@@ -11,11 +11,11 @@ const Layout: React.FC<LayoutProps> = ({ title, children }) => {
     <>
       <Menu />
       <IonPage id="main-content">
-        <IonHeader>
+        <IonHeader translucent={true}>
           <IonToolbar>
             <IonTitle>{title}</IonTitle>
             <IonButtons slot="start">
-              <IonMenuButton></IonMenuButton>
+              <IonMenuButton color="primary"></IonMenuButton>
             </IonButtons>
           </IonToolbar>
         </IonHeader>

@@ -3,9 +3,9 @@ import { IonButton, IonContent, IonHeader, IonMenu, IonMenuToggle, IonTitle, Ion
 const Menu: React.FC = () => {
     return (
         <IonMenu type="push" contentId="main-content">
-            <IonHeader>
+            <IonHeader translucent={true}>
                 <IonToolbar>
-                    <IonTitle>Aastha Health Plush</IonTitle>
+                    <IonTitle>Aastha Health Plus</IonTitle>
                 </IonToolbar>
             </IonHeader>
             <IonContent className="ion-padding">
