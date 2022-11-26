@@ -1,5 +1,5 @@
 import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonMenuButton, IonNavLink, IonPage, IonRefresher, IonRefresherContent, IonTitle, IonToolbar, RefresherEventDetail } from '@ionic/react';
-import { add, ellipse } from 'ionicons/icons';
+import { add, ellipse, linkOutline } from 'ionicons/icons';
 import { useEffect, useState } from 'react';
 import ManageSessions from './ManageSessions';
 
@@ -61,7 +61,7 @@ const Sessions: React.FC = () => {
         <IonList>
           {items.map((item) => (
             <IonItem button={true} key={item.name}>
-              <IonIcon slot="start" color="primary" icon={item.unread ? ellipse : ''}></IonIcon>
+              <IonIcon slot="start" color="primary" icon={item.unread ? ellipse : linkOutline}></IonIcon>
               <IonLabel>
                 <h2>{item.name}</h2>
                 <p>New message from {item.name}</p>

@@ -1,4 +1,4 @@
-import { IonBackButton, IonButton, IonButtons, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonModal, IonPage, IonRadio, IonRadioGroup, IonRefresher, IonRefresherContent, IonSegment, IonSegmentButton, IonSelect, IonSelectOption, IonTitle, IonToolbar, RefresherEventDetail } from '@ionic/react';
+import { IonBackButton, IonButton, IonButtons, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonModal, IonNote, IonPage, IonRadio, IonRadioGroup, IonRefresher, IonRefresherContent, IonSegment, IonSegmentButton, IonSelect, IonSelectOption, IonTitle, IonToolbar, RefresherEventDetail } from '@ionic/react';
 import { save, saveOutline } from 'ionicons/icons';
 import { useParams } from 'react-router-dom';
 import ExploreContainer from '../components/ExploreContainer';
@@ -56,8 +56,8 @@ const ManageSessions: React.FC = () => {
             <IonSelectOption value="bananas5">Bananas5</IonSelectOption>
           </IonSelect>
         </IonItem>
-        <IonItem>
-          <IonLabel>Session Date</IonLabel>
+        <IonItem>          
+        <IonLabel position='stacked'>Session Date</IonLabel>
           <IonDatetimeButton datetime="datetime"></IonDatetimeButton>
           <IonModal keepContentsMounted={true}>
             <IonDatetime id="datetime" showDefaultTitle={true} showDefaultButtons={true}>
@@ -65,8 +65,9 @@ const ManageSessions: React.FC = () => {
             </IonDatetime>
           </IonModal>
         </IonItem>
-        <IonItem>
-          <IonLabel position='stacked'>Payment Mode</IonLabel>
+        <IonItem lines='none' />
+        <IonItem>          
+        <IonLabel position='stacked' slot='start'>Payment Mode</IonLabel>
           <IonSegment value="Cash">
             <IonSegmentButton value="Cash">
               <IonLabel>Cash</IonLabel>
@@ -88,9 +89,10 @@ const ManageSessions: React.FC = () => {
           <IonLabel position="stacked">Amount Deposit</IonLabel>
           <IonInput type='number' clearInput={true} defaultValue="0"></IonInput>
         </IonItem>
+        <IonItem lines='none' />
         <IonItem lines='none'>
-          <IonButton color={"primary"} fill="clear" href='/sessions'>Cancel</IonButton>
-          <IonButton color={"primary"} fill="solid" href='/sessions'>
+          <IonButton size='large' color={"primary"} fill="clear" href='/sessions'>Cancel</IonButton>
+          <IonButton size='large' color={"primary"} fill="solid" href='/sessions'>
             Save
             <IonIcon slot="start" icon={saveOutline}></IonIcon>
           </IonButton>
