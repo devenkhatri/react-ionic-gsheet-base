@@ -10,7 +10,7 @@ const Menu: React.FC = () => {
             </IonHeader>
             <IonContent className="ion-padding">
                 <IonMenuToggle>
-                    <IonButton>Close X</IonButton>
+                    <IonButton>Coming Soon...</IonButton>
                 </IonMenuToggle>
             </IonContent>
         </IonMenu>

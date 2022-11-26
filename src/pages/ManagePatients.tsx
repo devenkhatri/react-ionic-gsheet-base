@@ -1,8 +1,8 @@
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
 
-const Patients: React.FC = () => {
-  const title = "Patients"
+const ManagePatients: React.FC = () => {
+  const title = "Manage Patients"
   return (
     <IonPage id="main-content">
         <IonHeader translucent={true}>
@@ -25,4 +25,4 @@ const Patients: React.FC = () => {
   );
 };
 
-export default Patients;
+export default ManagePatients;
