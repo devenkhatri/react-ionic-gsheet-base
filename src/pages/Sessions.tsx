@@ -45,9 +45,9 @@ const Sessions: React.FC = () => {
           {data && data.length >0 && data[0].data.map((item: any) => (
             <IonItem button={true} key={item["🔒 Row ID"]}>
               <IonLabel>
-                <h2>{item["Patient ID"]}</h2>
-                <p>{item["Session Date"]}</p>
-                <p>{item["Amount Paid"]}</p>
+                <h2>{item["Report: Patient Name"]}</h2>
+                <p>{item["Report: Session Date"]}</p>
+                <p>{item["Report: Collection Amount"]}</p>
               </IonLabel>
             </IonItem>
           ))}
