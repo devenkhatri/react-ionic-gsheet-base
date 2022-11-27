@@ -1,4 +1,4 @@
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent } from '@ionic/react';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonButton } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
 
 const Reports: React.FC = () => {
@@ -20,6 +20,7 @@ const Reports: React.FC = () => {
         </IonHeader>
         <IonContent fullscreen>
           <ExploreContainer name={title} />
+          <IonButton target='_blank' href="https://docs.google.com/spreadsheets/d/e/2PACX-1vQzzndt387vajYtxYgRmreohxXvU7sqvtSk6OmG1o8eiPyQF9T3DYZS5U87qVEewNbEySbQUZ6k7Wuy/pubhtml?gid=569572014&single=true">Test Link</IonButton>
         </IonContent>
       </IonPage>    
   );

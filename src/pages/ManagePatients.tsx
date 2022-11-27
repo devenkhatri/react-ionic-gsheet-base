@@ -52,7 +52,7 @@ const ManagePatients: React.FC = () => {
               <IonInput clearInput={true}></IonInput>
             </IonCol>
           </IonRow>
-          <IonItemDivider />
+          
           <IonRow>
             <IonCol>
               <IonLabel>Start Date</IonLabel>
@@ -68,7 +68,7 @@ const ManagePatients: React.FC = () => {
               </IonModal>
             </IonCol>
           </IonRow>
-          <IonItemDivider />
+          
           <IonRow>
             <IonCol>
               <IonLabel>Description</IonLabel>
@@ -89,7 +89,7 @@ const ManagePatients: React.FC = () => {
               <IonInput type='number' clearInput={true}></IonInput>
             </IonCol>
           </IonRow>
-          <IonItemDivider/>
+          
           <IonRow>
             <IonCol><IonLabel>Referral Type</IonLabel></IonCol>
           </IonRow>

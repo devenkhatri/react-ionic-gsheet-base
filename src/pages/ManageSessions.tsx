@@ -68,7 +68,7 @@ const ManageSessions: React.FC = () => {
               </IonSelect>
             </IonCol>
           </IonRow>
-          <IonItemDivider />
+          
           <IonRow>
             <IonCol>
               <IonLabel>Session Date</IonLabel>
@@ -84,7 +84,7 @@ const ManageSessions: React.FC = () => {
               </IonModal>
             </IonCol>
           </IonRow>
-          <IonItemDivider />
+          
           <IonRow>
             <IonCol><IonLabel>Payment Mode</IonLabel></IonCol>
           </IonRow>
@@ -96,7 +96,7 @@ const ManageSessions: React.FC = () => {
               </IonSelect>
             </IonCol>
           </IonRow>
-          <IonItemDivider />
+          
           <IonRow>
             <IonCol>
               <IonLabel>Amount Received</IonLabel>
