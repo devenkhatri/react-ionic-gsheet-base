@@ -35,6 +35,8 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 import ManageSessions from './pages/ManageSessions';
 import ManagePatients from './pages/ManagePatients';
+import ViewSession from './pages/ViewSession';
+import ViewPatient from './pages/ViewPatient';
 
 setupIonicReact();
 
@@ -55,8 +57,17 @@ const App: React.FC = () => (
           <Route path="/managesession/:id">
             <ManageSessions />
           </Route>
+          <Route path="/viewsession/:id">
+            <ViewSession />
+          </Route>
           <Route exact path="/managepatient">
             <ManagePatients />
+          </Route>
+          <Route path="/managepatient/:id">
+            <ManageSessions />
+          </Route>
+          <Route path="/viewpatient/:id">
+            <ViewPatient />
           </Route>
           <Route path="/reports">
             <Reports />

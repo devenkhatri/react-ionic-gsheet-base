@@ -1,11 +1,11 @@
-import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonLoading, IonMenuButton, IonNavLink, IonPage, IonRefresher, IonRefresherContent, IonSpinner, IonTitle, IonToast, IonToolbar, RefresherEventDetail } from '@ionic/react';
+import { IonAvatar, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonLoading, IonMenuButton, IonNavLink, IonPage, IonRefresher, IonRefresherContent, IonSpinner, IonTitle, IonToast, IonToolbar, RefresherEventDetail } from '@ionic/react';
 import { add, pencil } from 'ionicons/icons';
 import ManageSessions from './ManageSessions';
 import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
-import { useEffect, useState } from 'react';
 import { refreshPage } from '../utils';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
+import Avatar from 'react-avatar';
 
 const Sessions: React.FC = () => {
 
@@ -18,13 +18,11 @@ const Sessions: React.FC = () => {
   });
 
   const sessionsData = _.filter(data, { id: "Sessions" });
-  const patientsData = _.filter(data, { id: "Patients" });
+  // const patientsData = _.filter(data, { id: "Patients" });
 
   const sortedSessions = sessionsData && sessionsData.length > 0 && _.orderBy(sessionsData[0].data, (item: any) => item["Report: Session Date"], ['desc'])
   const groupedSessions = sortedSessions && _.groupBy(sortedSessions, (item: any) => item["Report: Session Date"])
 
-  console.log("****** data", groupedSessions)
-  
   return (
     <IonPage id="main-content">
       <IonHeader translucent={true}>
@@ -64,14 +62,17 @@ const Sessions: React.FC = () => {
         <>
           {groupedSessions && _.map(groupedSessions, (sessionDetails: any, sessionDate: any) => (
             <IonItemGroup key={sessionDate}>
-              <IonItemDivider color="light">
+              <IonItemDivider color="primary">
                 <IonLabel>
                   {sessionDate}
                 </IonLabel>
               </IonItemDivider>
               {sessionDetails.map((session: any) => (
-                <IonItemSliding>
-                  <IonItem button={true} key={session["🔒 Row ID"]} detail={true}>
+                <IonItemSliding key={session["🔒 Row ID"]}>
+                  <IonItem button={true} key={session["🔒 Row ID"]} detail={true} href={`/viewsession/${session["🔒 Row ID"]}`}>
+                    <IonAvatar slot="start">
+                      <Avatar name={session["Report: Patient Name"]} round size="100%" />
+                    </IonAvatar>
                     <IonLabel>{session["Report: Patient Name"]}</IonLabel>
                     <IonLabel slot='end'>{session["Report: Collection Amount"]}</IonLabel>
                   </IonItem>
