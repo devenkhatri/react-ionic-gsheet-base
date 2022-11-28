@@ -1,22 +1,36 @@
-import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonMenuButton, IonNavLink, IonPage, IonRefresher, IonRefresherContent, IonTitle, IonToolbar, RefresherEventDetail } from '@ionic/react';
-import { add} from 'ionicons/icons';
+import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonLoading, IonMenuButton, IonNavLink, IonPage, IonRefresher, IonRefresherContent, IonSpinner, IonTitle, IonToast, IonToolbar, RefresherEventDetail } from '@ionic/react';
+import { add } from 'ionicons/icons';
 import ManageSessions from './ManageSessions';
 import useGoogleSheets from 'use-google-sheets';
+import * as _ from "lodash";
+import { useState } from 'react';
+import { refreshPage } from '../utils';
+import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 
 const Sessions: React.FC = () => {
 
   const title = "Sessions"
 
-  const { data, loading, error, refetch } = useGoogleSheets({
+  const [items, setItems] = useState<any[]>([]);
+
+  const { data, loading, error } = useGoogleSheets({
     apiKey: process.env.REACT_APP_GOOGLE_API_KEY || "",
     sheetId: process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
-    sheetsOptions: [{ id: 'Sessions' }],
+    sheetsOptions: [],
   });
 
-  console.log("****** data", data && data.length >0 && data[0].data)
-  data && data.length >0 && data[0].data.map((item: any) => {
-    // console.log(item["Session Date"])
-  })
+  const getItems = () => {
+    const newItems = [];
+    for (let i = 0; i < 50; i++) {
+      newItems.push(`Item ${1 + items.length + i}`);
+    }
+    setItems([...items, ...newItems]);
+  };
+
+  const sessionsData = _.filter(data, { id: "Sessions" });
+  const patientsData = _.filter(data, { id: "Patients" });
+
+  console.log("****** data", data, sessionsData)
 
   return (
     <IonPage id="main-content">
@@ -27,22 +41,35 @@ const Sessions: React.FC = () => {
             <IonMenuButton color="primary"></IonMenuButton>
           </IonButtons>
           <IonButtons slot="end">
-            <IonNavLink component={()=><ManageSessions/>} routerDirection={"forward"}>
-            <IonButton href='/managesession'>
-              <IonIcon slot="icon-only" icon={add} color="primary"></IonIcon>            
-            </IonButton>
+            <IonNavLink component={() => <ManageSessions />} routerDirection={"forward"}>
+              <IonButton href='/managesession'>
+                <IonIcon slot="icon-only" icon={add} color="primary"></IonIcon>
+              </IonButton>
             </IonNavLink>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonRefresher slot="fixed" onIonRefresh={refetch}>
+        <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
           <IonRefresherContent></IonRefresherContent>
         </IonRefresher>
-        {loading && <div>Loading...</div>}
-        {error && <div>Error!</div>}
+        {loading &&
+          <ListLoadingSkeleton />
+        }
+        <IonToast
+          isOpen={!!error}
+          position={'top'}
+          color={'danger'}
+          message="Error occurred while fetching the details. Please try again !!!"
+          duration={1500}
+        />
+        {error &&
+          <IonItem color={'light'}>
+            <IonLabel color={'danger'}>Error loading data. Please refresh the page to try again !!!</IonLabel>
+          </IonItem>
+        }
         <IonList>
-          {data && data.length >0 && data[0].data.map((item: any) => (
+          {sessionsData && sessionsData.length > 0 && sessionsData[0].data.map((item: any) => (
             <IonItem button={true} key={item["🔒 Row ID"]}>
               <IonLabel>
                 <h2>{item["Report: Patient Name"]}</h2>
