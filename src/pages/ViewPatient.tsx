@@ -41,7 +41,7 @@ const ViewPatient: React.FC = () => {
         <IonPage id="main-content">
             <IonHeader translucent={true}>
                 <IonToolbar>
-                    <IonTitle>{title}</IonTitle>
+                    <IonTitle>{title}</IonTitle>                    
                     <IonButtons slot="start">
                         <IonBackButton defaultHref={fromSessionID ? `/viewsession/${fromSessionID}` : "/patients"}></IonBackButton>
                     </IonButtons>
@@ -52,7 +52,7 @@ const ViewPatient: React.FC = () => {
                             </IonButton>
                         </IonNavLink>
                     </IonButtons>
-                </IonToolbar>
+                </IonToolbar>                
             </IonHeader>
             <IonContent fullscreen>
                 <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
@@ -72,9 +72,8 @@ const ViewPatient: React.FC = () => {
                     <IonItem color={'light'}>
                         <IonLabel color={'danger'}>Error loading data. Please refresh the page to try again !!!</IonLabel>
                     </IonItem>
-                }
-
-                <IonCard style={{ textAlign: "center" }}>
+                }                
+                <IonCard style={{ textAlign: "center", paddingTop: "1rem" }}>
                     <Avatar name={currentPatient["Name"]} round />
                     <IonCardHeader>
                         <IonCardTitle>{currentPatient["Name"]}</IonCardTitle>

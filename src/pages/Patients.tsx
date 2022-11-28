@@ -1,4 +1,4 @@
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonButton, IonIcon, IonItem, IonLabel, IonNavLink, IonRefresher, IonRefresherContent, IonToast, IonAvatar, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding } from '@ionic/react';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonButton, IonIcon, IonItem, IonLabel, IonNavLink, IonRefresher, IonRefresherContent, IonToast, IonAvatar, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonSearchbar } from '@ionic/react';
 import ManagePatients from './ManagePatients';
 import { add, pencil } from 'ionicons/icons';
 import useGoogleSheets from 'use-google-sheets';
@@ -6,6 +6,7 @@ import * as _ from "lodash";
 import { refreshPage } from '../utils';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import Avatar from 'react-avatar';
+import { useState } from 'react';
 
 
 const Patients: React.FC = () => {
@@ -19,8 +20,18 @@ const Patients: React.FC = () => {
 
   const patientsData = _.filter(data, { id: "Patients" });
 
+  let [query, setQuery] = useState("");
+
+  const handleChange = (ev: Event) => {
+    let q = "";
+    const target = ev.target as HTMLIonSearchbarElement;
+    if (target) q = target.value!.toLowerCase();
+    setQuery(q)
+  }
+
   const sortedPatients = patientsData && patientsData.length > 0 && _.orderBy(patientsData[0].data, (item: any) => item["Name"])
-  const groupedPatients = sortedPatients && _.groupBy(sortedPatients, (item: any) => item["Name"].charAt(0).toUpperCase())
+  const filteredPatients = sortedPatients && query?_.filter(sortedPatients, (item: any) => item["Name"] && item["Name"].toLowerCase().indexOf(query) > -1):sortedPatients;
+  const groupedPatients = filteredPatients && _.groupBy(filteredPatients, (item: any) => item["Name"] && item["Name"].charAt(0).toUpperCase())
 
   return (
     <IonPage id="main-content">
@@ -37,6 +48,9 @@ const Patients: React.FC = () => {
               </IonButton>
             </IonNavLink>
           </IonButtons>
+        </IonToolbar>
+        <IonToolbar>
+          <IonSearchbar animated={true} showClearButton="focus" placeholder="Search" onIonChange={(ev) => handleChange(ev)}></IonSearchbar>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
