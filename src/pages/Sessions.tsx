@@ -1,9 +1,9 @@
-import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonLoading, IonMenuButton, IonNavLink, IonPage, IonRefresher, IonRefresherContent, IonSpinner, IonTitle, IonToast, IonToolbar, RefresherEventDetail } from '@ionic/react';
-import { add } from 'ionicons/icons';
+import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonLoading, IonMenuButton, IonNavLink, IonPage, IonRefresher, IonRefresherContent, IonSpinner, IonTitle, IonToast, IonToolbar, RefresherEventDetail } from '@ionic/react';
+import { add, pencil } from 'ionicons/icons';
 import ManageSessions from './ManageSessions';
 import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { refreshPage } from '../utils';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 
@@ -11,27 +11,20 @@ const Sessions: React.FC = () => {
 
   const title = "Sessions"
 
-  const [items, setItems] = useState<any[]>([]);
-
   const { data, loading, error } = useGoogleSheets({
     apiKey: process.env.REACT_APP_GOOGLE_API_KEY || "",
     sheetId: process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
     sheetsOptions: [],
   });
 
-  const getItems = () => {
-    const newItems = [];
-    for (let i = 0; i < 50; i++) {
-      newItems.push(`Item ${1 + items.length + i}`);
-    }
-    setItems([...items, ...newItems]);
-  };
-
   const sessionsData = _.filter(data, { id: "Sessions" });
   const patientsData = _.filter(data, { id: "Patients" });
 
-  console.log("****** data", data, sessionsData)
+  const sortedSessions = sessionsData && sessionsData.length > 0 && _.orderBy(sessionsData[0].data, (item: any) => item["Report: Session Date"], ['desc'])
+  const groupedSessions = sortedSessions && _.groupBy(sortedSessions, (item: any) => item["Report: Session Date"])
 
+  console.log("****** data", groupedSessions)
+  
   return (
     <IonPage id="main-content">
       <IonHeader translucent={true}>
@@ -68,17 +61,31 @@ const Sessions: React.FC = () => {
             <IonLabel color={'danger'}>Error loading data. Please refresh the page to try again !!!</IonLabel>
           </IonItem>
         }
-        <IonList>
-          {sessionsData && sessionsData.length > 0 && sessionsData[0].data.map((item: any) => (
-            <IonItem button={true} key={item["🔒 Row ID"]}>
-              <IonLabel>
-                <h2>{item["Report: Patient Name"]}</h2>
-                <p>{item["Report: Session Date"]}</p>
-                <p>{item["Report: Collection Amount"]}</p>
-              </IonLabel>
-            </IonItem>
+        <>
+          {groupedSessions && _.map(groupedSessions, (sessionDetails: any, sessionDate: any) => (
+            <IonItemGroup key={sessionDate}>
+              <IonItemDivider color="light">
+                <IonLabel>
+                  {sessionDate}
+                </IonLabel>
+              </IonItemDivider>
+              {sessionDetails.map((session: any) => (
+                <IonItemSliding>
+                  <IonItem button={true} key={session["🔒 Row ID"]} detail={true}>
+                    <IonLabel>{session["Report: Patient Name"]}</IonLabel>
+                    <IonLabel slot='end'>{session["Report: Collection Amount"]}</IonLabel>
+                  </IonItem>
+                  <IonItemOptions>
+                    <IonItemOption>
+                      <IonIcon icon={pencil} />&nbsp;
+                      Edit
+                    </IonItemOption>
+                  </IonItemOptions>
+                </IonItemSliding>
+              ))}
+            </IonItemGroup>
           ))}
-        </IonList>
+        </>
       </IonContent>
     </IonPage>
   );

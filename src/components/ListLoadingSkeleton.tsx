@@ -5,8 +5,8 @@ const ListLoadingSkeleton = () => {
 
     return (
         <IonList>
-            {_.times(25, () => (
-                <IonItem>
+            {_.times(25, (index: any) => (
+                <IonItem key={index}>
                     <IonLabel>
                         <h1><IonSkeletonText animated={true} style={{ 'width': '80%' }} /></h1>
                         <p><IonSkeletonText animated={true} style={{ 'width': '100%' }} /></p>
