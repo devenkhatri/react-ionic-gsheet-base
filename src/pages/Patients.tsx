@@ -75,7 +75,7 @@ const Patients: React.FC = () => {
         <>
           {groupedPatients && _.map(groupedPatients, (patientDetails: any, initials: any) => (
             <IonItemGroup key={initials}>
-              <IonItemDivider color="primary">
+              <IonItemDivider color="primary" style={{padding: '0.5rem 1rem', margin:'1rem 0'}}>
                 <IonLabel>
                   {initials}
                 </IonLabel>

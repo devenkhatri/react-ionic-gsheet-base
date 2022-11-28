@@ -62,7 +62,7 @@ const Sessions: React.FC = () => {
         <>
           {groupedSessions && _.map(groupedSessions, (sessionDetails: any, sessionDate: any) => (
             <IonItemGroup key={sessionDate}>
-              <IonItemDivider color="primary">
+              <IonItemDivider color="primary" style={{padding: '0.5rem 1rem', margin:'1rem 0'}}>
                 <IonLabel>
                   {sessionDate}
                 </IonLabel>
