@@ -1,6 +1,7 @@
 const querystring = require("querystring");
 const TokenGenerator = require('uuid-token-generator');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
+const _ = require("lodash");
 
 exports.handler = async (event, context) => {
     // Only allow POST
@@ -74,7 +75,14 @@ exports.handler = async (event, context) => {
             'Report: Collection Amount': body.amountPaid + body.depositAmount
         }
 
-        if(!isEdit) dataToSave['🔒 Row ID'] = token;
+        if(!isEdit) { // adding a row
+            dataToSave['🔒 Row ID'] = token;
+            // await doc.addRow({ dataToSave });
+        } else { //editing a row
+            // const rows = await sheet.getRows();
+            // const sessionToEdit = rows && rows.length > 0 && _.filter(rows, { "🔒 Row ID": itemID })
+            
+        }
 
         console.log("*** dataToSave", dataToSave)
 

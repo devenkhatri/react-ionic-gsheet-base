@@ -1,5 +1,5 @@
 import { IonBackButton, IonButton, IonButtons, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonGrid, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonLabel, IonModal, IonNote, IonPage, IonRadio, IonRadioGroup, IonRefresher, IonRefresherContent, IonRow, IonSegment, IonSegmentButton, IonSelect, IonSelectOption, IonTitle, IonToolbar, RefresherEventDetail, useIonToast } from '@ionic/react';
-import { globe, saveOutline, thumbsDown, thumbsUp } from 'ionicons/icons';
+import { saveOutline, thumbsDown, thumbsUp } from 'ionicons/icons';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
@@ -36,7 +36,8 @@ const ManageSessions: React.FC = () => {
 
   const saveRecord = () => {
     const requestOptions: any = {
-      url: `${process.env.REACT_APP_API_BASE}/.netlify/functions/addsession`,
+      baseURL: process.env.REACT_APP_API_BASE || '',
+      url: `.netlify/functions/addsession`,
       method: 'post',
       params: {
         itemID: id
