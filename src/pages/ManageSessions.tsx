@@ -1,6 +1,7 @@
-import { IonBackButton, IonButton, IonButtons, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonGrid, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonLabel, IonModal, IonNote, IonPage, IonRadio, IonRadioGroup, IonRefresher, IonRefresherContent, IonRow, IonSegment, IonSegmentButton, IonSelect, IonSelectOption, IonTitle, IonToolbar, RefresherEventDetail } from '@ionic/react';
-import { saveOutline } from 'ionicons/icons';
+import { IonBackButton, IonButton, IonButtons, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonGrid, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonLabel, IonModal, IonNote, IonPage, IonRadio, IonRadioGroup, IonRefresher, IonRefresherContent, IonRow, IonSegment, IonSegmentButton, IonSelect, IonSelectOption, IonTitle, IonToolbar, RefresherEventDetail, useIonToast } from '@ionic/react';
+import { globe, saveOutline, thumbsDown, thumbsUp } from 'ionicons/icons';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 type PageParams = {
   id?: string;
@@ -15,10 +16,55 @@ const ManageSessions: React.FC = () => {
 
   const title = (isEdit ? "Edit" : "Add") + " Sessions";
 
+  const [present] = useIonToast();
+
+  const presentToast = (color: any, icon: any,message: any) => {
+    present({
+      message: message,
+      duration: 1500,
+      position: 'top',
+      icon: icon,
+      color: color
+    });
+  };
+
   function handleRefresh(event: CustomEvent<RefresherEventDetail>) {
     setTimeout(() => {
       event.detail.complete();
     }, 2000);
+  }
+
+  const saveRecord = () => {
+    const requestOptions: any = {
+      url: `${process.env.REACT_APP_API_BASE}/.netlify/functions/addsession`,
+      method: 'post',
+      params: {
+        itemID: id
+      },
+      data: {
+        patientId: 'Fred',
+        sessionDate: 'Flintstone',
+        amountPaid: 0,
+        amountPending: 0,
+        paymentMode: 'Cash',
+        depositAmount: 0,
+        patientName: ''
+      },
+      withCredentials: false,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
+    };
+
+    axios(requestOptions)
+      .then(function (response) {
+        console.log(response);
+        presentToast('success',thumbsUp, 'Saved Successfully.....')
+      })
+      .catch(function (error) {
+        console.log(error);
+        presentToast('danger',thumbsDown, 'Sorry some error occured. Please try again to save.....')
+      });
   }
 
   return (
@@ -30,7 +76,7 @@ const ManageSessions: React.FC = () => {
             <IonBackButton defaultHref="/sessions"></IonBackButton>
           </IonButtons>
           <IonButtons slot="end">
-            <IonButton fill="clear" color='primary'>
+            <IonButton fill="clear" color='primary' onClick={saveRecord}>
               Save
               <IonIcon slot="start" icon={saveOutline}></IonIcon>
             </IonButton>
@@ -68,7 +114,7 @@ const ManageSessions: React.FC = () => {
               </IonSelect>
             </IonCol>
           </IonRow>
-          
+
           <IonRow>
             <IonCol>
               <IonLabel>Session Date</IonLabel>
@@ -84,7 +130,7 @@ const ManageSessions: React.FC = () => {
               </IonModal>
             </IonCol>
           </IonRow>
-          
+
           <IonRow>
             <IonCol><IonLabel>Payment Mode</IonLabel></IonCol>
           </IonRow>
@@ -96,7 +142,7 @@ const ManageSessions: React.FC = () => {
               </IonSelect>
             </IonCol>
           </IonRow>
-          
+
           <IonRow>
             <IonCol>
               <IonLabel>Amount Received</IonLabel>

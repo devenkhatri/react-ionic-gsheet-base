@@ -8,7 +8,7 @@ const Reports: React.FC = () => {
   const title = "Reports"
 
   const requestOptions: any = {
-    url: "/.netlify/functions/addsession",
+    url: `${process.env.REACT_APP_API_BASE}/.netlify/functions/addsession`,
     method: 'post',
     params: {
       itemID: 12345
