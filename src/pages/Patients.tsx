@@ -1,6 +1,6 @@
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonButton, IonIcon, IonItem, IonLabel, IonNavLink, IonRefresher, IonRefresherContent, IonToast, IonAvatar, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonSearchbar } from '@ionic/react';
 import ManagePatients from './ManagePatients';
-import { add, pencil } from 'ionicons/icons';
+import { add, createOutline, pencil } from 'ionicons/icons';
 import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
 import { refreshPage } from '../utils';
@@ -89,9 +89,10 @@ const Patients: React.FC = () => {
                     <IonLabel>{patient["Name"]}</IonLabel>
                     {/* <IonLabel slot='end'>{patient["Description"]}</IonLabel> */}
                   </IonItem>
+                  
                   <IonItemOptions>
-                    <IonItemOption>
-                      <IonIcon icon={pencil} />&nbsp;
+                  <IonItemOption onClick={()=>{window.location.href=`/managepatient/${patient["🔒 Row ID"]}`}}>
+                      <IonIcon slot="top" icon={createOutline} />
                       Edit
                     </IonItemOption>
                   </IonItemOptions>

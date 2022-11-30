@@ -1,5 +1,5 @@
-import { IonAvatar, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonLoading, IonMenuButton, IonNavLink, IonPage, IonRefresher, IonRefresherContent, IonSpinner, IonTitle, IonToast, IonToolbar, RefresherEventDetail } from '@ionic/react';
-import { add, pencil } from 'ionicons/icons';
+import { IonAvatar, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonMenuButton, IonNavLink, IonPage, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar } from '@ionic/react';
+import { add, create, createOutline, pencil } from 'ionicons/icons';
 import ManageSessions from './ManageSessions';
 import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
@@ -77,8 +77,8 @@ const Sessions: React.FC = () => {
                     <IonLabel slot='end'>{session["Report: Collection Amount"]}</IonLabel>
                   </IonItem>
                   <IonItemOptions>
-                    <IonItemOption>
-                      <IonIcon icon={pencil} />&nbsp;
+                    <IonItemOption onClick={()=>{window.location.href=`/managesession/${session["🔒 Row ID"]}`}}>
+                      <IonIcon slot="top" icon={createOutline} />
                       Edit
                     </IonItemOption>
                   </IonItemOptions>

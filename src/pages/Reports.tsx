@@ -35,15 +35,15 @@ const Reports: React.FC = () => {
     },
   };
 
-  useEffect(() => {
-    axios(requestOptions)
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  },[]);
+  // useEffect(() => {
+  //   axios(requestOptions)
+  //     .then(function (response) {
+  //       console.log(response);
+  //     })
+  //     .catch(function (error) {
+  //       console.log(error);
+  //     });
+  // },[requestOptions]);
 
   return (
     <IonPage id="main-content">

@@ -1,6 +1,7 @@
-import { IonBackButton, IonButton, IonButtons, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonGrid, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonLabel, IonModal, IonNote, IonPage, IonRadio, IonRadioGroup, IonRefresher, IonRefresherContent, IonRow, IonSegment, IonSegmentButton, IonSelect, IonSelectOption, IonTextarea, IonTitle, IonToolbar, RefresherEventDetail } from '@ionic/react';
+import { IonBackButton, IonButton, IonButtons, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonGrid, IonHeader, IonIcon, IonInput, IonLabel, IonModal, IonPage, IonRefresher, IonRefresherContent, IonRow, IonSelect, IonSelectOption, IonTextarea, IonTitle, IonToolbar } from '@ionic/react';
 import { saveOutline } from 'ionicons/icons';
 import { useParams } from 'react-router-dom';
+import { refreshPage } from '../utils';
 
 type PageParams = {
   id?: string;
@@ -14,12 +15,6 @@ const ManagePatients: React.FC = () => {
   if (id) isEdit = true;
 
   const title = (isEdit ? "Edit" : "Add") + " Patients";
-
-  function handleRefresh(event: CustomEvent<RefresherEventDetail>) {
-    setTimeout(() => {
-      event.detail.complete();
-    }, 2000);
-  }
 
   return (
     <IonPage id="main-content">
@@ -38,7 +33,7 @@ const ManagePatients: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
+        <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
           <IonRefresherContent></IonRefresherContent>
         </IonRefresher>
         <IonGrid>

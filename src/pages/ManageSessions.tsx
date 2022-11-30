@@ -1,7 +1,13 @@
-import { IonBackButton, IonButton, IonButtons, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonGrid, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonLabel, IonModal, IonNote, IonPage, IonRadio, IonRadioGroup, IonRefresher, IonRefresherContent, IonRow, IonSegment, IonSegmentButton, IonSelect, IonSelectOption, IonTitle, IonToolbar, RefresherEventDetail, useIonToast } from '@ionic/react';
+import { IonBackButton, IonButton, IonButtons, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonGrid, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonLoading, IonModal, IonPage, IonRefresher, IonRefresherContent, IonRow, IonSelect, IonSelectOption, IonTitle, IonToast, IonToolbar, useIonToast } from '@ionic/react';
 import { saveOutline, thumbsDown, thumbsUp } from 'ionicons/icons';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { refreshPage } from '../utils';
+import useGoogleSheets from 'use-google-sheets';
+import * as _ from "lodash";
+import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
+import { useEffect, useState } from 'react';
+import moment from 'moment';
 
 type PageParams = {
   id?: string;
@@ -16,9 +22,49 @@ const ManageSessions: React.FC = () => {
 
   const title = (isEdit ? "Edit" : "Add") + " Sessions";
 
-  const [present] = useIonToast();
+  const { data, loading, error } = useGoogleSheets({
+    apiKey: process.env.REACT_APP_GOOGLE_API_KEY || "",
+    sheetId: process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
+    sheetsOptions: [],
+  });
 
-  const presentToast = (color: any, icon: any,message: any) => {
+  const patientsData = _.filter(data, { id: "Patients" });
+  const sortedPatients = patientsData && patientsData.length > 0 && _.orderBy(patientsData[0].data, (item: any) => item["Name"])
+
+  const optionsData = _.filter(data, { id: "Options" });
+  const allPaymentModes = optionsData && optionsData.length > 0 && _.filter(optionsData[0].data, (item: any) => item["Payment Modes"])
+  const defaultPaymentMode: any = allPaymentModes && allPaymentModes.length > 0 && _.head(allPaymentModes);
+
+  const sessionsData = _.filter(data, { id: "Sessions" });
+  const filteredSession = sessionsData && sessionsData.length > 0 && _.filter(sessionsData[0].data, { "🔒 Row ID": id })
+  const currentSession: any = (filteredSession && filteredSession.length > 0) ? filteredSession[0] : {}
+
+  const [present] = useIonToast();
+  const [showLoading, setShowLoading] = useState(false);
+
+  const [patientID, setPatientID] = useState("")
+  const [patientName, setPatientName] = useState("")
+  const [sessionDate, setSessionDate] = useState<any>(moment().format())
+  const [paymentMode, setPaymentMode] = useState("")
+  const [amountPaid, setAmountPaid] = useState<any>()
+  const [amountPending, setAmountPending] = useState<any>()
+  const [depositAmount, setDepositAmount] = useState<any>()
+
+  useEffect(() => {
+    console.log("**** isEdit", isEdit)
+    setPaymentMode(defaultPaymentMode && defaultPaymentMode["Payment Modes"]);
+    if (isEdit && currentSession) {
+      console.log(moment(currentSession["Session Date"], "DD-MMM-YYYY, ddd").format())
+      setPatientID(currentSession["Patient ID"])
+      currentSession["Session Date"] && setSessionDate(moment(currentSession["Session Date"], "DD-MMM-YYYY, ddd").format())
+      setPaymentMode(currentSession["Payment Mode"])
+      setAmountPaid(currentSession["Amount Paid"])
+      setAmountPending(currentSession["Amount Pending"])
+      setDepositAmount(currentSession["Deposit Amount"])
+    }
+  }, [defaultPaymentMode, currentSession]);
+
+  const presentToast = (color: any, icon: any, message: any) => {
     present({
       message: message,
       duration: 1500,
@@ -27,12 +73,6 @@ const ManageSessions: React.FC = () => {
       color: color
     });
   };
-
-  function handleRefresh(event: CustomEvent<RefresherEventDetail>) {
-    setTimeout(() => {
-      event.detail.complete();
-    }, 2000);
-  }
 
   const saveRecord = () => {
     const requestOptions: any = {
@@ -43,13 +83,13 @@ const ManageSessions: React.FC = () => {
         itemID: id
       },
       data: {
-        patientId: 'Fred',
-        sessionDate: 'Flintstone',
-        amountPaid: 0,
-        amountPending: 0,
-        paymentMode: 'Cash',
-        depositAmount: 0,
-        patientName: ''
+        patientId: patientID,
+        sessionDate: sessionDate,
+        amountPaid: amountPaid,
+        amountPending: amountPending,
+        paymentMode: paymentMode,
+        depositAmount: depositAmount,
+        patientName: patientName
       },
       withCredentials: false,
       headers: {
@@ -57,15 +97,26 @@ const ManageSessions: React.FC = () => {
       },
     };
 
+    setShowLoading(true);
     axios(requestOptions)
-      .then(function (response) {
+      .then(function (response: any) {
         console.log(response);
-        presentToast('success',thumbsUp, 'Saved Successfully.....')
+        presentToast('success', thumbsUp, response?.data?.message || 'Saved Successfully.....');
+        setShowLoading(false)        
+        window.location.href = id ? `/viewsession/${id}` : "/sessions";
       })
       .catch(function (error) {
         console.log(error);
-        presentToast('danger',thumbsDown, 'Sorry some error occured. Please try again to save.....')
+        setShowLoading(false)
+        presentToast('danger', thumbsDown, 'Sorry some error occured. Please try again to save.....')
       });
+  }
+
+  const getPatientNameFromID = (pId: string) => {
+    if (!sortedPatients) return null;
+    const filteredPatient = _.filter(sortedPatients, { "🔒 Row ID": pId })
+    const currentPatient: any = (filteredPatient && filteredPatient.length > 0) ? filteredPatient[0] : {}
+    return currentPatient["Name"];
   }
 
   return (
@@ -74,7 +125,7 @@ const ManageSessions: React.FC = () => {
         <IonToolbar>
           <IonTitle>{title}</IonTitle>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/sessions"></IonBackButton>
+            <IonBackButton defaultHref={id ? `/viewsession/${id}` : "/sessions"}></IonBackButton>
           </IonButtons>
           <IonButtons slot="end">
             <IonButton fill="clear" color='primary' onClick={saveRecord}>
@@ -85,9 +136,29 @@ const ManageSessions: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
+        <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
           <IonRefresherContent></IonRefresherContent>
         </IonRefresher>
+        {loading &&
+          <ListLoadingSkeleton />
+        }
+        <IonToast
+          isOpen={!!error}
+          position={'top'}
+          color={'danger'}
+          message="Error occurred while fetching the details. Please try again !!!"
+          duration={1500}
+        />
+        {error &&
+          <IonItem color={'light'}>
+            <IonLabel color={'danger'}>Error loading data. Please refresh the page to try again !!!</IonLabel>
+          </IonItem>
+        }
+        <IonLoading
+          isOpen={showLoading}
+          onDidDismiss={() => setShowLoading(false)}
+          message={'Please wait while the data is being saved...'}
+        />
         <IonGrid>
           <IonRow>
             <IonCol>
@@ -96,22 +167,16 @@ const ManageSessions: React.FC = () => {
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonSelect interface="action-sheet">
-                <IonSelectOption value="apples1">Apples1</IonSelectOption>
-                <IonSelectOption value="oranges1">Oranges1</IonSelectOption>
-                <IonSelectOption value="bananas1">Bananas1</IonSelectOption>
-                <IonSelectOption value="apples2">Apples2</IonSelectOption>
-                <IonSelectOption value="oranges2">Oranges2</IonSelectOption>
-                <IonSelectOption value="bananas2">Bananas2</IonSelectOption>
-                <IonSelectOption value="apples3">Apples3</IonSelectOption>
-                <IonSelectOption value="oranges3">Oranges3</IonSelectOption>
-                <IonSelectOption value="bananas3">Bananas3</IonSelectOption>
-                <IonSelectOption value="apples4">Apples4</IonSelectOption>
-                <IonSelectOption value="oranges4">Oranges4</IonSelectOption>
-                <IonSelectOption value="bananas4">Bananas4</IonSelectOption>
-                <IonSelectOption value="apples5">Apples5</IonSelectOption>
-                <IonSelectOption value="oranges5">Oranges5</IonSelectOption>
-                <IonSelectOption value="bananas5">Bananas5</IonSelectOption>
+              <IonSelect interface="action-sheet"
+                onIonChange={(e) => {
+                  setPatientID(e.detail.value);
+                  setPatientName(getPatientNameFromID(e.detail.value))
+                }}
+                value={patientID}
+              >
+                {sortedPatients && sortedPatients.map((patient: any) => (
+                  <IonSelectOption key={patient["🔒 Row ID"]} value={patient["🔒 Row ID"]}>{patient["Name"]}</IonSelectOption>
+                ))}
               </IonSelect>
             </IonCol>
           </IonRow>
@@ -125,7 +190,13 @@ const ManageSessions: React.FC = () => {
             <IonCol>
               <IonDatetimeButton datetime="datetime"></IonDatetimeButton>
               <IonModal keepContentsMounted={true}>
-                <IonDatetime id="datetime" showDefaultTitle={true} showDefaultButtons={true}>
+                <IonDatetime
+                  id="datetime"
+                  showDefaultTitle={true}
+                  showDefaultButtons={true}
+                  onIonChange={(e) => setSessionDate(e.detail.value)}
+                  value={sessionDate}
+                >
                   <span slot="title">Session Date</span>
                 </IonDatetime>
               </IonModal>
@@ -137,9 +208,13 @@ const ManageSessions: React.FC = () => {
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonSelect interface="action-sheet" placeholder="Select Payment Mode" value={"Cash"}>
-                <IonSelectOption value="Cash">Cash</IonSelectOption>
-                <IonSelectOption value="Online">Online</IonSelectOption>
+              <IonSelect interface="action-sheet" placeholder="Select Payment Mode"
+                value={paymentMode}
+                onIonChange={(e) => setPaymentMode(e.detail.value)}
+              >
+                {allPaymentModes && allPaymentModes.map((options: any) => (
+                  <IonSelectOption key={options["Payment Modes"]} value={options["Payment Modes"]}>{options["Payment Modes"]}</IonSelectOption>
+                ))}
               </IonSelect>
             </IonCol>
           </IonRow>
@@ -151,7 +226,9 @@ const ManageSessions: React.FC = () => {
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonInput type='number' clearInput={true} defaultValue="0" placeholder='0'></IonInput>
+              <IonInput type='number' defaultValue="0" placeholder='0'
+                onIonInput={(e) => setAmountPaid(e.target.value)}
+                value={amountPaid}></IonInput>
             </IonCol>
           </IonRow>
           <IonRow>
@@ -161,7 +238,9 @@ const ManageSessions: React.FC = () => {
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonInput type='number' clearInput={true} defaultValue="0" placeholder='0'></IonInput>
+              <IonInput type='number' defaultValue="0" placeholder='0'
+                onIonInput={(e) => setAmountPending(e.target.value)}
+                value={amountPending}></IonInput>
             </IonCol>
           </IonRow>
           <IonRow>
@@ -171,7 +250,9 @@ const ManageSessions: React.FC = () => {
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonInput type='number' clearInput={true} defaultValue="0" placeholder='0'></IonInput>
+              <IonInput type='number' defaultValue="0" placeholder='0'
+                onIonInput={(e) => setDepositAmount(e.target.value)}
+                value={depositAmount}></IonInput>
             </IonCol>
           </IonRow>
         </IonGrid>
