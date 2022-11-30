@@ -64,7 +64,7 @@ const App: React.FC = () => (
             <ManagePatients />
           </Route>
           <Route path="/managepatient/:id">
-            <ManageSessions />
+            <ManagePatients />
           </Route>
           <Route path="/viewpatient/:id">
             <ViewPatient />

@@ -51,10 +51,8 @@ const ManageSessions: React.FC = () => {
   const [depositAmount, setDepositAmount] = useState<any>()
 
   useEffect(() => {
-    console.log("**** isEdit", isEdit)
     setPaymentMode(defaultPaymentMode && defaultPaymentMode["Payment Modes"]);
     if (isEdit && currentSession) {
-      console.log(moment(currentSession["Session Date"], "DD-MMM-YYYY, ddd").format())
       setPatientID(currentSession["Patient ID"])
       currentSession["Session Date"] && setSessionDate(moment(currentSession["Session Date"], "DD-MMM-YYYY, ddd").format())
       setPaymentMode(currentSession["Payment Mode"])
