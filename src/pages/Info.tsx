@@ -1,7 +1,8 @@
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonImg, IonLabel, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonItem, IonNote } from '@ionic/react';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonImg, IonLabel, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonItem, IonNote, IonRefresher, IonRefresherContent } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
 import { QRCode } from 'react-qrcode-logo';
 import Avatar from 'react-avatar';
+import { refreshPage } from '../utils';
 
 const Info: React.FC = () => {
   const title = "Info"
@@ -17,6 +18,9 @@ const Info: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
+      <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
+          <IonRefresherContent></IonRefresherContent>
+        </IonRefresher>
         <IonCard style={{ textAlign: "center", paddingTop: "1rem" }}>
           <Avatar src="/assets/icon/banner.png" size='90%' />
           <IonCardHeader>
