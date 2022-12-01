@@ -1,5 +1,6 @@
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent } from '@ionic/react';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonRefresher, IonRefresherContent } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
+import { refreshPage } from '../utils';
 
 const Reports: React.FC = () => {
   const title = "Reports"
@@ -20,6 +21,9 @@ const Reports: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
+        <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
+          <IonRefresherContent></IonRefresherContent>
+        </IonRefresher>
         <ExploreContainer name={`${title} is coming soon.......`} />
       </IonContent>
     </IonPage>
