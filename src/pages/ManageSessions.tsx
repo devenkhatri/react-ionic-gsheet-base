@@ -73,6 +73,10 @@ const ManageSessions: React.FC = () => {
   };
 
   const saveRecord = () => {
+    if(!patientID || !patientName) {
+      presentToast('danger', thumbsDown, 'Please select Patient Name...')
+      return;
+    }
     const requestOptions: any = {
       baseURL: process.env.REACT_APP_API_BASE || '',
       url: `.netlify/functions/addsession`,
@@ -171,6 +175,7 @@ const ManageSessions: React.FC = () => {
                   setPatientName(getPatientNameFromID(e.detail.value))
                 }}
                 value={patientID}
+                style={{background: "var(--ion-color-light)"}}
               >
                 {sortedPatients && sortedPatients.map((patient: any) => (
                   <IonSelectOption key={patient["🔒 Row ID"]} value={patient["🔒 Row ID"]}>{patient["Name"]}</IonSelectOption>
@@ -186,7 +191,7 @@ const ManageSessions: React.FC = () => {
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonDatetimeButton datetime="datetime"></IonDatetimeButton>
+              <IonDatetimeButton datetime="datetime" style={{background: "var(--ion-color-light)"}}></IonDatetimeButton>
               <IonModal keepContentsMounted={true}>
                 <IonDatetime
                   id="datetime"
@@ -209,6 +214,7 @@ const ManageSessions: React.FC = () => {
               <IonSelect interface="action-sheet" placeholder="Select Payment Mode"
                 value={paymentMode}
                 onIonChange={(e) => setPaymentMode(e.detail.value)}
+                style={{background: "var(--ion-color-light)"}}
               >
                 {allPaymentModes && allPaymentModes.map((options: any) => (
                   <IonSelectOption key={options["Payment Modes"]} value={options["Payment Modes"]}>{options["Payment Modes"]}</IonSelectOption>
@@ -226,6 +232,7 @@ const ManageSessions: React.FC = () => {
             <IonCol>
               <IonInput type='number' defaultValue="0" placeholder='0'
                 onIonInput={(e) => setAmountPaid(e.target.value)}
+                style={{background: "var(--ion-color-light)"}}
                 value={amountPaid}></IonInput>
             </IonCol>
           </IonRow>
@@ -238,6 +245,7 @@ const ManageSessions: React.FC = () => {
             <IonCol>
               <IonInput type='number' defaultValue="0" placeholder='0'
                 onIonInput={(e) => setAmountPending(e.target.value)}
+                style={{background: "var(--ion-color-light)"}}
                 value={amountPending}></IonInput>
             </IonCol>
           </IonRow>
@@ -250,6 +258,7 @@ const ManageSessions: React.FC = () => {
             <IonCol>
               <IonInput type='number' defaultValue="0" placeholder='0'
                 onIonInput={(e) => setDepositAmount(e.target.value)}
+                style={{background: "var(--ion-color-light)"}}
                 value={depositAmount}></IonInput>
             </IonCol>
           </IonRow>

@@ -44,10 +44,10 @@ const ManagePatients: React.FC = () => {
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonInput clearInput={true}></IonInput>
+              <IonInput clearInput={true} style={{ background: "var(--ion-color-light)" }}></IonInput>
             </IonCol>
           </IonRow>
-          
+
           <IonRow>
             <IonCol>
               <IonLabel>Start Date</IonLabel>
@@ -55,7 +55,7 @@ const ManagePatients: React.FC = () => {
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonDatetimeButton datetime="datetime"></IonDatetimeButton>
+              <IonDatetimeButton datetime="datetime" style={{ background: "var(--ion-color-light)" }}></IonDatetimeButton>
               <IonModal keepContentsMounted={true}>
                 <IonDatetime id="datetime" showDefaultTitle={true} showDefaultButtons={true}>
                   <span slot="title">Start Date</span>
@@ -63,7 +63,7 @@ const ManagePatients: React.FC = () => {
               </IonModal>
             </IonCol>
           </IonRow>
-          
+
           <IonRow>
             <IonCol>
               <IonLabel>Description</IonLabel>
@@ -71,7 +71,11 @@ const ManagePatients: React.FC = () => {
           </IonRow>
           <IonRow>
             <IonCol>
-            <IonTextarea autoCorrect='true' autoGrow={true} color={'primary'} placeholder="Enter Patient Description here..."></IonTextarea>
+              <IonTextarea
+                autoCorrect='true'
+                autoGrow={true}
+                placeholder="Enter Patient Description here..."
+                style={{ background: "var(--ion-color-light)" }} />
             </IonCol>
           </IonRow>
           <IonRow>
@@ -81,16 +85,16 @@ const ManagePatients: React.FC = () => {
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonInput type='number' clearInput={true}></IonInput>
+              <IonInput type='number' clearInput={true} style={{ background: "var(--ion-color-light)" }}></IonInput>
             </IonCol>
           </IonRow>
-          
+
           <IonRow>
             <IonCol><IonLabel>Referral Type</IonLabel></IonCol>
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonSelect interface="action-sheet" placeholder="Select Referral Type" value={"Direct"}>
+              <IonSelect interface="action-sheet" placeholder="Select Referral Type" value={"Direct"} style={{ background: "var(--ion-color-light)" }}>
                 <IonSelectOption value="Direct">Direct</IonSelectOption>
                 <IonSelectOption value="Word of Mouth">Word of Mouth</IonSelectOption>
                 <IonSelectOption value="Doctor">Doctor</IonSelectOption>
@@ -99,7 +103,7 @@ const ManagePatients: React.FC = () => {
               </IonSelect>
             </IonCol>
           </IonRow>
-          
+
           <IonRow>
             <IonCol>
               <IonLabel>Referral Details</IonLabel>
@@ -107,10 +111,14 @@ const ManagePatients: React.FC = () => {
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonTextarea autoCorrect='true' autoGrow={true} color={'primary'} placeholder="Enter Referral Details here..."></IonTextarea>
+              <IonTextarea
+                autoCorrect='true'
+                autoGrow={true}
+                style={{ background: "var(--ion-color-light)" }}
+                placeholder="Enter Referral Details here..." />
             </IonCol>
           </IonRow>
-          
+
         </IonGrid>
       </IonContent>
     </IonPage>
