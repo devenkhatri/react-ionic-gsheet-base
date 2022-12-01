@@ -8,6 +8,11 @@ import { RWebShare } from "react-web-share";
 const Info: React.FC = () => {
   const title = "Info"
 
+  const appDetails = {
+    title: "Aastha Health Plus",
+    subtitle: "Physiotherapy App",
+    url: "https://aastha-health-plus-physio-tracker.netlify.app/",
+  }
   return (
     <IonPage id="main-content">
       <IonHeader translucent={true}>
@@ -17,18 +22,19 @@ const Info: React.FC = () => {
             <IonMenuButton color="primary"></IonMenuButton>
           </IonButtons>
           <IonButtons slot="end">
-            <IonButton>
-              <RWebShare
-                data={{
-                  text: "Physiotherapy App",
-                  url: "https://aastha-health-plus-physio-tracker.netlify.app/",
-                  title: "Aastha Health Plus",
-                }}
-                onClick={() => console.log("shared successfully!")}
-              >
+            <RWebShare
+              data={{
+                text: appDetails.subtitle,
+                url: appDetails.url,
+                title: appDetails.title,
+              }}
+              onClick={() => console.log("shared successfully!")}
+            >
+              <IonButton>
                 <IonIcon slot="icon-only" icon={shareOutline} color="primary"></IonIcon>
-              </RWebShare>
-            </IonButton>
+              </IonButton>
+            </RWebShare>
+
           </IonButtons>
         </IonToolbar>
       </IonHeader>
@@ -39,8 +45,8 @@ const Info: React.FC = () => {
         <IonCard style={{ textAlign: "center", paddingTop: "1rem" }}>
           <Avatar src="/assets/icon/banner.png" size='90%' />
           <IonCardHeader>
-            <IonCardTitle>Aastha Health Plus</IonCardTitle>
-            <IonCardSubtitle>Physiotherapy App</IonCardSubtitle>
+            <IonCardTitle>{appDetails.title}</IonCardTitle>
+            <IonCardSubtitle>{appDetails.subtitle}</IonCardSubtitle>
           </IonCardHeader>
           <IonCardContent>
             <IonGrid>
@@ -49,7 +55,7 @@ const Info: React.FC = () => {
               </IonCol></IonRow>
               <IonRow><IonCol>
                 <QRCode
-                  value="https://aastha-health-plus-physio-tracker.netlify.app/"
+                  value={appDetails.url}
                   logoImage="/assets/icon/icon.png"
                   fgColor='#462e5c'
                   removeQrCodeBehindLogo={true}
