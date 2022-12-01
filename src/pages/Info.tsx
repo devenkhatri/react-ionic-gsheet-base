@@ -1,5 +1,4 @@
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonImg, IonItem, IonLabel, IonIcon } from '@ionic/react';
-import { shareOutline } from 'ionicons/icons';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonImg } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
 
 const Info: React.FC = () => {

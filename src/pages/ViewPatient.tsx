@@ -1,4 +1,4 @@
-import { IonAvatar, IonBackButton, IonBadge, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonNavLink, IonPage, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar } from "@ionic/react";
+import { IonAvatar, IonBackButton, IonBadge, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonNavLink, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar } from "@ionic/react";
 import { useParams } from 'react-router-dom';
 import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
@@ -41,7 +41,8 @@ const ViewPatient: React.FC = () => {
         <IonPage id="main-content">
             <IonHeader translucent={true}>
                 <IonToolbar>
-                    <IonTitle>{title}</IonTitle>                    
+                    <IonTitle>{title}</IonTitle>  
+                    {loading && <IonProgressBar type="indeterminate"></IonProgressBar> }                  
                     <IonButtons slot="start">
                         <IonBackButton defaultHref={fromSessionID ? `/viewsession/${fromSessionID}` : "/patients"}></IonBackButton>
                     </IonButtons>
