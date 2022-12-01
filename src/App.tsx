@@ -38,7 +38,7 @@ import ManagePatients from './pages/ManagePatients';
 import ViewSession from './pages/ViewSession';
 import ViewPatient from './pages/ViewPatient';
 
-import ReactGA from 'react-ga';
+import ReactGA from 'react-ga4';
 import { useEffect } from 'react';
 import Info from './pages/Info';
 
@@ -48,7 +48,8 @@ process.env.REACT_GOOGLE_TRACKING_ID && ReactGA.initialize(process.env.REACT_GOO
 
 const App: React.FC = () => {
   useEffect(() => {
-    ReactGA.pageview(window.location.pathname + window.location.search);
+    // Send pageview with path
+    ReactGA.send({ hitType: "pageview", page: (window.location.pathname + window.location.search) });
   }, []);
 
   return (
