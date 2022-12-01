@@ -38,61 +38,72 @@ import ManagePatients from './pages/ManagePatients';
 import ViewSession from './pages/ViewSession';
 import ViewPatient from './pages/ViewPatient';
 
+import ReactGA from 'react-ga';
+import { useEffect } from 'react';
+
 setupIonicReact();
 
-const App: React.FC = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonTabs>
-        <IonRouterOutlet>
-          <Route exact path="/sessions">
-            <Sessions />
-          </Route>
-          <Route exact path="/patients">
-            <Patients />
-          </Route>
-          <Route exact path="/managesession">
-            <ManageSessions />
-          </Route>
-          <Route path="/managesession/:id">
-            <ManageSessions />
-          </Route>
-          <Route path="/viewsession/:id">
-            <ViewSession />
-          </Route>
-          <Route exact path="/managepatient">
-            <ManagePatients />
-          </Route>
-          <Route path="/managepatient/:id">
-            <ManagePatients />
-          </Route>
-          <Route path="/viewpatient/:id">
-            <ViewPatient />
-          </Route>
-          <Route path="/reports">
-            <Reports />
-          </Route>
-          <Route exact path="/">
-            <Redirect to="/sessions" />
-          </Route>
-        </IonRouterOutlet>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="sessions" href="/sessions">
-            <IonIcon icon={calendarOutline} />
-            <IonLabel>Sessions</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="patients" href="/patients">
-            <IonIcon icon={peopleOutline} />
-            <IonLabel>Patients</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="reports" href="/reports">
-            <IonIcon icon={barChartOutline} />
-            <IonLabel>Reports</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
-      </IonTabs>
-    </IonReactRouter>
-  </IonApp>
-);
+process.env.REACT_GOOGLE_TRACKING_ID && ReactGA.initialize(process.env.REACT_GOOGLE_TRACKING_ID);
+
+const App: React.FC = () => {
+  useEffect(() => {
+    ReactGA.pageview(window.location.pathname + window.location.search);
+  }, []);
+
+  return (
+    <IonApp>
+      <IonReactRouter>
+        <IonTabs>
+          <IonRouterOutlet>
+            <Route exact path="/sessions">
+              <Sessions />
+            </Route>
+            <Route exact path="/patients">
+              <Patients />
+            </Route>
+            <Route exact path="/managesession">
+              <ManageSessions />
+            </Route>
+            <Route path="/managesession/:id">
+              <ManageSessions />
+            </Route>
+            <Route path="/viewsession/:id">
+              <ViewSession />
+            </Route>
+            <Route exact path="/managepatient">
+              <ManagePatients />
+            </Route>
+            <Route path="/managepatient/:id">
+              <ManagePatients />
+            </Route>
+            <Route path="/viewpatient/:id">
+              <ViewPatient />
+            </Route>
+            <Route path="/reports">
+              <Reports />
+            </Route>
+            <Route exact path="/">
+              <Redirect to="/sessions" />
+            </Route>
+          </IonRouterOutlet>
+          <IonTabBar slot="bottom">
+            <IonTabButton tab="sessions" href="/sessions">
+              <IonIcon icon={calendarOutline} />
+              <IonLabel>Sessions</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="patients" href="/patients">
+              <IonIcon icon={peopleOutline} />
+              <IonLabel>Patients</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="reports" href="/reports">
+              <IonIcon icon={barChartOutline} />
+              <IonLabel>Reports</IonLabel>
+            </IonTabButton>
+          </IonTabBar>
+        </IonTabs>
+      </IonReactRouter>
+    </IonApp>
+  )
+};
 
 export default App;
