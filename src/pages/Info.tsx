@@ -9,9 +9,9 @@ const Info: React.FC = () => {
   const title = "Info"
 
   const appDetails = {
-    title: "Aastha Health Plus",
-    subtitle: "Physiotherapy App",
-    url: "https://aastha-health-plus-physio-tracker.netlify.app/",
+    title: process.env.REACT_APP_TITLE,
+    subtitle: process.env.REACT_APP_SUBTITLE,
+    url: process.env.REACT_APP_URL,
   }
   return (
     <IonPage id="main-content">
@@ -24,7 +24,7 @@ const Info: React.FC = () => {
           <IonButtons slot="end">
             <RWebShare
               data={{
-                text: appDetails.subtitle,
+                text: appDetails.title +" - "+ appDetails.subtitle,
                 url: appDetails.url,
                 title: appDetails.title,
               }}
@@ -43,7 +43,7 @@ const Info: React.FC = () => {
           <IonRefresherContent></IonRefresherContent>
         </IonRefresher>
         <IonCard style={{ textAlign: "center", paddingTop: "1rem" }}>
-          <Avatar src="/assets/icon/banner.png" size='90%' />
+          <Avatar src="/assets/icon/banner.png" size='80%' />
           <IonCardHeader>
             <IonCardTitle>{appDetails.title}</IonCardTitle>
             <IonCardSubtitle>{appDetails.subtitle}</IonCardSubtitle>

@@ -13,7 +13,7 @@ import { IonReactRouter } from '@ionic/react-router';
 import { peopleOutline, barChartOutline, calendarOutline, informationCircle } from 'ionicons/icons';
 import Sessions from './pages/Sessions';
 import Patients from './pages/Patients';
-import Reports from './pages/Reports';
+import PhysioReports from './pages/PhysioReports';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -44,13 +44,15 @@ import Info from './pages/Info';
 
 setupIonicReact();
 
-process.env.REACT_GOOGLE_TRACKING_ID && ReactGA.initialize(process.env.REACT_GOOGLE_TRACKING_ID);
+process.env.REACT_APP_GOOGLE_TRACKING_ID && ReactGA.initialize(process.env.REACT_APP_GOOGLE_TRACKING_ID);
 
 const App: React.FC = () => {
   useEffect(() => {
     // Send pageview with path
     ReactGA.send({ hitType: "pageview", page: (window.location.pathname + window.location.search) });
   }, []);
+
+  const category = process.env.REACT_APP_CATEGORY || "";
 
   return (
     <IonApp>
@@ -80,27 +82,27 @@ const App: React.FC = () => {
             </Route>
             <Route path="/viewpatient/:id">
               <ViewPatient />
-            </Route>            
-            <Route exact path="/">
-              <Redirect to="/sessions" />
             </Route>
-            <Route path="/reports">
-              <Reports />
+            <Route exact path="/">
+              <Redirect to="/info" />
+            </Route>
+            <Route path="/physioreports">
+              <PhysioReports />
             </Route>
             <Route path="/info">
               <Info />
             </Route>
           </IonRouterOutlet>
           <IonTabBar slot="bottom">
-            <IonTabButton tab="sessions" href="/sessions">
+            <IonTabButton tab="sessions" href="/sessions" style={{display: (category !== "physio")?'none':''}}>
               <IonIcon icon={calendarOutline} />
               <IonLabel>Sessions</IonLabel>
             </IonTabButton>
-            <IonTabButton tab="patients" href="/patients">
+            <IonTabButton tab="patients" href="/patients" style={{display: (category !== "physio")?'none':''}}>
               <IonIcon icon={peopleOutline} />
               <IonLabel>Patients</IonLabel>
             </IonTabButton>
-            <IonTabButton tab="reports" href="/reports">
+            <IonTabButton tab="physioreports" href="/physioreports" style={{display: (category !== "physio")?'none':''}}>
               <IonIcon icon={barChartOutline} />
               <IonLabel>Reports</IonLabel>
             </IonTabButton>

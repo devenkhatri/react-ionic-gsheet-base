@@ -2,7 +2,7 @@ import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, Io
 import ExploreContainer from '../components/ExploreContainer';
 import { refreshPage } from '../utils';
 
-const Reports: React.FC = () => {
+const PhysioReports: React.FC = () => {
   const title = "Reports"
 
   return (
@@ -30,4 +30,4 @@ const Reports: React.FC = () => {
   );
 };
 
-export default Reports;
+export default PhysioReports;
