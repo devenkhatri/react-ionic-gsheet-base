@@ -47,7 +47,7 @@ const ViewPatient: React.FC = () => {
                     </IonButtons>
                     <IonButtons slot="end">
                         <IonNavLink component={() => <ManagePatients />} routerDirection={"forward"}>
-                            <IonButton href={`/managepatients/${id}`}>
+                            <IonButton href={`/managepatient/${id}`}>
                                 <IonIcon slot="icon-only" icon={pencil} color="primary"></IonIcon>
                             </IonButton>
                         </IonNavLink>

@@ -1,6 +1,6 @@
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonButton, IonIcon, IonItem, IonLabel, IonNavLink, IonRefresher, IonRefresherContent, IonToast, IonAvatar, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonSearchbar } from '@ionic/react';
 import ManagePatients from './ManagePatients';
-import { add, createOutline, pencil } from 'ionicons/icons';
+import { add, createOutline } from 'ionicons/icons';
 import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
 import { refreshPage } from '../utils';

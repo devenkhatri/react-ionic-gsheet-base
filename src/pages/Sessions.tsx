@@ -1,5 +1,5 @@
 import { IonAvatar, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonMenuButton, IonNavLink, IonPage, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar } from '@ionic/react';
-import { add, create, createOutline, pencil } from 'ionicons/icons';
+import { add, createOutline } from 'ionicons/icons';
 import ManageSessions from './ManageSessions';
 import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";

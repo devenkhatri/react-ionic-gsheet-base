@@ -51,7 +51,7 @@ const ManageSessions: React.FC = () => {
   const [depositAmount, setDepositAmount] = useState<any>()
 
   useEffect(() => {
-    setPaymentMode(defaultPaymentMode && defaultPaymentMode["Payment Modes"]);
+    if(!paymentMode) setPaymentMode(defaultPaymentMode && defaultPaymentMode["Payment Modes"]);
     if (isEdit && currentSession) {
       setPatientID(currentSession["Patient ID"])
       currentSession["Session Date"] && setSessionDate(moment(currentSession["Session Date"], "DD-MMM-YYYY, ddd").format())
@@ -60,7 +60,7 @@ const ManageSessions: React.FC = () => {
       setAmountPending(currentSession["Amount Pending"])
       setDepositAmount(currentSession["Deposit Amount"])
     }
-  }, [defaultPaymentMode, currentSession]);
+  }, [paymentMode, defaultPaymentMode, currentSession]);
 
   const presentToast = (color: any, icon: any, message: any) => {
     present({
@@ -79,7 +79,7 @@ const ManageSessions: React.FC = () => {
     }
     const requestOptions: any = {
       baseURL: process.env.REACT_APP_API_BASE || '',
-      url: `.netlify/functions/addsession`,
+      url: `.netlify/functions/sessionmgmt`,
       method: 'post',
       params: {
         itemID: id

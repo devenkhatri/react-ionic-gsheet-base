@@ -10,7 +10,7 @@ import {
   setupIonicReact
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { peopleOutline, barChartOutline, calendarOutline } from 'ionicons/icons';
+import { peopleOutline, barChartOutline, calendarOutline, informationCircle } from 'ionicons/icons';
 import Sessions from './pages/Sessions';
 import Patients from './pages/Patients';
 import Reports from './pages/Reports';
@@ -40,6 +40,7 @@ import ViewPatient from './pages/ViewPatient';
 
 import ReactGA from 'react-ga';
 import { useEffect } from 'react';
+import Info from './pages/Info';
 
 setupIonicReact();
 
@@ -78,12 +79,15 @@ const App: React.FC = () => {
             </Route>
             <Route path="/viewpatient/:id">
               <ViewPatient />
+            </Route>            
+            <Route exact path="/">
+              <Redirect to="/sessions" />
             </Route>
             <Route path="/reports">
               <Reports />
             </Route>
-            <Route exact path="/">
-              <Redirect to="/sessions" />
+            <Route path="/info">
+              <Info />
             </Route>
           </IonRouterOutlet>
           <IonTabBar slot="bottom">
@@ -98,6 +102,10 @@ const App: React.FC = () => {
             <IonTabButton tab="reports" href="/reports">
               <IonIcon icon={barChartOutline} />
               <IonLabel>Reports</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="info" href="/info">
+              <IonIcon icon={informationCircle} />
+              <IonLabel>Info</IonLabel>
             </IonTabButton>
           </IonTabBar>
         </IonTabs>
