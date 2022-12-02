@@ -10,7 +10,7 @@ import Avatar from 'react-avatar';
 const Sessions: React.FC = () => {
 
   const title = "Sessions"
-
+ 
   const { data, loading, error } = useGoogleSheets({
     apiKey: process.env.REACT_APP_GOOGLE_API_KEY || "",
     sheetId: process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
