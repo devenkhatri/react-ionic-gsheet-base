@@ -1,12 +1,12 @@
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonButton, IonIcon, IonItem, IonLabel, IonNavLink, IonRefresher, IonRefresherContent, IonToast, IonAvatar, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonSearchbar, IonProgressBar } from '@ionic/react';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonButton, IonIcon, IonItem, IonLabel, IonNavLink, IonRefresher, IonRefresherContent, IonToast, IonItemDivider, IonItemGroup, IonSearchbar, IonProgressBar } from '@ionic/react';
 import ManagePatients from './ManagePatients';
-import { add, createOutline } from 'ionicons/icons';
+import { add } from 'ionicons/icons';
 import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
 import { refreshPage } from '../utils';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
-import Avatar from 'react-avatar';
 import { useState } from 'react';
+import PatientList from '../components/PatientList';
 
 
 const Patients: React.FC = () => {
@@ -81,24 +81,7 @@ const Patients: React.FC = () => {
                   {initials}
                 </IonLabel>
               </IonItemDivider>
-              {patientDetails.map((patient: any) => (
-                <IonItemSliding key={patient["🔒 Row ID"]}>
-                  <IonItem button={true} key={patient["🔒 Row ID"]} detail={true} href={`/viewpatient/${patient["🔒 Row ID"]}`}>
-                    <IonAvatar slot="start">
-                      <Avatar name={patient["Name"]} round size="100%" />
-                    </IonAvatar>
-                    <IonLabel>{patient["Name"]}</IonLabel>
-                    {/* <IonLabel slot='end'>{patient["Description"]}</IonLabel> */}
-                  </IonItem>
-                  
-                  <IonItemOptions>
-                  <IonItemOption onClick={()=>{window.location.href=`/managepatient/${patient["🔒 Row ID"]}`}}>
-                      <IonIcon slot="top" icon={createOutline} />
-                      Edit
-                    </IonItemOption>
-                  </IonItemOptions>
-                </IonItemSliding>
-              ))}
+              <PatientList allPatients={patientDetails} />
             </IonItemGroup>
           ))}
         </>

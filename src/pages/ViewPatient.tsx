@@ -1,4 +1,4 @@
-import { IonAvatar, IonBackButton, IonBadge, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonNavLink, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar } from "@ionic/react";
+import { IonBackButton, IonBadge, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonNavLink, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar } from "@ionic/react";
 import { useParams } from 'react-router-dom';
 import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
@@ -7,6 +7,7 @@ import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import { pencil } from "ionicons/icons";
 import Avatar from 'react-avatar';
 import ManagePatients from "./ManagePatients";
+import SessionList from "../components/SessionList";
 
 type PageParams = {
     id?: string;
@@ -41,8 +42,8 @@ const ViewPatient: React.FC = () => {
         <IonPage id="main-content">
             <IonHeader translucent={true}>
                 <IonToolbar>
-                    <IonTitle>{title}</IonTitle>  
-                    {loading && <IonProgressBar type="indeterminate"></IonProgressBar> }                  
+                    <IonTitle>{title}</IonTitle>
+                    {loading && <IonProgressBar type="indeterminate"></IonProgressBar>}
                     <IonButtons slot="start">
                         <IonBackButton defaultHref={fromSessionID ? `/viewsession/${fromSessionID}` : "/patients"}></IonBackButton>
                     </IonButtons>
@@ -53,7 +54,7 @@ const ViewPatient: React.FC = () => {
                             </IonButton>
                         </IonNavLink>
                     </IonButtons>
-                </IonToolbar>                
+                </IonToolbar>
             </IonHeader>
             <IonContent fullscreen>
                 <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
@@ -73,7 +74,7 @@ const ViewPatient: React.FC = () => {
                     <IonItem color={'light'}>
                         <IonLabel color={'danger'}>Error loading data. Please refresh the page to try again !!!</IonLabel>
                     </IonItem>
-                }                
+                }
                 <IonCard style={{ textAlign: "center", paddingTop: "1rem" }}>
                     <Avatar name={currentPatient["Name"]} round />
                     <IonCardHeader>
@@ -95,9 +96,9 @@ const ViewPatient: React.FC = () => {
                         <IonLabel>{currentPatient["Referral Details"]}</IonLabel>
 
                         <IonList>
-                            <IonCard color={"warning"} style={{padding: '1rem'}}>
+                            <IonCard color={"warning"} style={{ padding: '1rem' }}>
                                 <IonCardSubtitle>Remaining Balance Amount</IonCardSubtitle>
-                                <IonLabel><h1>Rs. {totalDepositAmount-totalAmountPending}</h1></IonLabel>
+                                <IonLabel><h1>Rs. {totalDepositAmount - totalAmountPending}</h1></IonLabel>
                             </IonCard>
                             <IonItem>
                                 <IonLabel>Total Amount Paid:</IonLabel>
@@ -114,23 +115,8 @@ const ViewPatient: React.FC = () => {
                         </IonList>
                     </IonCardContent>
                 </IonCard>
-
                 <IonLabel><h1 style={{ padding: "1rem 1rem 0 1rem" }}>View Session Details</h1></IonLabel>
-                <IonList>
-                    {sortedSessions && sortedSessions.map((session: any) => (
-                        <IonItem button={true} key={session["🔒 Row ID"]} detail={true} href={`/viewsession/${session["🔒 Row ID"]}?fromPatientID=${id}`}>
-                            <IonAvatar slot="start">
-                                <Avatar name={session["Report: Patient Name"]} round size="100%" />
-                            </IonAvatar>
-                            <IonLabel>
-                                <h2>{session["Report: Patient Name"]}</h2>
-                                <p>{session["Report: Session Date"]}</p>
-                            </IonLabel>
-
-                            <IonLabel slot='end'>{session["Report: Collection Amount"]}</IonLabel>
-                        </IonItem>
-                    ))}
-                </IonList>
+                <SessionList allSessions={sortedSessions} fromPatientID={id} isShowDate />
             </IonContent>
         </IonPage>
     );

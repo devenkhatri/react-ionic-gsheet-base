@@ -1,11 +1,11 @@
-import { IonAvatar, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonMenuButton, IonNavLink, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar } from '@ionic/react';
-import { add, createOutline } from 'ionicons/icons';
+import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonMenuButton, IonNavLink, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar } from '@ionic/react';
+import { add } from 'ionicons/icons';
 import ManageSessions from './ManageSessions';
 import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
 import { refreshPage } from '../utils';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
-import Avatar from 'react-avatar';
+import SessionList from '../components/SessionList';
 
 const Sessions: React.FC = () => {
 
@@ -68,23 +68,7 @@ const Sessions: React.FC = () => {
                   {sessionDate}
                 </IonLabel>
               </IonItemDivider>
-              {sessionDetails.map((session: any) => (
-                <IonItemSliding key={session["🔒 Row ID"]}>
-                  <IonItem button={true} key={session["🔒 Row ID"]} detail={true} href={`/viewsession/${session["🔒 Row ID"]}`}>
-                    <IonAvatar slot="start">
-                      <Avatar name={session["Report: Patient Name"]} round size="100%" />
-                    </IonAvatar>
-                    <IonLabel>{session["Report: Patient Name"]}</IonLabel>
-                    <IonLabel slot='end'>{session["Report: Collection Amount"]}</IonLabel>
-                  </IonItem>
-                  <IonItemOptions>
-                    <IonItemOption onClick={()=>{window.location.href=`/managesession/${session["🔒 Row ID"]}`}}>
-                      <IonIcon slot="top" icon={createOutline} />
-                      Edit
-                    </IonItemOption>
-                  </IonItemOptions>
-                </IonItemSliding>
-              ))}
+              <SessionList allSessions={sessionDetails} />
             </IonItemGroup>
           ))}
         </>

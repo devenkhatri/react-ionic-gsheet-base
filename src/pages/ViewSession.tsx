@@ -1,4 +1,4 @@
-import { IonAvatar, IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonNavLink, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar } from "@ionic/react";
+import { IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonNavLink, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar } from "@ionic/react";
 import { useParams } from 'react-router-dom';
 import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
@@ -6,8 +6,7 @@ import { refreshPage } from '../utils';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import { pencil } from "ionicons/icons";
 import ManageSessions from "./ManageSessions";
-import Avatar from 'react-avatar';
-import ManagePatients from "./ManagePatients";
+import PatientList from "../components/PatientList";
 
 type PageParams = {
     id?: string;
@@ -94,19 +93,7 @@ const ViewSession: React.FC = () => {
                 </IonCard>
                 
                 <IonLabel><h1 style={{ padding: "1rem 1rem 0 1rem" }}>View Patient Details</h1></IonLabel>
-                <IonList>
-                    <IonNavLink component={() => <ManagePatients />} routerDirection={"forward"}>
-                        <IonItem button={true} detail={true} href={`/viewpatient/${currentSession["Patient ID"]}?fromSessionID=${id}`}>
-                            <IonAvatar slot="start">
-                                <Avatar name={currentSession["Report: Patient Name"]} round size="100%" />
-                            </IonAvatar>
-                            <IonLabel>
-                                <h2>{currentSession["Report: Patient Name"]}</h2>
-                                <p>{currentPatient["Description"]}</p>
-                            </IonLabel>
-                        </IonItem>
-                    </IonNavLink>
-                </IonList>
+                <PatientList allPatients={[currentPatient]} fromSessionID={id} isShowDescription />
             </IonContent>
         </IonPage>
     );
