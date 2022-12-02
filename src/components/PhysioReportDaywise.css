@@ -1,0 +1,34 @@
+.reportTitle {
+    text-align: center;    
+}
+
+.reportTitle h1 {
+    color: var(--ion-color-primary);    
+    padding: 1rem 0;
+    font-weight: bold;
+}
+
+.numberType {
+    text-align: right;
+}
+
+.header, .footer {
+    background-color: var(--ion-color-light);
+    border-bottom: 0.75px solid;
+    border-bottom-color: var(--ion-color-primary);
+    border-top: 0.75px solid;
+    border-top-color: var(--ion-color-primary);
+    padding: 0.3rem 0;
+}
+
+.header, .footer > ion-col {
+    font-weight: bold;
+}
+
+.itemrow :first-child {
+    font-style: italic;
+}
+
+.itemrow :last-child {
+    font-weight: bold;
+}
