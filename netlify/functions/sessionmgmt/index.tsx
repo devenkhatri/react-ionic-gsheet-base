@@ -33,15 +33,13 @@ exports.handler = async (event, context) => {
         const token = tokenGenerator.generate();
 
         const doc = new GoogleSpreadsheet(process.env.REACT_APP_GOOGLE_SHEETS_ID);
-        // let privateKey = process.env.GOOGLE_PRIVATE_KEY && process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/gm, '\n')
+        let privateKey = process.env.GOOGLE_PRIVATE_KEY && process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/gm, '\n')
         await doc.useServiceAccountAuth({
             client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-            private_key: process.env.GOOGLE_PRIVATE_KEY,
+            private_key: privateKey,
         });
         await doc.loadInfo(); // loads document properties and worksheets
         const sheet = doc.sheetsByTitle['Sessions']; // or use doc.sheetsById[id] or doc.sheetsByTitle[title]
-
-        // console.log("***** sheet", sheet)
 
         const patientId = body.patientId;
         const sessionDate = moment(body.sessionDate).format("DD-MMM-YYYY, ddd");
