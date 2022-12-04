@@ -41,8 +41,6 @@ exports.handler = async (event, context) => {
         await doc.loadInfo(); // loads document properties and worksheets
         const sheet = doc.sheetsByTitle['Sessions']; // or use doc.sheetsById[id] or doc.sheetsByTitle[title]
 
-        // console.log("***** sheet", sheet)
-
         const patientId = body.patientId;
         const sessionDate = moment(body.sessionDate).format("DD-MMM-YYYY, ddd");
         const amountPaid = Number.parseInt(body.amountPaid || 0)

@@ -41,8 +41,6 @@ exports.handler = async (event, context) => {
         await doc.loadInfo(); // loads document properties and worksheets
         const sheet = doc.sheetsByTitle['Patients']; // or use doc.sheetsById[id] or doc.sheetsByTitle[title]
 
-        // console.log("***** sheet", sheet)
-
         const patientName = body.patientName;
         const startDate = moment(body.startDate).format("MM/DD/YYYY");
         const description = body.description
