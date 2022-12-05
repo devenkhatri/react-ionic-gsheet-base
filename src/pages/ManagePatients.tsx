@@ -234,7 +234,7 @@ const ManagePatients: React.FC = () => {
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonSelect interface="action-sheet" placeholder="Select Referral Type"
+              <IonSelect interface="action-sheet" interfaceOptions={{ header: "Select Referral Type" }} placeholder="Select Referral Type"
                 value={referralType}
                 onIonChange={(e) => setReferralType(e.detail.value)}
                 style={{ background: "var(--ion-color-light)" }}
