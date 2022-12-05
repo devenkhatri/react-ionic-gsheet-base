@@ -1,6 +1,7 @@
-import { IonItem, IonLabel, IonGrid, IonRow, IonCol } from "@ionic/react";
+import { IonLabel, IonGrid, IonRow, IonCol } from "@ionic/react";
 import _ from "lodash";
 import moment from "moment";
+import { formatCurrency } from "../utils";
 import './PhysioReportDaywise.css'
 
 const PhysioReportDaywise = ({ data }: any) => {
@@ -9,6 +10,7 @@ const PhysioReportDaywise = ({ data }: any) => {
 
     let grandTotalCash = 0;
     let grandTotalOnline = 0;
+
     return (
         <>
             <IonLabel color={'primary'} class="reportTitle"><h1>Day-wise Collection Report</h1></IonLabel>
@@ -31,18 +33,18 @@ const PhysioReportDaywise = ({ data }: any) => {
                     return (
                         <IonRow key={sessionDate} class="itemrow">
                             <IonCol size="4">{sessionDate}</IonCol>
-                            <IonCol class="numberType">{totalCash}</IonCol>
-                            <IonCol class="numberType">{totalOnline}</IonCol>
-                            <IonCol class="numberType">{netTotal}</IonCol>
+                            <IonCol class="numberType">{formatCurrency(totalCash)}</IonCol>
+                            <IonCol class="numberType">{formatCurrency(totalOnline)}</IonCol>
+                            <IonCol class="numberType">{formatCurrency(netTotal)}</IonCol>
                         </IonRow>
                     )
                 })}
                 <IonLabel color={'primary'}>
                     <IonRow class="footer">
                         <IonCol size="4">Total</IonCol>
-                        <IonCol class="numberType">{grandTotalCash}</IonCol>
-                        <IonCol class="numberType">{grandTotalOnline}</IonCol>
-                        <IonCol class="numberType">{grandTotalCash + grandTotalOnline}</IonCol>
+                        <IonCol class="numberType">{formatCurrency(grandTotalCash)}</IonCol>
+                        <IonCol class="numberType">{formatCurrency(grandTotalOnline)}</IonCol>
+                        <IonCol class="numberType">{formatCurrency(grandTotalCash + grandTotalOnline)}</IonCol>
                     </IonRow>
                 </IonLabel>
             </IonGrid>
