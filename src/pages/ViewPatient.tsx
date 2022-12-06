@@ -8,6 +8,7 @@ import { pencil } from "ionicons/icons";
 import Avatar from 'react-avatar';
 import ManagePatients from "./ManagePatients";
 import SessionList from "../components/SessionList";
+import moment from "moment";
 
 type PageParams = {
     id?: string;
@@ -32,7 +33,7 @@ const ViewPatient: React.FC = () => {
     const currentPatient: any = (filteredPatient && filteredPatient.length > 0) ? filteredPatient[0] : {}
 
     const filteredSession = currentPatient && sessionsData && sessionsData.length > 0 && _.filter(sessionsData[0].data, { "Patient ID": currentPatient["🔒 Row ID"] })
-    const sortedSessions = filteredSession && _.orderBy(filteredSession, (item: any) => item["Report: Session Date"], ['desc'])
+    const sortedSessions = filteredSession && _.orderBy(filteredSession, (item: any) => moment(item["Report: Session Date"], 'DD-MMM-YYYY'), ['desc'])
 
     const totalDepositAmount = _.sumBy(sortedSessions, (session: any) => _.toNumber(session["Deposit Amount"]));
     const totalAmountPending = _.sumBy(sortedSessions, (session: any) => _.toNumber(session["Amount Pending"]));

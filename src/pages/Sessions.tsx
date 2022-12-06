@@ -6,6 +6,7 @@ import * as _ from "lodash";
 import { refreshPage } from '../utils';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import SessionList from '../components/SessionList';
+import moment from 'moment';
 
 const Sessions: React.FC = () => {
 
@@ -20,7 +21,7 @@ const Sessions: React.FC = () => {
   const sessionsData = _.filter(data, { id: "Sessions" });
   // const patientsData = _.filter(data, { id: "Patients" });
 
-  const sortedSessions = sessionsData && sessionsData.length > 0 && _.orderBy(sessionsData[0].data, (item: any) => item["Report: Session Date"], ['desc'])
+  const sortedSessions = sessionsData && sessionsData.length > 0 && _.orderBy(sessionsData[0].data, (item: any) => moment(item["Report: Session Date"], 'DD-MMM-YYYY'), ['desc'])
   const groupedSessions = sortedSessions && _.groupBy(sortedSessions, (item: any) => item["Report: Session Date"])
 
   return (

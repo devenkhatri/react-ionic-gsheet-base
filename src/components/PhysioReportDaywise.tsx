@@ -5,7 +5,7 @@ import { formatCurrency } from "../utils";
 import './PhysioReportDaywise.css'
 
 const PhysioReportDaywise = ({ data }: any) => {
-    const sortedSessions = data && data.length > 0 && _.orderBy(data[0].data, (item: any) => item["Report: Session Date"], ['desc'])
+    const sortedSessions = data && data.length > 0 && _.orderBy(data[0].data, (item: any) => moment(item["Report: Session Date"], 'DD-MMM-YYYY'), ['desc'])
     const groupedSessions = sortedSessions && _.groupBy(sortedSessions, (item: any) => moment(item["Session Date"], "DD-MMM-YYYY, ddd").format("DD-MMM-YYYY"))
 
     let grandTotalCash = 0;
