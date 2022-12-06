@@ -10,7 +10,7 @@ import {
   setupIonicReact
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { peopleOutline, barChartOutline, calendarOutline, informationCircle } from 'ionicons/icons';
+import { peopleOutline, barChartOutline, calendarOutline, informationCircle, barbellOutline } from 'ionicons/icons';
 import Sessions from './pages/Sessions';
 import Patients from './pages/Patients';
 import PhysioReports from './pages/PhysioReports';
@@ -41,6 +41,8 @@ import ViewPatient from './pages/ViewPatient';
 import ReactGA from 'react-ga4';
 import { useEffect } from 'react';
 import Info from './pages/Info';
+import GymMembers from './pages/GymMembers';
+import ManageGymMembers from './pages/ManageGymMembers';
 
 setupIonicReact();
 
@@ -59,6 +61,9 @@ const App: React.FC = () => {
       <IonReactRouter>
         <IonTabs>
           <IonRouterOutlet>
+          <Route exact path="/">
+              <Redirect to="/info" />
+            </Route>
             <Route exact path="/sessions">
               <Sessions />
             </Route>
@@ -83,17 +88,27 @@ const App: React.FC = () => {
             <Route path="/viewpatient/:id">
               <ViewPatient />
             </Route>
-            <Route exact path="/">
-              <Redirect to="/info" />
-            </Route>
             <Route path="/physioreports">
               <PhysioReports />
             </Route>
             <Route path="/info">
               <Info />
             </Route>
+            <Route exact path="/gymmembers">
+              <GymMembers />
+            </Route>
+            <Route exact path="/managegymmember">
+              <ManageGymMembers />
+            </Route>
+            <Route path="/managegymmember/:id">
+              <ManageGymMembers />
+            </Route>
+            <Route path="/viewgymmember/:id">
+              <ViewPatient />
+            </Route>
           </IonRouterOutlet>
           <IonTabBar slot="bottom">
+            {/* Physio Related Tabs - STARTS */}
             <IonTabButton tab="sessions" href="/sessions" style={{display: (category !== "physio")?'none':''}}>
               <IonIcon icon={calendarOutline} />
               <IonLabel>Sessions</IonLabel>
@@ -104,8 +119,17 @@ const App: React.FC = () => {
             </IonTabButton>
             <IonTabButton tab="physioreports" href="/physioreports" style={{display: (category !== "physio")?'none':''}}>
               <IonIcon icon={barChartOutline} />
-              <IonLabel>Reports</IonLabel>
+              <IonLabel>Reports</IonLabel>              
             </IonTabButton>
+            {/* Physio Related Tabs - STARTS */}
+
+            {/* Gym Related Tabs - STARTS */}
+            <IonTabButton tab="gymmebrs" href="/gymmembers" style={{display: (category !== "gym")?'none':''}}>
+              <IonIcon icon={barbellOutline} />
+              <IonLabel>Gym Members</IonLabel>
+            </IonTabButton>
+            {/* Gym Related Tabs - ENDS */}
+
             <IonTabButton tab="info" href="/info">
               <IonIcon icon={informationCircle} />
               <IonLabel>Info</IonLabel>
