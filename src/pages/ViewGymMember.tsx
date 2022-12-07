@@ -2,12 +2,10 @@ import { IonBackButton, IonBadge, IonButton, IonButtons, IonCard, IonCardContent
 import { useParams } from 'react-router-dom';
 import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
-import { refreshPage } from '../utils';
+import { formatCurrency, refreshPage } from '../utils';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
-import { pencil } from "ionicons/icons";
+import { callOutline, mailOutline, pencil } from "ionicons/icons";
 import Avatar from 'react-avatar';
-import ManagePatients from "./ManagePatients";
-import SessionList from "../components/SessionList";
 import ManageGymMembers from "./ManageGymMembers";
 import moment from "moment";
 
@@ -17,7 +15,7 @@ type PageParams = {
 
 const ViewGymMember: React.FC = () => {
     const { id } = useParams<PageParams>();
-    
+
     const title = "Gym Member Details"
 
     const { data, loading, error } = useGoogleSheets({
@@ -26,18 +24,16 @@ const ViewGymMember: React.FC = () => {
         sheetsOptions: [],
     });
 
-    const sessionsData = _.filter(data, { id: "Sessions" });
-    const patientsData = _.filter(data, { id: "Patients" });
+    const gymMembersData = _.filter(data, { id: "GymMembers" });
 
-    const filteredPatient = patientsData && patientsData.length > 0 && _.filter(patientsData[0].data, { "🔒 Row ID": id })
-    const currentPatient: any = (filteredPatient && filteredPatient.length > 0) ? filteredPatient[0] : {}
+    const filteredGymMember = gymMembersData && gymMembersData.length > 0 && _.filter(gymMembersData[0].data, { "🔒 Row ID": id })
+    const currentGymMember: any = (filteredGymMember && filteredGymMember.length > 0) ? filteredGymMember[0] : {}
 
-    const filteredSession = currentPatient && sessionsData && sessionsData.length > 0 && _.filter(sessionsData[0].data, { "Patient ID": currentPatient["🔒 Row ID"] })
-    const sortedSessions = filteredSession && _.orderBy(filteredSession, (item: any) => moment(item["Report: Session Date"], 'DD-MMM-YYYY'), ['desc'])
-
-    const totalDepositAmount = _.sumBy(sortedSessions, (session: any) => _.toNumber(session["Deposit Amount"]));
-    const totalAmountPending = _.sumBy(sortedSessions, (session: any) => _.toNumber(session["Amount Pending"]));
-    const totalAmountPaid = _.sumBy(sortedSessions, (session: any) => _.toNumber(session["Amount Paid"]));
+    const daysRemaining = currentGymMember && moment(currentGymMember["Ending Date"], 'DD-MMM-YYYY').diff(moment(), "hours")
+    let status = "primary";
+    if (daysRemaining <= 0) status = "danger";
+    else if (daysRemaining <= 10*24) status = "warning";
+    else if (daysRemaining <= 30*24) status = "secondary"
 
     return (
         <IonPage id="main-content">
@@ -77,47 +73,45 @@ const ViewGymMember: React.FC = () => {
                     </IonItem>
                 }
                 <IonCard style={{ textAlign: "center", paddingTop: "1rem" }}>
-                    <Avatar name={currentPatient["Name"]} round />
+                    <Avatar name={currentGymMember["Name"]} round />
                     <IonCardHeader>
-                        <IonCardTitle>{currentPatient["Name"]}</IonCardTitle>
-                        <IonCardSubtitle>{currentPatient["Phone"]}</IonCardSubtitle>
+                        <IonCardTitle>{currentGymMember["Name"]}</IonCardTitle>
+                        <IonCardSubtitle><IonIcon icon={mailOutline}/> {currentGymMember["Email"]}</IonCardSubtitle>
+                        <IonCardSubtitle><IonIcon icon={callOutline}/> {currentGymMember["Phone"]}</IonCardSubtitle>
                     </IonCardHeader>
 
                     <IonCardContent>
-                        <IonLabel color={"dark"}><h2 style={{ paddingTop: "0.5rem" }}>Start Date: </h2></IonLabel>
-                        <IonLabel>{currentPatient["Start Date"]}</IonLabel>
+                        <IonItem>
+                            <IonLabel color={"medium"}>Joining Date: </IonLabel>
+                            <IonLabel>{currentGymMember["Joining Date"]}</IonLabel>
+                        </IonItem>
 
-                        <IonLabel color={"dark"}><h2 style={{ paddingTop: "0.5rem" }}>Description: </h2></IonLabel>
-                        <IonLabel>{currentPatient["Description"]}</IonLabel>
+                        <IonItem>
+                            <IonLabel color={"medium"}>Ending Date: </IonLabel>
+                            <IonLabel>{currentGymMember["Ending Date"]}</IonLabel>
+                        </IonItem>
 
-                        <IonLabel color={"dark"}><h2 style={{ paddingTop: "0.5rem" }}>Referral Type: </h2></IonLabel>
-                        <IonLabel>{currentPatient["Referral Type"]}</IonLabel>
-
-                        <IonLabel color={"dark"}><h2 style={{ paddingTop: "0.5rem" }}>Referral Details: </h2></IonLabel>
-                        <IonLabel>{currentPatient["Referral Details"]}</IonLabel>
+                        <IonItem>
+                            <IonLabel color={"medium"}>Payment Mode: </IonLabel>
+                            <IonLabel>{currentGymMember["Payment Mode"]}</IonLabel>
+                        </IonItem>
 
                         <IonList>
-                            <IonCard color={"warning"} style={{ padding: '1rem' }}>
-                                <IonCardSubtitle>Remaining Balance Amount</IonCardSubtitle>
-                                <IonLabel><h1>Rs. {totalDepositAmount - totalAmountPending}</h1></IonLabel>
+                            <IonCard color={status} style={{ padding: '1rem' }}>
+                                <IonCardSubtitle>Membership {daysRemaining<=0?'Ended':'Ending'}</IonCardSubtitle>
+                                <IonLabel><h1>{moment(currentGymMember["Ending Date"]).fromNow()}</h1></IonLabel>
                             </IonCard>
                             <IonItem>
-                                <IonLabel>Total Amount Paid:</IonLabel>
-                                <IonBadge slot="end" color={"success"}>Rs. {totalAmountPaid}</IonBadge>
+                                <IonLabel>Total Amount Received:</IonLabel>
+                                <IonBadge slot="end" color={"success"}>{formatCurrency(currentGymMember["Amount Received"] || 0)}</IonBadge>
                             </IonItem>
                             <IonItem>
                                 <IonLabel>Total Amount Pending:</IonLabel>
-                                <IonBadge slot="end" color={"danger"}>Rs. {totalAmountPending}</IonBadge>
-                            </IonItem>
-                            <IonItem>
-                                <IonLabel>Total Deposit Amount:</IonLabel>
-                                <IonBadge slot="end" color={"primary"}>Rs. {totalDepositAmount}</IonBadge>
+                                <IonBadge slot="end" color={"danger"}>{formatCurrency(currentGymMember["Amount Pending"] || 0)}</IonBadge>
                             </IonItem>
                         </IonList>
                     </IonCardContent>
                 </IonCard>
-                <IonLabel><h1 style={{ padding: "1rem 1rem 0 1rem" }}>View Session Details</h1></IonLabel>
-                <SessionList allSessions={sortedSessions} fromPatientID={id} isShowDate />
             </IonContent>
         </IonPage>
     );

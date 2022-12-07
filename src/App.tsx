@@ -43,6 +43,8 @@ import { useEffect } from 'react';
 import Info from './pages/Info';
 import GymMembers from './pages/GymMembers';
 import ManageGymMembers from './pages/ManageGymMembers';
+import ViewGymMember from './pages/ViewGymMember';
+import GymReports from './pages/GymReports';
 
 setupIonicReact();
 
@@ -104,7 +106,10 @@ const App: React.FC = () => {
               <ManageGymMembers />
             </Route>
             <Route path="/viewgymmember/:id">
-              <ViewPatient />
+              <ViewGymMember />
+            </Route>
+            <Route path="/gymreports">
+              <GymReports />
             </Route>
           </IonRouterOutlet>
           <IonTabBar slot="bottom">
@@ -124,9 +129,13 @@ const App: React.FC = () => {
             {/* Physio Related Tabs - STARTS */}
 
             {/* Gym Related Tabs - STARTS */}
-            <IonTabButton tab="gymmebrs" href="/gymmembers" style={{display: (category !== "gym")?'none':''}}>
+            <IonTabButton tab="gymmembers" href="/gymmembers" style={{display: (category !== "gym")?'none':''}}>
               <IonIcon icon={barbellOutline} />
               <IonLabel>Gym Members</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="gymreports" href="/gymreports" style={{display: (category !== "gym")?'none':''}}>
+              <IonIcon icon={barChartOutline} />
+              <IonLabel>Reports</IonLabel>              
             </IonTabButton>
             {/* Gym Related Tabs - ENDS */}
 

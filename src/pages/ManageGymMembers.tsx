@@ -1,4 +1,4 @@
-import { IonBackButton, IonButton, IonButtons, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonGrid, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonLoading, IonModal, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonRow, IonSelect, IonSelectOption, IonTextarea, IonTitle, IonToast, IonToolbar, useIonToast } from '@ionic/react';
+import { IonBackButton, IonButton, IonButtons, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonGrid, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonLoading, IonModal, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonRow, IonSelect, IonSelectOption, IonTitle, IonToast, IonToggle, IonToolbar, useIonToast } from '@ionic/react';
 import axios from 'axios';
 import { saveOutline, thumbsDown, thumbsUp } from 'ionicons/icons';
 import _ from 'lodash';
@@ -22,13 +22,15 @@ const ManageGymMembers: React.FC = () => {
 
   const title = (isEdit ? "Edit" : "Add") + " Gym Members";
 
-  const [patientName, setPatientName] = useState("")
-  const [startDate, setStartDate] = useState<any>(moment().format())
-  const [description, setDescription] = useState("")
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
-  const [occupation, setOccupation] = useState("")
-  const [referralType, setReferralType] = useState<any>("")
-  const [referralDetails, setReferralDetails] = useState<any>("")
+  const [joiningDate, setJoiningDate] = useState<any>(moment().format())
+  const [months, setMonths] = useState(0)
+  const [isPersonalTraining, setIsPersonalTraining] = useState("")
+  const [paymentMode, setPaymentMode] = useState("")
+  const [amountReceived, setAmountReceived] = useState(0)
+  const [amountPending, setAmountPending] = useState(0)
 
   const { data, loading, error } = useGoogleSheets({
     apiKey: process.env.REACT_APP_GOOGLE_API_KEY || "",
@@ -37,28 +39,32 @@ const ManageGymMembers: React.FC = () => {
   });
 
   const optionsData = _.filter(data, { id: "Options" });
-  const allReferralType = optionsData && optionsData.length > 0 && _.filter(optionsData[0].data, (item: any) => item["Referral Type"])
-  const defaultReferralType: any = allReferralType && allReferralType.length > 0 && _.head(allReferralType);
+  const allPaymentModes = optionsData && optionsData.length > 0 && _.filter(optionsData[0].data, (item: any) => item["Payment Modes"])
+  const defaultPaymentMode: any = allPaymentModes && allPaymentModes.length > 0 && _.head(allPaymentModes);
 
-  const patientsData = _.filter(data, { id: "Patients" });
-  const filteredPatient = patientsData && patientsData.length > 0 && _.filter(patientsData[0].data, { "🔒 Row ID": id })
-  const currentPatient: any = (filteredPatient && filteredPatient.length > 0) ? filteredPatient[0] : {}
+  const gymMembersData = _.filter(data, { id: "GymMembers" });
+
+  const filteredGymMember = gymMembersData && gymMembersData.length > 0 && _.filter(gymMembersData[0].data, { "🔒 Row ID": id })
+  const currentGymMember: any = (filteredGymMember && filteredGymMember.length > 0) ? filteredGymMember[0] : {}
 
   const [present] = useIonToast();
   const [showLoading, setShowLoading] = useState(false);
-
+  
   useEffect(() => {
-    if(!referralType) setReferralType(defaultReferralType && defaultReferralType["Referral Type"]);
-    if (isEdit && currentPatient) {
-      setPatientName(currentPatient["Name"])
-      currentPatient["Start Date"] && setStartDate(moment(currentPatient["Start Date"], "MM/DD/YYYY").format())
-      setDescription(currentPatient["Description"])
-      setPhone(currentPatient["Phone"])
-      setOccupation(currentPatient["Occupation"])
-      setReferralType(currentPatient["Referral Type"])
-      setReferralDetails(currentPatient["Referral Details"])
+    if (!paymentMode) setPaymentMode(defaultPaymentMode && defaultPaymentMode["Payment Modes"]);
+    if (isEdit && currentGymMember) {
+      setName(currentGymMember["Name"])
+      setEmail(currentGymMember["Email"])
+      setPhone(currentGymMember["Phone"])
+      currentGymMember["Joining Date"] && setJoiningDate(moment(currentGymMember["Joining Date"], "DD-MMM-YYYY").format())
+      setMonths(currentGymMember["Months"])
+      setPhone(currentGymMember["Phone"])
+      setIsPersonalTraining(currentGymMember["IsPersonalTraining"])
+      setPaymentMode(currentGymMember["Payment Mode"])
+      setAmountReceived(currentGymMember["Amount Received"])
+      setAmountPending(currentGymMember["Amount Pending"])
     }
-  }, [defaultReferralType, currentPatient]);
+  }, [defaultPaymentMode, currentGymMember]);
 
   const presentToast = (color: any, icon: any, message: any) => {
     present({
@@ -71,25 +77,37 @@ const ManageGymMembers: React.FC = () => {
   };
 
   const saveRecord = () => {
-    if (!patientName) {
-      presentToast('danger', thumbsDown, 'Please select Patient Name...')
+
+    if (!name) {
+      presentToast('danger', thumbsDown, 'Please enter Member Name...')
       return;
     }
+    if (!joiningDate) {
+      presentToast('danger', thumbsDown, 'Please select Joining Date...')
+      return;
+    }
+    if (!months) {
+      presentToast('danger', thumbsDown, 'Please enter membership Months...')
+      return;
+    }
+
     const requestOptions: any = {
       baseURL: process.env.REACT_APP_API_BASE || '',
-      url: `.netlify/functions/patientmgmt`,
+      url: `.netlify/functions/gymmembermgmt`,
       method: 'post',
       params: {
         itemID: id
       },
       data: {
-        patientName: patientName,
-        startDate: startDate,
-        description: description,
+        name: name,
+        email: email,
         phone: phone,
-        occupation: occupation,
-        referralType: referralType,
-        referralDetails: referralDetails
+        joiningDate: joiningDate,
+        months: months,
+        isPersonalTraining: isPersonalTraining ? 'Yes' : '',
+        paymentMode: paymentMode,
+        amountReceived: amountReceived,
+        amountPending: amountPending,
       },
       withCredentials: false,
       headers: {
@@ -103,7 +121,7 @@ const ManageGymMembers: React.FC = () => {
         console.log(response);
         presentToast('success', thumbsUp, response?.data?.message || 'Saved Successfully.....');
         setShowLoading(false)
-        window.location.href = id ? `/viewpatient/${id}` : "/patients";
+        window.location.href = id ? `/viewgymmember/${id}` : "/gymmembers";
       })
       .catch(function (error) {
         console.log(error);
@@ -117,9 +135,9 @@ const ManageGymMembers: React.FC = () => {
       <IonHeader translucent={true}>
         <IonToolbar>
           <IonTitle>{title}</IonTitle>
-          {loading && <IonProgressBar type="indeterminate"></IonProgressBar> }
+          {loading && <IonProgressBar type="indeterminate"></IonProgressBar>}
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/patients"></IonBackButton>
+            <IonBackButton defaultHref={id ? `/viewgymmember/${id}` : "/gymmembers"}></IonBackButton>
           </IonButtons>
           <IonButtons slot="end">
             <IonButton fill="clear" color='primary' onClick={saveRecord}>
@@ -156,53 +174,32 @@ const ManageGymMembers: React.FC = () => {
         <IonGrid>
           <IonRow>
             <IonCol>
-              <IonLabel>Patient Name</IonLabel>
+              <IonLabel>Name</IonLabel>
             </IonCol>
           </IonRow>
           <IonRow>
             <IonCol>
               <IonInput clearInput={true} style={{ background: "var(--ion-color-light)" }}
-                onIonInput={(e: any) => setPatientName(e.target.value)}
-                value={patientName}
+                onIonInput={(e: any) => setName(e.target.value)}
+                value={name}
               ></IonInput>
             </IonCol>
           </IonRow>
 
           <IonRow>
             <IonCol>
-              <IonLabel>Start Date</IonLabel>
+              <IonLabel>Email</IonLabel>
             </IonCol>
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonDatetimeButton datetime="datetime" style={{ background: "var(--ion-color-light)" }}></IonDatetimeButton>
-              <IonModal keepContentsMounted={true}>
-                <IonDatetime id="datetime" showDefaultTitle={true} showDefaultButtons={true}
-                  onIonChange={(e) => setStartDate(e.detail.value)}
-                  value={startDate}
-                >
-                  <span slot="title">Start Date</span>
-                </IonDatetime>
-              </IonModal>
+              <IonInput type={'email'} clearInput={true} style={{ background: "var(--ion-color-light)" }}
+                onIonInput={(e: any) => setEmail(e.target.value)}
+                value={email}
+              ></IonInput>
             </IonCol>
           </IonRow>
 
-          <IonRow>
-            <IonCol>
-              <IonLabel>Description</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonTextarea
-                autoCorrect='true'
-                autoGrow={true}
-                placeholder="Enter Patient Description here..."
-                onIonInput={(e: any) => setDescription(e.target.value)}
-                value={description}
-                style={{ background: "var(--ion-color-light)" }} />
-            </IonCol>
-          </IonRow>
           <IonRow>
             <IonCol>
               <IonLabel>Phone</IonLabel>
@@ -210,37 +207,58 @@ const ManageGymMembers: React.FC = () => {
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonInput type='number' clearInput={true} style={{ background: "var(--ion-color-light)" }}
+              <IonInput type={'number'} clearInput={true} style={{ background: "var(--ion-color-light)" }}
                 onIonInput={(e: any) => setPhone(e.target.value)}
                 value={phone}
               ></IonInput>
             </IonCol>
           </IonRow>
+
           <IonRow>
             <IonCol>
-              <IonLabel>Occupation</IonLabel>
+              <IonLabel>Joining Date</IonLabel>
+            </IonCol>
+          </IonRow>
+          <IonRow>
+            <IonCol>
+              <IonDatetimeButton datetime="datetime" style={{ background: "var(--ion-color-light)" }}></IonDatetimeButton>
+              <IonModal keepContentsMounted={true}>
+                <IonDatetime id="datetime" showDefaultTitle={true} showDefaultButtons={true}
+                  onIonChange={(e) => setJoiningDate(e.detail.value)}
+                  value={joiningDate}
+                >
+                  <span slot="title">Joining Date</span>
+                </IonDatetime>
+              </IonModal>
+            </IonCol>
+          </IonRow>
+
+          <IonRow>
+            <IonCol>
+              <IonLabel>Membership (in Months)</IonLabel>
             </IonCol>
           </IonRow>
           <IonRow>
             <IonCol>
               <IonInput clearInput={true} style={{ background: "var(--ion-color-light)" }}
-                onIonInput={(e: any) => setOccupation(e.target.value)}
-                value={occupation}
+                onIonInput={(e: any) => setMonths(e.target.value)}
+                value={months}
               ></IonInput>
             </IonCol>
           </IonRow>
+
           <IonRow>
-            <IonCol><IonLabel>Referral Type</IonLabel></IonCol>
+            <IonCol><IonLabel>Payment Mode</IonLabel></IonCol>
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonSelect interface="action-sheet" interfaceOptions={{ header: "Select Referral Type" }} placeholder="Select Referral Type"
-                value={referralType}
-                onIonChange={(e) => setReferralType(e.detail.value)}
+              <IonSelect interface="action-sheet" interfaceOptions={{ header: "Select Payment Mode" }} placeholder="Select Payment Mode"
+                value={paymentMode}
+                onIonChange={(e) => setPaymentMode(e.detail.value)}
                 style={{ background: "var(--ion-color-light)" }}
               >
-                {allReferralType && allReferralType.map((options: any) => (
-                  <IonSelectOption key={options["Referral Type"]} value={options["Referral Type"]}>{options["Referral Type"]}</IonSelectOption>
+                {allPaymentModes && allPaymentModes.map((options: any) => (
+                  <IonSelectOption key={options["Payment Modes"]} value={options["Payment Modes"]}>{options["Payment Modes"]}</IonSelectOption>
                 ))}
               </IonSelect>
             </IonCol>
@@ -248,18 +266,41 @@ const ManageGymMembers: React.FC = () => {
 
           <IonRow>
             <IonCol>
-              <IonLabel>Referral Details</IonLabel>
+              <IonLabel>Amount Received</IonLabel>
             </IonCol>
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonTextarea
-                autoCorrect='true'
-                autoGrow={true}
-                style={{ background: "var(--ion-color-light)" }}
-                onIonInput={(e: any) => setReferralDetails(e.target.value)}
-                value={referralDetails}
-                placeholder="Enter Referral Details here..." />
+              <IonInput type='number' clearInput={true} style={{ background: "var(--ion-color-light)" }}
+                onIonInput={(e: any) => setAmountReceived(e.target.value)}
+                value={amountReceived}
+              ></IonInput>
+            </IonCol>
+          </IonRow>
+
+          <IonRow>
+            <IonCol>
+              <IonLabel>Amount Pending</IonLabel>
+            </IonCol>
+          </IonRow>
+          <IonRow>
+            <IonCol>
+              <IonInput type='number' clearInput={true} style={{ background: "var(--ion-color-light)" }}
+                onIonInput={(e: any) => setAmountPending(e.target.value)}
+                value={amountPending}
+              ></IonInput>
+            </IonCol>
+          </IonRow>
+
+
+          <IonRow>
+            <IonCol>
+              <IonLabel>isPersonalTraining</IonLabel>
+            </IonCol>
+          </IonRow>
+          <IonRow>
+            <IonCol>
+              <IonToggle checked={!!isPersonalTraining} onIonChange={(e: any) => setIsPersonalTraining(e.detail.checked ? 'Yes' : '')}></IonToggle>
             </IonCol>
           </IonRow>
 
