@@ -1,4 +1,4 @@
-import { IonItemSliding, IonItem, IonAvatar, IonLabel, IonItemOptions, IonItemOption, IonIcon, IonList, IonNote } from "@ionic/react";
+import { IonItemSliding, IonItem, IonAvatar, IonLabel, IonItemOptions, IonItemOption, IonIcon, IonList } from "@ionic/react";
 import { createOutline } from "ionicons/icons";
 import _ from "lodash";
 import Avatar from "react-avatar";

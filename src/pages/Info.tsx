@@ -43,7 +43,7 @@ const Info: React.FC = () => {
           <IonRefresherContent></IonRefresherContent>
         </IonRefresher>
         <IonCard style={{ textAlign: "center", paddingTop: "1rem" }}>
-          <Avatar src="/assets/icon/banner.png" size='80%' />
+          <Avatar src={`/assets/icon/banner${process.env.REACT_APP_CATEGORY || ''}.png`} size='80%' />
           <IonCardHeader>
             <IonCardTitle>{appDetails.title}</IonCardTitle>
             <IonCardSubtitle>{appDetails.subtitle}</IonCardSubtitle>
@@ -56,7 +56,7 @@ const Info: React.FC = () => {
               <IonRow><IonCol>
                 <QRCode
                   value={appDetails.url}
-                  logoImage="/assets/icon/icon.png"
+                  logoImage={`/assets/icon/icon${process.env.REACT_APP_CATEGORY || ''}.png`}
                   fgColor='#462e5c'
                   removeQrCodeBehindLogo={true}
                   qrStyle="dots"
@@ -70,7 +70,6 @@ const Info: React.FC = () => {
             </IonItem>
           </IonCardContent>
         </IonCard>
-        {/* <IonImg src="/assets/icon/icon.png" /> */}
       </IonContent>
     </IonPage>
   );
