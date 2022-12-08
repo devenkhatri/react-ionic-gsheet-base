@@ -30,6 +30,7 @@ const GymMemberList = ({ allGymMembers }: any) => {
                     </IonItemOptions>
                 </IonItemSliding>
             ))}
+            {allGymMembers && allGymMembers.length <= 0 && <IonItem><IonLabel color={'primary'}>No Data Found</IonLabel></IonItem>}
         </IonList>
     );
 }
