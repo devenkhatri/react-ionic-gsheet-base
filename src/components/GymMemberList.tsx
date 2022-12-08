@@ -4,6 +4,7 @@ import _ from "lodash";
 import Avatar from "react-avatar";
 
 const GymMemberList = ({ allGymMembers }: any) => {    
+    console.log("******* ", allGymMembers)
     return (
         <IonList>
             {allGymMembers && allGymMembers.map((member: any) => (
@@ -29,8 +30,7 @@ const GymMemberList = ({ allGymMembers }: any) => {
                         </IonItemOption>
                     </IonItemOptions>
                 </IonItemSliding>
-            ))}
-            {allGymMembers && allGymMembers.length <= 0 && <IonItem><IonLabel color={'primary'}>No Data Found</IonLabel></IonItem>}
+            ))}            
         </IonList>
     );
 }

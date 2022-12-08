@@ -7,13 +7,13 @@ import { RWebShare } from "react-web-share";
 import './PhysioReportDaywise.css'
 
 const GymReportExpiringList = ({ data }: any) => {
-
+    
     const sortedGymMembers = data && data.length > 0 && _.orderBy(data[0].data, (item: any) => moment(item["Ending Date"], "DD-MMM-YYYY"))
     const filtedMember_2Days = sortedGymMembers && _.filter(sortedGymMembers, (item: any) => (moment(item["Ending Date"], 'DD-MMM-YYYY').diff(moment(), "hours")) > 0 && (moment(item["Ending Date"], 'DD-MMM-YYYY').diff(moment(), "hours")) <= 2 * 24)
     const filtedMember_7Days = sortedGymMembers && _.filter(sortedGymMembers, (item: any) => (moment(item["Ending Date"], 'DD-MMM-YYYY').diff(moment(), "hours")) > 2 * 24 && (moment(item["Ending Date"], 'DD-MMM-YYYY').diff(moment(), "hours")) <= 7 * 24)
     const filtedMember_15Days = sortedGymMembers && _.filter(sortedGymMembers, (item: any) => (moment(item["Ending Date"], 'DD-MMM-YYYY').diff(moment(), "hours")) > 7 * 24 && (moment(item["Ending Date"], 'DD-MMM-YYYY').diff(moment(), "hours")) <= 15 * 24)
     const filtedMember_30Days = sortedGymMembers && _.filter(sortedGymMembers, (item: any) => (moment(item["Ending Date"], 'DD-MMM-YYYY').diff(moment(), "hours")) > 15 * 24 && (moment(item["Ending Date"], 'DD-MMM-YYYY').diff(moment(), "hours")) <= 30 * 24)
-
+    
     const sendWhatsappMessage = (mobileNumber: any, message: any) => {
 
         // Regex expression to remove all characters which are NOT alphanumeric
@@ -76,7 +76,7 @@ const GymReportExpiringList = ({ data }: any) => {
     return (
         <>
             <IonLabel color={'primary'} class="reportTitle"><h1>Memberships Expiring Soon - Report</h1></IonLabel>
-            {data && data.length <= 0 && <IonItem><IonLabel color={'primary'}>No Data Found</IonLabel></IonItem>}
+            {sortedGymMembers && sortedGymMembers.length <= 0 && <IonItem><IonLabel color={'primary'}>No Data Found</IonLabel></IonItem>}
             {filtedMember_2Days && <ShowExpiringMemberList items={filtedMember_2Days} title="Expiring in 2 days" theme="danger" />}
             {filtedMember_7Days && <ShowExpiringMemberList items={filtedMember_7Days} title="Expiring in 7 days" theme="warning"/>}
             {filtedMember_15Days && <ShowExpiringMemberList items={filtedMember_15Days} title="Expiring in 15 days" theme="secondary" />}
