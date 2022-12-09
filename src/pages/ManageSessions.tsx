@@ -121,6 +121,16 @@ const ManageSessions: React.FC = () => {
     return currentPatient["Name"];
   }
 
+  const handleSearch = (ev: Event) => {
+    if (!sortedPatients) return null;
+    let q = "";
+    const target = ev.target as HTMLIonSearchbarElement;
+    if (target) q = target.value!.toLowerCase();
+    const filteredPatient = _.filter(sortedPatients, (item: any) => item["Name"] && item["Name"].toLowerCase().indexOf(q) >=0 )
+    const currentPatient: any = (filteredPatient && filteredPatient.length > 0) ? filteredPatient[0] : {}
+    setPatientID(currentPatient["🔒 Row ID"])
+  }
+
   return (
     <IonPage id="main-content">
       <IonHeader translucent={true}>
@@ -170,6 +180,7 @@ const ManageSessions: React.FC = () => {
           </IonRow>
           <IonRow>
             <IonCol>
+              <IonSearchbar animated={true} showClearButton="focus" placeholder="Search Patient" onIonChange={(ev) => handleSearch(ev)}></IonSearchbar>
               <IonSelect
                 interface="action-sheet"
                 interfaceOptions={{ header: "Select Patient" }}
@@ -179,8 +190,7 @@ const ManageSessions: React.FC = () => {
                 }}
                 value={patientID}
                 style={{ background: "var(--ion-color-light)" }}
-              >
-                <IonSearchbar animated={true} showClearButton="focus" placeholder="Search"></IonSearchbar>
+              >                
                 {sortedPatients && sortedPatients.map((patient: any) => (
                   <IonSelectOption key={patient["🔒 Row ID"]} value={patient["🔒 Row ID"]}>{patient["Name"]}</IonSelectOption>
                 ))}

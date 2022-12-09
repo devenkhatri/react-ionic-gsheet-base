@@ -1,4 +1,4 @@
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonButton, IonIcon, IonItem, IonLabel, IonNavLink, IonRefresher, IonRefresherContent, IonToast, IonItemDivider, IonItemGroup, IonSearchbar, IonProgressBar } from '@ionic/react';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonButton, IonIcon, IonItem, IonLabel, IonNavLink, IonRefresher, IonRefresherContent, IonToast, IonItemDivider, IonItemGroup, IonSearchbar, IonProgressBar, IonBadge } from '@ionic/react';
 import { add } from 'ionicons/icons';
 import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
@@ -29,12 +29,12 @@ const GymMembers: React.FC = () => {
     setQuery(q)
   }
 
-  const sortedGymMembers = gymMembersData && gymMembersData.length > 0 && _.orderBy(gymMembersData[0].data, (item: any) => moment(item["Ending Date"],"DD-MMM-YYYY"))
-  const filteredGymMembers = sortedGymMembers && query?_.filter(sortedGymMembers, (item: any) => item["Name"] && item["Name"].toLowerCase().indexOf(query) > -1):sortedGymMembers;
+  const sortedGymMembers = gymMembersData && gymMembersData.length > 0 && _.orderBy(gymMembersData[0].data, (item: any) => moment(item["Ending Date"], "DD-MMM-YYYY"))
+  const filteredGymMembers = sortedGymMembers && query ? _.filter(sortedGymMembers, (item: any) => item["Name"] && item["Name"].toLowerCase().indexOf(query) > -1) : sortedGymMembers;
   const groupedGymMembers = filteredGymMembers && _.groupBy(filteredGymMembers, (item: any) => _.toNumber(item["Months"] || 0))
-  
+
   let groupedGymMemberKeys = null;
-  if(groupedGymMembers){
+  if (groupedGymMembers) {
     groupedGymMemberKeys = _.orderBy(Object.keys(groupedGymMembers), (item: any) => _.toNumber(item));
   }
 
@@ -43,7 +43,7 @@ const GymMembers: React.FC = () => {
       <IonHeader translucent={true}>
         <IonToolbar>
           <IonTitle>{title}</IonTitle>
-          {loading && <IonProgressBar type="indeterminate"></IonProgressBar> }
+          {loading && <IonProgressBar type="indeterminate"></IonProgressBar>}
           <IonButtons slot="start">
             <IonMenuButton color="primary"></IonMenuButton>
           </IonButtons>
@@ -81,10 +81,9 @@ const GymMembers: React.FC = () => {
         <>
           {groupedGymMemberKeys && _.map(groupedGymMemberKeys, (months: any) => (
             <IonItemGroup key={months}>
-              <IonItemDivider color="primary" style={{padding: '0.5rem 1rem', margin:'1rem 0'}}>
-                <IonLabel>
-                  {months} Month(s)
-                </IonLabel>
+              <IonItemDivider color="primary" style={{ padding: '0.5rem 1rem', margin: '1rem 0' }}>
+                <IonLabel>{months} Month(s)</IonLabel>
+                <IonBadge color={'warning'} slot="end">{groupedGymMembers ? groupedGymMembers[months].length : 0}</IonBadge>
               </IonItemDivider>
               <GymMemberList allGymMembers={groupedGymMembers && groupedGymMembers[months]} />
             </IonItemGroup>

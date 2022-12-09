@@ -1,4 +1,4 @@
-import { IonAvatar, IonButton, IonButtons, IonIcon, IonItem, IonItemSliding, IonLabel, IonList } from "@ionic/react";
+import { IonAvatar, IonBadge, IonButton, IonButtons, IonIcon, IonItem, IonItemSliding, IonLabel, IonList } from "@ionic/react";
 import { alarmOutline, logoWhatsapp } from "ionicons/icons";
 import _ from "lodash";
 import moment from "moment";
@@ -33,7 +33,10 @@ const GymReportExpiringList = ({ data }: any) => {
         if (!items || items.length <= 0) return <></>;
         return (
             <IonList>
-                <IonItem color={theme}>{title}</IonItem>
+                <IonItem color={theme}>
+                    <IonLabel>{title}</IonLabel>
+                    <IonBadge slot="end" color={'light'}>{items.length}</IonBadge>
+                </IonItem>
                 {items && items.map((member: any) => (
                     <IonItemSliding key={member["🔒 Row ID"]}>
                         <IonItem button={false} key={member["🔒 Row ID"]} detail={false}
