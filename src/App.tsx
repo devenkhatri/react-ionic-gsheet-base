@@ -126,7 +126,7 @@ const App: React.FC = () => {
               <IonIcon icon={barChartOutline} />
               <IonLabel>Reports</IonLabel>              
             </IonTabButton>
-            {/* Physio Related Tabs - STARTS */}
+            {/* Physio Related Tabs - ENDS */}
 
             {/* Gym Related Tabs - STARTS */}
             <IonTabButton tab="gymmembers" href="/gymmembers" style={{display: (category !== "gym")?'none':''}}>

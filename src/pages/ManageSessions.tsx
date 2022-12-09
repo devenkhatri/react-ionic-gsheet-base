@@ -30,6 +30,7 @@ const ManageSessions: React.FC = () => {
 
   const patientsData = _.filter(data, { id: "Patients" });
   const sortedPatients = patientsData && patientsData.length > 0 && _.orderBy(patientsData[0].data, (item: any) => item["Name"])
+  const [allPatients, setAllPatients] = useState<any>()
 
   const optionsData = _.filter(data, { id: "Options" });
   const allPaymentModes = optionsData && optionsData.length > 0 && _.filter(optionsData[0].data, (item: any) => item["Payment Modes"])
@@ -51,6 +52,7 @@ const ManageSessions: React.FC = () => {
   const [depositAmount, setDepositAmount] = useState<any>()
 
   useEffect(() => {
+    if (!allPatients) setAllPatients(sortedPatients);
     if (!paymentMode) setPaymentMode(defaultPaymentMode && defaultPaymentMode["Payment Modes"]);
     if (isEdit && currentSession) {
       setPatientID(currentSession["Patient ID"])
@@ -60,7 +62,7 @@ const ManageSessions: React.FC = () => {
       setAmountPending(currentSession["Amount Pending"])
       setDepositAmount(currentSession["Deposit Amount"])
     }
-  }, [paymentMode, defaultPaymentMode, currentSession]);
+  }, [paymentMode, defaultPaymentMode, currentSession, allPatients]);
 
   const presentToast = (color: any, icon: any, message: any) => {
     present({
@@ -126,9 +128,10 @@ const ManageSessions: React.FC = () => {
     let q = "";
     const target = ev.target as HTMLIonSearchbarElement;
     if (target) q = target.value!.toLowerCase();
-    const filteredPatient = _.filter(sortedPatients, (item: any) => item["Name"] && item["Name"].toLowerCase().indexOf(q) >=0 )
-    const currentPatient: any = (filteredPatient && filteredPatient.length > 0) ? filteredPatient[0] : {}
-    setPatientID(currentPatient["🔒 Row ID"])
+    const filteredPatients = _.filter(sortedPatients, (item: any) => item["Name"] && item["Name"].toLowerCase().indexOf(q) >= 0)
+    setAllPatients(filteredPatients)
+    const currentPatient: any = (filteredPatients && filteredPatients.length > 0) ? filteredPatients[0] : {}
+    setPatientID(q?currentPatient["🔒 Row ID"]:"")
   }
 
   return (
@@ -190,8 +193,8 @@ const ManageSessions: React.FC = () => {
                 }}
                 value={patientID}
                 style={{ background: "var(--ion-color-light)" }}
-              >                
-                {sortedPatients && sortedPatients.map((patient: any) => (
+              >
+                {allPatients && allPatients.map((patient: any) => (
                   <IonSelectOption key={patient["🔒 Row ID"]} value={patient["🔒 Row ID"]}>{patient["Name"]}</IonSelectOption>
                 ))}
               </IonSelect>
