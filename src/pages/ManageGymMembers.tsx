@@ -26,11 +26,11 @@ const ManageGymMembers: React.FC = () => {
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
   const [joiningDate, setJoiningDate] = useState<any>(moment().format())
-  const [months, setMonths] = useState(0)
+  const [months, setMonths] = useState()
   const [isPersonalTraining, setIsPersonalTraining] = useState("")
   const [paymentMode, setPaymentMode] = useState("")
-  const [amountReceived, setAmountReceived] = useState(0)
-  const [amountPending, setAmountPending] = useState(0)
+  const [amountReceived, setAmountReceived] = useState()
+  const [amountPending, setAmountPending] = useState()
 
   const { data, loading, error } = useGoogleSheets({
     apiKey: process.env.REACT_APP_GOOGLE_API_KEY || "",
@@ -243,6 +243,7 @@ const ManageGymMembers: React.FC = () => {
               <IonInput clearInput={true} style={{ background: "var(--ion-color-light)" }}
                 onIonInput={(e: any) => setMonths(e.target.value)}
                 value={months}
+                placeholder="0"
               ></IonInput>
             </IonCol>
           </IonRow>
@@ -274,6 +275,7 @@ const ManageGymMembers: React.FC = () => {
               <IonInput type='number' clearInput={true} style={{ background: "var(--ion-color-light)" }}
                 onIonInput={(e: any) => setAmountReceived(e.target.value)}
                 value={amountReceived}
+                placeholder="0"
               ></IonInput>
             </IonCol>
           </IonRow>
@@ -288,6 +290,7 @@ const ManageGymMembers: React.FC = () => {
               <IonInput type='number' clearInput={true} style={{ background: "var(--ion-color-light)" }}
                 onIonInput={(e: any) => setAmountPending(e.target.value)}
                 value={amountPending}
+                placeholder="0"
               ></IonInput>
             </IonCol>
           </IonRow>
