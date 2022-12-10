@@ -4,7 +4,7 @@ import _ from "lodash";
 import Avatar from "react-avatar";
 
 const GymMemberList = ({ allGymMembers }: any) => {    
-    console.log("******* ", allGymMembers)
+    // console.log("******* ", allGymMembers)
     return (
         <IonList>
             {allGymMembers && allGymMembers.map((member: any) => (

@@ -80,7 +80,7 @@ const GymReportExpiringList = ({ data }: any) => {
 
     return (
         <>
-            <IonLabel color={'primary'} class="reportTitle"><h1>Memberships Expiring Soon - Report</h1></IonLabel>
+            <IonLabel color={'primary'} class="reportTitle"><h1>Memberships Expiring Soon</h1></IonLabel>
             <ShowExpiringMemberList items={filtedMember_2Days} title="Expiring in 2 days" theme="danger" />
             <ShowExpiringMemberList items={filtedMember_7Days} title="Expiring in 7 days" theme="warning"/>
             <ShowExpiringMemberList items={filtedMember_15Days} title="Expiring in 15 days" theme="secondary" />

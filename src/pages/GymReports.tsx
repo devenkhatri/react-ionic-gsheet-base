@@ -1,10 +1,11 @@
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonRefresher, IonRefresherContent, IonItem, IonLabel, IonToast, IonProgressBar, IonCard, IonCardTitle, IonList } from '@ionic/react';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonRefresher, IonRefresherContent, IonItem, IonLabel, IonToast, IonProgressBar, IonCard, IonCardTitle, IonList, IonRouterLink, IonCardSubtitle } from '@ionic/react';
 import { refreshPage } from '../utils';
 import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import GymReportExpiringList from '../components/GymReportExpiringList';
 import moment from 'moment';
+import GymMemberList from '../components/GymMemberList';
 
 
 const GymReports: React.FC = () => {
@@ -21,6 +22,11 @@ const GymReports: React.FC = () => {
   const sortedGymMembers = gymMembersData && gymMembersData.length > 0 && _.orderBy(gymMembersData[0].data, (item: any) => moment(item["Ending Date"], "DD-MMM-YYYY"))
   const activeMemberships = sortedGymMembers && _.filter(sortedGymMembers, (item: any) => (moment(item["Ending Date"], 'DD-MMM-YYYY').diff(moment(), "hours")) > 0)
   const expiredMemberships = sortedGymMembers && _.filter(sortedGymMembers, (item: any) => (moment(item["Ending Date"], 'DD-MMM-YYYY').diff(moment(), "hours")) <= 0)
+
+  function scroll(id: any) {
+    var anchor = document.getElementById(id);
+    anchor && anchor.scrollIntoView({block: "start", behavior: "smooth"});
+  }
 
   return (
     <IonPage id="main-content">
@@ -53,18 +59,24 @@ const GymReports: React.FC = () => {
           </IonItem>
         }
         <IonLabel color={'primary'} class="reportTitle"><h1>Overall Membership Statistics</h1></IonLabel>
-        <IonList>
-          <IonCard color={'primary'} style={{ textAlign: "center", padding: '1rem' }}>
-            <IonCardTitle>Total Active Memberships</IonCardTitle>
-            <IonLabel><h1>{activeMemberships ? activeMemberships.length : 0}</h1></IonLabel>
+        <IonList>          
+          <IonCard onClick={()=>scroll("activememberlist")} style={{ cursor: "pointer", textAlign: "center", padding: '1rem', background: 'rgba(var(--ion-color-success-rgb), 0.15)' }}>
+            <IonCardSubtitle color={'primary'}>Total Active Memberships</IonCardSubtitle>
+            <IonLabel color={'primary'}><h1>{activeMemberships ? activeMemberships.length : 0}</h1></IonLabel>
           </IonCard>
-          <IonCard color={'warning'} style={{ textAlign: "center", padding: '1rem' }}>
-            <IonCardTitle>Total Expired Memberships</IonCardTitle>
-            <IonLabel><h1>{expiredMemberships ? expiredMemberships.length : 0}</h1></IonLabel>
+          
+          <IonCard style={{ textAlign: "center", padding: '1rem', background: 'rgba(var(--ion-color-danger-rgb), 0.15)' }}>
+            <IonCardSubtitle color={'danger'}>Total Memberships Expired</IonCardSubtitle>
+            <IonLabel color={'danger'}><h1>{expiredMemberships ? expiredMemberships.length : 0}</h1></IonLabel>
           </IonCard>
         </IonList>
-        <IonItem />
+        
         <GymReportExpiringList data={gymMembersData} />
+        <IonItem />
+
+        <a id="activememberlist"></a>
+        <IonLabel color={'primary'} class="reportTitle"><h1>All Active Member List</h1></IonLabel>
+        <GymMemberList allGymMembers={activeMemberships} />
 
       </IonContent>
     </IonPage>
