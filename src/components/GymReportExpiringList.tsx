@@ -30,13 +30,15 @@ const GymReportExpiringList = ({ data }: any) => {
     };
 
     const ShowExpiringMemberList = ({ items, title, theme }: any) => {
-        if (!items || items.length <= 0) return <></>;
         return (
             <IonList>
                 <IonItem color={theme}>
                     <IonLabel>{title}</IonLabel>
                     <IonBadge slot="end" color={'light'}>{items.length}</IonBadge>
                 </IonItem>
+                {(!items || items.length <= 0) &&
+                    <IonItem><IonLabel color={'primary'}>No Membership {title}</IonLabel></IonItem>
+                }
                 {items && items.map((member: any) => (
                     <IonItemSliding key={member["🔒 Row ID"]}>
                         <IonItem button={false} key={member["🔒 Row ID"]} detail={false}
@@ -79,11 +81,10 @@ const GymReportExpiringList = ({ data }: any) => {
     return (
         <>
             <IonLabel color={'primary'} class="reportTitle"><h1>Memberships Expiring Soon - Report</h1></IonLabel>
-            {sortedGymMembers && sortedGymMembers.length <= 0 && <IonItem><IonLabel color={'primary'}>No Data Found</IonLabel></IonItem>}
-            {filtedMember_2Days && <ShowExpiringMemberList items={filtedMember_2Days} title="Expiring in 2 days" theme="danger" />}
-            {filtedMember_7Days && <ShowExpiringMemberList items={filtedMember_7Days} title="Expiring in 7 days" theme="warning"/>}
-            {filtedMember_15Days && <ShowExpiringMemberList items={filtedMember_15Days} title="Expiring in 15 days" theme="secondary" />}
-            {filtedMember_30Days && <ShowExpiringMemberList items={filtedMember_30Days} title="Expiring in 30 days" theme="primary" />}
+            <ShowExpiringMemberList items={filtedMember_2Days} title="Expiring in 2 days" theme="danger" />
+            <ShowExpiringMemberList items={filtedMember_7Days} title="Expiring in 7 days" theme="warning"/>
+            <ShowExpiringMemberList items={filtedMember_15Days} title="Expiring in 15 days" theme="secondary" />
+            <ShowExpiringMemberList items={filtedMember_30Days} title="Expiring in 30 days" theme="primary" />
         </>
     );
 }
