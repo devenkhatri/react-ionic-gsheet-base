@@ -3,12 +3,12 @@
   "name": "Aastha Health Plus",
   "icons": [
     {
-      "src": "assets/icon/favicongym.png",
+      "src": "assets/icon/favicongymadmin.png",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "assets/icon/icongym.png",
+      "src": "assets/icon/icongymadmin.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "maskable"
