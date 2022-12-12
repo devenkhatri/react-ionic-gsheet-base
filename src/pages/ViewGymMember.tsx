@@ -18,6 +18,9 @@ const ViewGymMember: React.FC = () => {
 
     const title = "Gym Member Details"
 
+    const category = process.env.REACT_APP_CATEGORY || "";
+    const isGymAdminAccess = (category === "gymadmin")
+
     const { data, loading, error } = useGoogleSheets({
         apiKey: process.env.REACT_APP_GOOGLE_API_KEY || "",
         sheetId: process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
@@ -32,8 +35,8 @@ const ViewGymMember: React.FC = () => {
     const daysRemaining = currentGymMember && moment(currentGymMember["Ending Date"], 'DD-MMM-YYYY').diff(moment(), "hours")
     let status = "primary";
     if (daysRemaining <= 0) status = "danger";
-    else if (daysRemaining <= 10*24) status = "warning";
-    else if (daysRemaining <= 30*24) status = "secondary"
+    else if (daysRemaining <= 10 * 24) status = "warning";
+    else if (daysRemaining <= 30 * 24) status = "secondary"
 
     return (
         <IonPage id="main-content">
@@ -76,8 +79,8 @@ const ViewGymMember: React.FC = () => {
                     <Avatar name={currentGymMember["Name"]} round />
                     <IonCardHeader>
                         <IonCardTitle>{currentGymMember["Name"]}</IonCardTitle>
-                        <IonCardSubtitle><IonIcon icon={mailOutline}/> {currentGymMember["Email"]}</IonCardSubtitle>
-                        <IonCardSubtitle><IonIcon icon={callOutline}/> {currentGymMember["Phone"]}</IonCardSubtitle>
+                        <IonCardSubtitle><IonIcon icon={mailOutline} /> {currentGymMember["Email"]}</IonCardSubtitle>
+                        <IonCardSubtitle><IonIcon icon={callOutline} /> {currentGymMember["Phone"]}</IonCardSubtitle>
                     </IonCardHeader>
 
                     <IonCardContent>
@@ -98,9 +101,11 @@ const ViewGymMember: React.FC = () => {
 
                         <IonList>
                             <IonCard color={status} style={{ padding: '1rem' }}>
-                                <IonCardSubtitle>Membership {daysRemaining<=0?'Ended':'Ending'}</IonCardSubtitle>
+                                <IonCardSubtitle>Membership {daysRemaining <= 0 ? 'Ended' : 'Ending'}</IonCardSubtitle>
                                 <IonLabel><h1>{moment(currentGymMember["Ending Date"]).fromNow()}</h1></IonLabel>
                             </IonCard>
+                        </IonList>
+                        {isGymAdminAccess && <IonList>
                             <IonItem>
                                 <IonLabel>Total Amount Received:</IonLabel>
                                 <IonBadge slot="end" color={"success"}>{formatCurrency(currentGymMember["Amount Received"] || 0)}</IonBadge>
@@ -110,6 +115,7 @@ const ViewGymMember: React.FC = () => {
                                 <IonBadge slot="end" color={"danger"}>{formatCurrency(currentGymMember["Amount Pending"] || 0)}</IonBadge>
                             </IonItem>
                         </IonList>
+                        }
                     </IonCardContent>
                 </IonCard>
             </IonContent>

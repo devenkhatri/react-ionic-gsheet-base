@@ -1,4 +1,4 @@
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonRefresher, IonRefresherContent, IonItem, IonLabel, IonToast, IonProgressBar, IonCard, IonCardTitle, IonList, IonRouterLink, IonCardSubtitle } from '@ionic/react';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonRefresher, IonRefresherContent, IonItem, IonLabel, IonToast, IonProgressBar, IonCard, IonList, IonCardSubtitle } from '@ionic/react';
 import { refreshPage } from '../utils';
 import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
@@ -25,7 +25,7 @@ const GymReports: React.FC = () => {
 
   function scroll(id: any) {
     var anchor = document.getElementById(id);
-    anchor && anchor.scrollIntoView({block: "start", behavior: "smooth"});
+    anchor && anchor.scrollIntoView({behavior: "smooth"});
   }
 
   return (

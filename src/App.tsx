@@ -58,6 +58,10 @@ const App: React.FC = () => {
 
   const category = process.env.REACT_APP_CATEGORY || "";
 
+  const isPhysioAccess = (category === "physio")
+  const isGymAdminAccess = (category === "gymadmin")
+  const isGymAccess = (category === "gym") || (category === "gymadmin")
+
   return (
     <IonApp>
       <IonReactRouter>
@@ -114,26 +118,26 @@ const App: React.FC = () => {
           </IonRouterOutlet>
           <IonTabBar slot="bottom">
             {/* Physio Related Tabs - STARTS */}
-            <IonTabButton tab="sessions" href="/sessions" style={{display: (category !== "physio")?'none':''}}>
+            <IonTabButton tab="sessions" href="/sessions" style={{display: isPhysioAccess?'':'none'}}>
               <IonIcon icon={calendarOutline} />
               <IonLabel>Sessions</IonLabel>
             </IonTabButton>
-            <IonTabButton tab="patients" href="/patients" style={{display: (category !== "physio")?'none':''}}>
+            <IonTabButton tab="patients" href="/patients" style={{display: isPhysioAccess?'':'none'}}>
               <IonIcon icon={peopleOutline} />
               <IonLabel>Patients</IonLabel>
             </IonTabButton>
-            <IonTabButton tab="physioreports" href="/physioreports" style={{display: (category !== "physio")?'none':''}}>
+            <IonTabButton tab="physioreports" href="/physioreports" style={{display: isPhysioAccess?'':'none'}}>
               <IonIcon icon={barChartOutline} />
               <IonLabel>Reports</IonLabel>              
             </IonTabButton>
             {/* Physio Related Tabs - ENDS */}
 
             {/* Gym Related Tabs - STARTS */}
-            <IonTabButton tab="gymmembers" href="/gymmembers" style={{display: (category !== "gym")?'none':''}}>
+            <IonTabButton tab="gymmembers" href="/gymmembers" style={{display: isGymAccess?'':'none'}}>
               <IonIcon icon={barbellOutline} />
               <IonLabel>Gym Members</IonLabel>
             </IonTabButton>
-            <IonTabButton tab="gymreports" href="/gymreports" style={{display: (category !== "gym")?'none':''}}>
+            <IonTabButton tab="gymreports" href="/gymreports" style={{display: isGymAdminAccess?'':'none'}}>
               <IonIcon icon={barChartOutline} />
               <IonLabel>Reports</IonLabel>              
             </IonTabButton>

@@ -1,6 +1,5 @@
 import { IonItemSliding, IonItem, IonAvatar, IonLabel, IonItemOptions, IonItemOption, IonIcon, IonList } from "@ionic/react";
 import { createOutline } from "ionicons/icons";
-import _ from "lodash";
 import Avatar from "react-avatar";
 
 const GymMemberList = ({ allGymMembers }: any) => {    
@@ -18,9 +17,8 @@ const GymMemberList = ({ allGymMembers }: any) => {
                         </IonAvatar>
                         <IonLabel>
                             <h2>{member["Name"]}</h2>
-                            <p>{member["Ending Date"]}</p>
                         </IonLabel>
-                        <IonLabel slot="end">{(_.toNumber(member["Amount Received"] || 0)) - (_.toNumber(member["Amount Pending"] || 0))}</IonLabel>
+                        <IonLabel slot="end">{member["Ending Date"]}</IonLabel>
                     </IonItem>
 
                     <IonItemOptions>

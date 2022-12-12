@@ -22,6 +22,9 @@ const ManageGymMembers: React.FC = () => {
 
   const title = (isEdit ? "Edit" : "Add") + " Gym Members";
 
+  const category = process.env.REACT_APP_CATEGORY || "";
+  const isGymAdminAccess = (category === "gymadmin")
+
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
@@ -49,7 +52,7 @@ const ManageGymMembers: React.FC = () => {
 
   const [present] = useIonToast();
   const [showLoading, setShowLoading] = useState(false);
-  
+
   useEffect(() => {
     if (!paymentMode) setPaymentMode(defaultPaymentMode && defaultPaymentMode["Payment Modes"]);
     if (isEdit && currentGymMember) {
@@ -247,54 +250,56 @@ const ManageGymMembers: React.FC = () => {
               ></IonInput>
             </IonCol>
           </IonRow>
+          {isGymAdminAccess &&
+            <>
+              <IonRow>
+                <IonCol><IonLabel>Payment Mode</IonLabel></IonCol>
+              </IonRow>
+              <IonRow>
+                <IonCol>
+                  <IonSelect interface="action-sheet" interfaceOptions={{ header: "Select Payment Mode" }} placeholder="Select Payment Mode"
+                    value={paymentMode}
+                    onIonChange={(e) => setPaymentMode(e.detail.value)}
+                    style={{ background: "var(--ion-color-light)" }}
+                  >
+                    {allPaymentModes && allPaymentModes.map((options: any) => (
+                      <IonSelectOption key={options["Payment Modes"]} value={options["Payment Modes"]}>{options["Payment Modes"]}</IonSelectOption>
+                    ))}
+                  </IonSelect>
+                </IonCol>
+              </IonRow>
 
-          <IonRow>
-            <IonCol><IonLabel>Payment Mode</IonLabel></IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonSelect interface="action-sheet" interfaceOptions={{ header: "Select Payment Mode" }} placeholder="Select Payment Mode"
-                value={paymentMode}
-                onIonChange={(e) => setPaymentMode(e.detail.value)}
-                style={{ background: "var(--ion-color-light)" }}
-              >
-                {allPaymentModes && allPaymentModes.map((options: any) => (
-                  <IonSelectOption key={options["Payment Modes"]} value={options["Payment Modes"]}>{options["Payment Modes"]}</IonSelectOption>
-                ))}
-              </IonSelect>
-            </IonCol>
-          </IonRow>
+              <IonRow>
+                <IonCol>
+                  <IonLabel>Amount Received</IonLabel>
+                </IonCol>
+              </IonRow>
+              <IonRow>
+                <IonCol>
+                  <IonInput type='number' clearInput={true} style={{ background: "var(--ion-color-light)" }}
+                    onIonInput={(e: any) => setAmountReceived(e.target.value)}
+                    value={amountReceived}
+                    placeholder="0"
+                  ></IonInput>
+                </IonCol>
+              </IonRow>
 
-          <IonRow>
-            <IonCol>
-              <IonLabel>Amount Received</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonInput type='number' clearInput={true} style={{ background: "var(--ion-color-light)" }}
-                onIonInput={(e: any) => setAmountReceived(e.target.value)}
-                value={amountReceived}
-                placeholder="0"
-              ></IonInput>
-            </IonCol>
-          </IonRow>
-
-          <IonRow>
-            <IonCol>
-              <IonLabel>Amount Pending</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonInput type='number' clearInput={true} style={{ background: "var(--ion-color-light)" }}
-                onIonInput={(e: any) => setAmountPending(e.target.value)}
-                value={amountPending}
-                placeholder="0"
-              ></IonInput>
-            </IonCol>
-          </IonRow>
-
+              <IonRow>
+                <IonCol>
+                  <IonLabel>Amount Pending</IonLabel>
+                </IonCol>
+              </IonRow>
+              <IonRow>
+                <IonCol>
+                  <IonInput type='number' clearInput={true} style={{ background: "var(--ion-color-light)" }}
+                    onIonInput={(e: any) => setAmountPending(e.target.value)}
+                    value={amountPending}
+                    placeholder="0"
+                  ></IonInput>
+                </IonCol>
+              </IonRow>
+            </>
+          }
 
           <IonRow>
             <IonCol>
