@@ -39,7 +39,7 @@ const Sessions: React.FC = () => {
       setItems(newItems);
     }
   };
-  // console.log("****** items", items)
+  console.log("****** items", items)
 
   useEffect(() => {
     generateItems();
