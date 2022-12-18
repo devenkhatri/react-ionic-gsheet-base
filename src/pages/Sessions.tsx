@@ -1,4 +1,4 @@
-import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonMenuButton, IonNavLink, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar } from '@ionic/react';
+import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonMenuButton, IonNavLink, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar } from '@ionic/react';
 import { add } from 'ionicons/icons';
 import ManageSessions from './ManageSessions';
 import useGoogleSheets from 'use-google-sheets';
@@ -7,29 +7,51 @@ import { refreshPage } from '../utils';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import SessionList from '../components/SessionList';
 import moment from 'moment';
+import { useEffect, useState } from 'react';
 
 const Sessions: React.FC = () => {
 
   const title = "Sessions"
- 
+
   const { data, loading, error } = useGoogleSheets({
     apiKey: process.env.REACT_APP_GOOGLE_API_KEY || "",
     sheetId: process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
     sheetsOptions: [],
   });
 
-  const sessionsData = _.filter(data, { id: "Sessions" });
-  // const patientsData = _.filter(data, { id: "Patients" });
+  const [logDate,] = useState(moment())
+  const [items, setItems] = useState<any>({});
+  const scrollSize = 3;
+  const [currentPage, setCurrentPage] = useState(1);
+  console.log("******* Time Diff = ", logDate.diff(moment()))
 
-  const sortedSessions = sessionsData && sessionsData.length > 0 && _.orderBy(sessionsData[0].data, (item: any) => moment(item["Report: Session Date"], 'DD-MMM-YYYY'), ['desc'])
-  const groupedSessions = sortedSessions && _.groupBy(sortedSessions, (item: any) => item["Report: Session Date"])
+  const generateItems = () => {
+    const sessionsData = _.filter(data, { id: "Sessions" });
+    const groupedSessions = sessionsData && sessionsData.length > 0 && _.groupBy(sessionsData[0].data, (item: any) => item["Report: Session Date"])
+    const sortedSessionKeys = groupedSessions && _.orderBy(Object.keys(groupedSessions), key => moment(key, 'DD-MMM-YYYY'),['desc'])
+    if (sortedSessionKeys) {
+      const newItems: any = items;
+      let newPageLength = Object.keys(items).length + (scrollSize*currentPage);
+      if(newPageLength > Object.keys(sortedSessionKeys).length) newPageLength = Object.keys(sortedSessionKeys).length;
+      for (let i = 0; i < newPageLength ; i++) {
+        newItems[sortedSessionKeys[i]] = groupedSessions[sortedSessionKeys[i]]
+      }
+      setItems(newItems);
+    }
+  };
+  // console.log("****** items", items)
+
+  useEffect(() => {
+    generateItems();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, currentPage]);
 
   return (
     <IonPage id="main-content">
       <IonHeader translucent={true}>
         <IonToolbar>
           <IonTitle>{title}</IonTitle>
-          {loading && <IonProgressBar type="indeterminate"></IonProgressBar> }
+          {loading && <IonProgressBar type="indeterminate"></IonProgressBar>}
           <IonButtons slot="start">
             <IonMenuButton color="primary"></IonMenuButton>
           </IonButtons>
@@ -62,9 +84,9 @@ const Sessions: React.FC = () => {
           </IonItem>
         }
         <>
-          {groupedSessions && _.map(groupedSessions, (sessionDetails: any, sessionDate: any) => (
+          {_.map(items, (sessionDetails: any, sessionDate: any) => (
             <IonItemGroup key={sessionDate}>
-              <IonItemDivider color="primary" style={{padding: '0.5rem 1rem', margin:'1rem 0'}}>
+              <IonItemDivider color="primary" style={{ padding: '0.5rem 1rem', margin: '1rem 0' }}>
                 <IonLabel>
                   {sessionDate}
                 </IonLabel>
@@ -72,6 +94,14 @@ const Sessions: React.FC = () => {
               <SessionList allSessions={sessionDetails} />
             </IonItemGroup>
           ))}
+          <IonInfiniteScroll
+            onIonInfinite={(ev) => {
+              setCurrentPage(currentPage+1);
+              setTimeout(() => ev.target.complete(), 500);
+            }}
+          >
+            <IonInfiniteScrollContent loadingText="Loading data..." loadingSpinner="bubbles"></IonInfiniteScrollContent>
+          </IonInfiniteScroll>
         </>
       </IonContent>
     </IonPage>
