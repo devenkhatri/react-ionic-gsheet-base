@@ -28,12 +28,14 @@ const Sessions: React.FC = () => {
   const generateItems = () => {
     const sessionsData = _.filter(data, { id: "Sessions" });
     const groupedSessions = sessionsData && sessionsData.length > 0 && _.groupBy(sessionsData[0].data, (item: any) => item["Report: Session Date"])
-    const sortedSessionKeys = groupedSessions && _.orderBy(Object.keys(groupedSessions), key => moment(key, 'DD-MMM-YYYY'),['desc'])
+    const sortedSessionKeys = groupedSessions && _.orderBy(Object.keys(groupedSessions), key => moment(key, 'DD-MMM-YYYY'), ['desc'])
+    console.log("****** sortedSessionKeys", sortedSessionKeys)
     if (sortedSessionKeys) {
       const newItems: any = items;
-      let newPageLength = Object.keys(items).length + (scrollSize*currentPage);
-      if(newPageLength > Object.keys(sortedSessionKeys).length) newPageLength = Object.keys(sortedSessionKeys).length;
-      for (let i = 0; i < newPageLength ; i++) {
+      let newPageLength = Object.keys(items).length + (scrollSize * currentPage);
+      console.log("****** newPageLength", newPageLength)
+      if (newPageLength > Object.keys(sortedSessionKeys).length) newPageLength = Object.keys(sortedSessionKeys).length;
+      for (let i = 0; i < newPageLength; i++) {
         newItems[sortedSessionKeys[i]] = groupedSessions[sortedSessionKeys[i]]
       }
       setItems(newItems);
@@ -96,7 +98,7 @@ const Sessions: React.FC = () => {
           ))}
           <IonInfiniteScroll
             onIonInfinite={(ev) => {
-              setCurrentPage(currentPage+1);
+              setCurrentPage(currentPage + 1);
               setTimeout(() => ev.target.complete(), 500);
             }}
           >
