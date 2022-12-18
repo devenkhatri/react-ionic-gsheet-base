@@ -7,7 +7,7 @@ import { refreshPage } from '../utils';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import SessionList from '../components/SessionList';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const Sessions: React.FC = () => {
 
@@ -42,6 +42,7 @@ const Sessions: React.FC = () => {
     }
   };
   console.log("****** items", items)
+  console.log("****** currentPage", currentPage)
 
   useEffect(() => {
     generateItems();
@@ -86,26 +87,29 @@ const Sessions: React.FC = () => {
             <IonLabel color={'danger'}>Error loading data. Please refresh the page to try again !!!</IonLabel>
           </IonItem>
         }
-        <>
-          {_.map(items, (sessionDetails: any, sessionDate: any) => (
-            <IonItemGroup key={sessionDate}>
-              <IonItemDivider color="primary" style={{ padding: '0.5rem 1rem', margin: '1rem 0' }}>
-                <IonLabel>
-                  {sessionDate}
-                </IonLabel>
-              </IonItemDivider>
-              <SessionList allSessions={sessionDetails} />
-            </IonItemGroup>
-          ))}
-          <IonInfiniteScroll
-            onIonInfinite={(ev) => {
-              setCurrentPage(currentPage + 1);
-              setTimeout(() => ev.target.complete(), 500);
-            }}
-          >
-            <IonInfiniteScrollContent loadingText="Loading data..." loadingSpinner="bubbles"></IonInfiniteScrollContent>
-          </IonInfiniteScroll>
-        </>
+        {Object.keys(items).length > 0 &&
+          <React.Fragment>
+            {_.map(items, (sessionDetails: any, sessionDate: any) => (
+              <IonItemGroup key={sessionDate}>
+                <IonItemDivider color="primary" style={{ padding: '0.5rem 1rem', margin: '1rem 0' }}>
+                  <IonLabel>
+                    {sessionDate}
+                  </IonLabel>
+                </IonItemDivider>
+                <SessionList allSessions={sessionDetails} />
+              </IonItemGroup>
+            ))}
+            <IonInfiniteScroll
+              onIonInfinite={(ev) => {
+                setCurrentPage(currentPage + 1);
+                setTimeout(() => ev.target.complete(), 500);
+              }}
+            >
+              <IonInfiniteScrollContent loadingText="Loading data..." loadingSpinner="bubbles"></IonInfiniteScrollContent>
+            </IonInfiniteScroll>
+          </React.Fragment>
+        }
+        {Object.keys(items).length <= 0 && <IonItem><IonLabel color={'primary'}>No Data Found</IonLabel></IonItem>}
       </IonContent>
     </IonPage>
   );
