@@ -22,7 +22,7 @@ const Sessions: React.FC = () => {
   const [logDate,] = useState(moment())
   const [items, setItems] = useState<any>({});
   const scrollSize = 3;
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   console.log("******* Time Diff = ", logDate.diff(moment()))
 
   const generateItems = () => {
@@ -45,8 +45,9 @@ const Sessions: React.FC = () => {
 
   useEffect(() => {
     generateItems();
+    setCurrentPage(1)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, currentPage, items]);
+  }, [data, currentPage]);
 
   return (
     <IonPage id="main-content">
