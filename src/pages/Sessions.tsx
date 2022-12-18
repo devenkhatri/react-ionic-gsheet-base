@@ -32,11 +32,9 @@ const Sessions: React.FC = () => {
     const sessionsData = _.filter(data, { id: "Sessions" });
     const groupedSessions = sessionsData && sessionsData.length > 0 && _.groupBy(sessionsData[0].data, (item: any) => item["Report: Session Date"])
     const sortedSessionKeys = groupedSessions && _.orderBy(Object.keys(groupedSessions), key => moment(key, 'DD-MMM-YYYY'), ['desc'])
-    // console.log("****** sortedSessionKeys", sortedSessionKeys)
     if (sortedSessionKeys) {
       const newItems: any = items;
       let newPageLength = Object.keys(items).length + (scrollSize * currentPage);
-      // console.log("****** newPageLength", newPageLength)
       if (newPageLength > Object.keys(sortedSessionKeys).length) newPageLength = Object.keys(sortedSessionKeys).length;
       for (let i = 0; i < newPageLength; i++) {
         newItems[sortedSessionKeys[i]] = groupedSessions[sortedSessionKeys[i]]
@@ -45,9 +43,6 @@ const Sessions: React.FC = () => {
       forceUpdate(); //this is used to force the state update after setting items
     }
   };
-  console.log("****** items", items)
-  console.log("****** currentPage", currentPage)
-  console.log("******** Object.keys(items).length", Object.keys(items).length)
 
   useEffect(() => {
     generateItems();
