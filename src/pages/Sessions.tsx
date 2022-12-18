@@ -22,32 +22,35 @@ const Sessions: React.FC = () => {
   const [logDate,] = useState(moment())
   const [items, setItems] = useState<any>({});
   const scrollSize = 3;
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   console.log("******* Time Diff = ", logDate.diff(moment()))
+
+  const [, updateState] = React.useState<any>();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
 
   const generateItems = () => {
     const sessionsData = _.filter(data, { id: "Sessions" });
     const groupedSessions = sessionsData && sessionsData.length > 0 && _.groupBy(sessionsData[0].data, (item: any) => item["Report: Session Date"])
     const sortedSessionKeys = groupedSessions && _.orderBy(Object.keys(groupedSessions), key => moment(key, 'DD-MMM-YYYY'), ['desc'])
-    console.log("****** sortedSessionKeys", sortedSessionKeys)
+    // console.log("****** sortedSessionKeys", sortedSessionKeys)
     if (sortedSessionKeys) {
       const newItems: any = items;
       let newPageLength = Object.keys(items).length + (scrollSize * currentPage);
-      console.log("****** newPageLength", newPageLength)
+      // console.log("****** newPageLength", newPageLength)
       if (newPageLength > Object.keys(sortedSessionKeys).length) newPageLength = Object.keys(sortedSessionKeys).length;
       for (let i = 0; i < newPageLength; i++) {
         newItems[sortedSessionKeys[i]] = groupedSessions[sortedSessionKeys[i]]
       }
       setItems(newItems);
+      forceUpdate(); //this is used to force the state update after setting items
     }
   };
   console.log("****** items", items)
   console.log("****** currentPage", currentPage)
+  console.log("******** Object.keys(items).length", Object.keys(items).length)
 
   useEffect(() => {
     generateItems();
-    setCurrentPage(1)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, currentPage]);
 
   return (
@@ -109,7 +112,7 @@ const Sessions: React.FC = () => {
             </IonInfiniteScroll>
           </React.Fragment>
         }
-        {Object.keys(items).length <= 0 && <IonItem><IonLabel color={'primary'}>No Data Found</IonLabel></IonItem>}
+        {!loading && Object.keys(items).length <= 0 && <IonItem><IonLabel color={'primary'}>No Data Found</IonLabel></IonItem>}
       </IonContent>
     </IonPage>
   );
