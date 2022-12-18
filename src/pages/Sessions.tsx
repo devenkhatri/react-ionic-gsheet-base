@@ -46,7 +46,7 @@ const Sessions: React.FC = () => {
   useEffect(() => {
     generateItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, currentPage]);
+  }, [data, currentPage, items]);
 
   return (
     <IonPage id="main-content">
