@@ -43,8 +43,6 @@ exports.handler = async (event, context) => {
 
         const patientId = body.patientId;
         const sessionDate = moment(body.sessionDate).tz("Asia/Kolkata").format("DD-MMM-YYYY, ddd");
-        console.log("********* sessionDate", sessionDate)
-        console.log("********* body.sessionDate", body.sessionDate)
         const amountPaid = Number.parseInt(body.amountPaid || 0)
         const amountPending = Number.parseInt(body.amountPending || 0)
         const paymentMode = body.paymentMode
