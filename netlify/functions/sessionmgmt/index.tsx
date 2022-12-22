@@ -2,7 +2,7 @@ const querystring = require("querystring");
 const TokenGenerator = require('uuid-token-generator');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const _ = require("lodash");
-const moment = require("moment");
+const moment = require("moment-timezone");
 
 exports.handler = async (event, context) => {
     // Only allow POST
@@ -42,12 +42,14 @@ exports.handler = async (event, context) => {
         const sheet = doc.sheetsByTitle['Sessions']; // or use doc.sheetsById[id] or doc.sheetsByTitle[title]
 
         const patientId = body.patientId;
-        const sessionDate = moment(body.sessionDate).format("DD-MMM-YYYY, ddd");
+        const sessionDate = moment(body.sessionDate).tz("Asia/Kolkata").format("DD-MMM-YYYY, ddd");
+        console.log("********* sessionDate", sessionDate)
+        console.log("********* body.sessionDate", body.sessionDate)
         const amountPaid = Number.parseInt(body.amountPaid || 0)
         const amountPending = Number.parseInt(body.amountPending || 0)
         const paymentMode = body.paymentMode
         const depositAmount = Number.parseInt(body.depositAmount || 0)
-        const reportSessionDate = moment(body.sessionDate).format("DD-MMM-YYYY")
+        const reportSessionDate = moment(body.sessionDate).tz("Asia/Kolkata").format("DD-MMM-YYYY")
         const reportPatientName = body.patientName
         const reportCollectionAmount = amountPaid + depositAmount
 

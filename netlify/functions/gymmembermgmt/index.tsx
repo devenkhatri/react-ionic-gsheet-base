@@ -2,7 +2,7 @@ const querystring = require("querystring");
 const TokenGenerator = require('uuid-token-generator');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const _ = require("lodash");
-const moment = require("moment");
+const moment = require("moment-timezone");
 
 exports.handler = async (event, context) => {
     // Only allow POST
@@ -38,7 +38,7 @@ exports.handler = async (event, context) => {
         const name = body.name;
         const email = body.email;
         const sphone = body.phone;
-        const joiningDate = moment(body.joiningDate).format("DD-MMM-YYYY");
+        const joiningDate = moment(body.joiningDate).tz("Asia/Kolkata").format("DD-MMM-YYYY");
         const months = body.months || 0;
         const isPersonalTraining = body.isPersonalTraining;
         const paymentMode = body.paymentMode;

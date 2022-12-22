@@ -2,7 +2,7 @@ const querystring = require("querystring");
 const TokenGenerator = require('uuid-token-generator');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const _ = require("lodash");
-const moment = require("moment");
+const moment = require("moment-timezone");
 
 exports.handler = async (event, context) => {
     // Only allow POST
@@ -42,7 +42,7 @@ exports.handler = async (event, context) => {
         const sheet = doc.sheetsByTitle['Patients']; // or use doc.sheetsById[id] or doc.sheetsByTitle[title]
 
         const patientName = body.patientName;
-        const startDate = moment(body.startDate).format("MM/DD/YYYY");
+        const startDate = moment(body.startDate).tz("Asia/Kolkata").format("MM/DD/YYYY");
         const description = body.description
         const phone = body.phone
         const occupation = body.occupation

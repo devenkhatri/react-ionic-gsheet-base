@@ -26,6 +26,7 @@
     "ionicons": "^6.0.3",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
+    "moment-timezone": "^0.5.40",
     "querystring": "^0.2.1",
     "react": "^18.2.0",
     "react-avatar": "^5.0.3",
