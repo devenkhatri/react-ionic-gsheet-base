@@ -1,10 +1,10 @@
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonButton, IonIcon, IonItem, IonLabel, IonNavLink, IonRefresher, IonRefresherContent, IonToast, IonItemDivider, IonItemGroup, IonSearchbar, IonProgressBar, IonBadge } from '@ionic/react';
-import { add } from 'ionicons/icons';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonButton, IonIcon, IonItem, IonLabel, IonNavLink, IonRefresher, IonRefresherContent, IonToast, IonItemDivider, IonItemGroup, IonSearchbar, IonProgressBar, IonBadge, IonSegment, IonSegmentButton } from '@ionic/react';
+import { add, calendar, person } from 'ionicons/icons';
 import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
 import { refreshPage } from '../utils';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import GymMemberList from '../components/GymMemberList';
 import moment from 'moment';
 import ManageGymMembers from './ManageGymMembers';
@@ -31,11 +31,22 @@ const GymMembers: React.FC = () => {
 
   const sortedGymMembers = gymMembersData && gymMembersData.length > 0 && _.orderBy(gymMembersData[0].data, (item: any) => moment(item["Ending Date"], "DD-MMM-YYYY"))
   const filteredGymMembers = sortedGymMembers && query ? _.filter(sortedGymMembers, (item: any) => item["Name"] && item["Name"].toLowerCase().indexOf(query) > -1) : sortedGymMembers;
-  const groupedGymMembers = filteredGymMembers && _.groupBy(filteredGymMembers, (item: any) => _.toNumber(item["Months"] || 0))
+  // const groupedGymMembers = filteredGymMembers && _.groupBy(filteredGymMembers, (item: any) => _.toNumber(item["Months"] || 0))
+
+  const [groupedGymMembers, setGroupedGymMembers] = useState<any>();
+  const [groupByValue, setGroupByValue] = useState<any>("Months");
+  useEffect(()=>{
+    if (filteredGymMembers) {
+      if(groupByValue === 'Name') 
+        setGroupedGymMembers(_.groupBy(filteredGymMembers, (item: any) => item["Name"].charAt(0).toUpperCase()))
+      else 
+        setGroupedGymMembers(_.groupBy(filteredGymMembers, (item: any) => _.toNumber(item["Months"] || 0)))
+    }
+  },[groupByValue]);
 
   let groupedGymMemberKeys = null;
   if (groupedGymMembers) {
-    groupedGymMemberKeys = _.orderBy(Object.keys(groupedGymMembers), (item: any) => _.toNumber(item));
+    groupedGymMemberKeys = _.orderBy(Object.keys(groupedGymMembers), (item: any) => groupByValue === 'Months' ? _.toNumber(item) : item);
   }
 
   return (
@@ -57,6 +68,16 @@ const GymMembers: React.FC = () => {
         </IonToolbar>
         <IonToolbar>
           <IonSearchbar animated={true} showClearButton="focus" placeholder="Search" onIonChange={(ev) => handleChange(ev)}></IonSearchbar>
+        </IonToolbar>
+        <IonToolbar>
+          <IonSegment color="primary" value={groupByValue} onIonChange={(e) => setGroupByValue(e.detail.value)}>
+            <IonSegmentButton value={'Months'}>
+              <IonIcon icon={calendar}></IonIcon>
+            </IonSegmentButton>
+            <IonSegmentButton value={'Name'}>
+              <IonIcon icon={person}></IonIcon>
+            </IonSegmentButton>
+          </IonSegment>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -82,7 +103,7 @@ const GymMembers: React.FC = () => {
           {groupedGymMemberKeys && _.map(groupedGymMemberKeys, (months: any) => (
             <IonItemGroup key={months}>
               <IonItemDivider color="primary" style={{ padding: '0.5rem 1rem', margin: '1rem 0' }}>
-                <IonLabel>{months} Month(s)</IonLabel>
+                <IonLabel>{months} {groupByValue === 'Months' && `Month(s)`}</IonLabel>
                 <IonBadge color={'warning'} slot="end">{groupedGymMembers ? groupedGymMembers[months].length : 0}</IonBadge>
               </IonItemDivider>
               <GymMemberList allGymMembers={groupedGymMembers && groupedGymMembers[months]} />

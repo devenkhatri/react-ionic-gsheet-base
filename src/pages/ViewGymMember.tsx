@@ -4,8 +4,7 @@ import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
 import { formatCurrency, refreshPage } from '../utils';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
-import { callOutline, mailOutline, pencil } from "ionicons/icons";
-import Avatar from 'react-avatar';
+import { alarmOutline, callOutline, mailOutline, pencil } from "ionicons/icons";
 import ManageGymMembers from "./ManageGymMembers";
 import moment from "moment";
 
@@ -76,7 +75,7 @@ const ViewGymMember: React.FC = () => {
                     </IonItem>
                 }
                 <IonCard style={{ textAlign: "center", paddingTop: "1rem" }}>
-                    <Avatar name={currentGymMember["Name"]} round />
+                    {/* <Avatar name={currentGymMember["Name"]} round /> */}
                     <IonCardHeader>
                         <IonCardTitle>{currentGymMember["Name"]}</IonCardTitle>
                         <IonCardSubtitle><IonIcon icon={mailOutline} /> {currentGymMember["Email"]}</IonCardSubtitle>
@@ -98,6 +97,25 @@ const ViewGymMember: React.FC = () => {
                             <IonLabel color={"medium"}>Payment Mode: </IonLabel>
                             <IonLabel>{currentGymMember["Payment Mode"]}</IonLabel>
                         </IonItem>
+
+                        <IonCard>
+                            <IonCardSubtitle>                                
+                                <IonIcon icon={alarmOutline}></IonIcon>
+                                <IonLabel>{`  Reminders`}</IonLabel>
+                            </IonCardSubtitle>
+                            <IonItem>
+                                <IonBadge>1</IonBadge>
+                                <IonLabel slot="end">{currentGymMember["Reminder-1"]}</IonLabel>
+                            </IonItem>
+                            <IonItem>
+                                <IonBadge color={'warning'}>2</IonBadge>
+                                <IonLabel slot="end">{currentGymMember["Reminder-2"]}</IonLabel>
+                            </IonItem>
+                            <IonItem>
+                                <IonBadge color={'danger'}>3</IonBadge>
+                                <IonLabel slot="end">{currentGymMember["Reminder-3"]}</IonLabel>
+                            </IonItem>
+                        </IonCard>
 
                         <IonList>
                             <IonCard color={status} style={{ padding: '1rem' }}>
