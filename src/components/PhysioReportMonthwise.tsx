@@ -17,10 +17,10 @@ const PhysioReportMonthwise = ({ data }: any) => {
             <IonGrid>
                 <IonLabel color={'primary'}>
                     <IonRow class="header">
-                        <IonCol size="4">Date</IonCol>
-                        <IonCol class="numberType">Cash</IonCol>
-                        <IonCol class="numberType">Online</IonCol>
-                        <IonCol class="numberType">Total</IonCol>
+                        <IonCol size="3">Date</IonCol>
+                        <IonCol size="3" class="numberType">Cash</IonCol>
+                        <IonCol size="3" class="numberType">Online</IonCol>
+                        <IonCol size="3" class="numberType">Total</IonCol>
                     </IonRow>
                 </IonLabel>
                 {groupedSessions && _.map(groupedSessions, (sessionDetails: any, sessionDate: any) => {
@@ -32,19 +32,19 @@ const PhysioReportMonthwise = ({ data }: any) => {
                     grandTotalOnline += totalOnline
                     return (
                         <IonRow key={sessionDate} class="itemrow">
-                            <IonCol size="4">{sessionDate}</IonCol>
-                            <IonCol class="numberType">{formatCurrency(totalCash)}</IonCol>
-                            <IonCol class="numberType">{formatCurrency(totalOnline)}</IonCol>
-                            <IonCol class="numberType">{formatCurrency(netTotal)}</IonCol>
+                            <IonCol size="3">{sessionDate}</IonCol>
+                            <IonCol size="3" class="numberType">{formatCurrency(totalCash)}</IonCol>
+                            <IonCol size="3" class="numberType">{formatCurrency(totalOnline)}</IonCol>
+                            <IonCol size="3" class="numberType">{formatCurrency(netTotal)}</IonCol>
                         </IonRow>
                     )
                 })}
                 <IonLabel color={'primary'}>
                     <IonRow class="footer">
-                        <IonCol size="4">Total</IonCol>
-                        <IonCol class="numberType">{formatCurrency(grandTotalCash)}</IonCol>
-                        <IonCol class="numberType">{formatCurrency(grandTotalOnline)}</IonCol>
-                        <IonCol class="numberType">{formatCurrency(grandTotalCash + grandTotalOnline)}</IonCol>
+                        <IonCol size="3">Total</IonCol>
+                        <IonCol size="3" class="numberType">{formatCurrency(grandTotalCash)}</IonCol>
+                        <IonCol size="3" class="numberType">{formatCurrency(grandTotalOnline)}</IonCol>
+                        <IonCol size="3" class="numberType">{formatCurrency(grandTotalCash + grandTotalOnline)}</IonCol>
                     </IonRow>
                 </IonLabel>
             </IonGrid>
