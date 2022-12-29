@@ -4,6 +4,7 @@ import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import PhysioReportDaywise from '../components/PhysioReportDaywise';
+import PhysioReportMonthwise from '../components/PhysioReportMonthwise';
 
 
 const PhysioReports: React.FC = () => {
@@ -47,7 +48,8 @@ const PhysioReports: React.FC = () => {
             <IonLabel color={'danger'}>Error loading data. Please refresh the page to try again !!!</IonLabel>
           </IonItem>
         }
-        
+        <PhysioReportMonthwise data={sessionsData} />
+        <br/>
         <PhysioReportDaywise data={sessionsData} />
 
       </IonContent>
