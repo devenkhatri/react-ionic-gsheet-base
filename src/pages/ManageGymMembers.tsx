@@ -1,4 +1,4 @@
-import { IonAvatar, IonBackButton, IonButton, IonButtons, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonFab, IonFabButton, IonGrid, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonLabel, IonLoading, IonModal, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonRow, IonSelect, IonSelectOption, IonTitle, IonToast, IonToggle, IonToolbar, useIonToast } from '@ionic/react';
+import { IonBackButton, IonButton, IonButtons, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonFab, IonFabButton, IonGrid, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonLoading, IonModal, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonRow, IonSelect, IonSelectOption, IonTitle, IonToast, IonToggle, IonToolbar, useIonToast } from '@ionic/react';
 import axios from 'axios';
 import { camera, saveOutline, thumbsDown, thumbsUp } from 'ionicons/icons';
 import _ from 'lodash';
@@ -195,7 +195,7 @@ const ManageGymMembers: React.FC = () => {
             <IonIcon icon={camera}></IonIcon>
           </IonFabButton>
         </IonFab>
-        <ProfilePhoto url={profilePhoto || (photos && photos.length > 0 && photos[0].webviewPath)} />
+        <ProfilePhoto url={profilePhoto || (photos && photos.length > 0 && photos[0].webviewPath)} title={name} />
         <IonGrid>
           <IonRow>
             <IonCol>

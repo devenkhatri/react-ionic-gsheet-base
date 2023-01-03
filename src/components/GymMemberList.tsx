@@ -13,10 +13,11 @@ const GymMemberList = ({ allGymMembers }: any) => {
                         style={{borderLeft: `${member["IsPersonalTraining"]?'3px':'0px'} solid var(--ion-color-secondary)`}}
                     >
                         <IonAvatar slot="start">
-                            <Avatar name={member["Name"]} round size="100%" />
+                            <Avatar name={member["Name"]} round size="100%" src={member["Profile Photo"]} />
                         </IonAvatar>
                         <IonLabel>
                             <h2>{member["Name"]}</h2>
+                            <p>{member["Phone"]}</p>
                         </IonLabel>
                         <IonLabel slot="end">{member["Ending Date"]}</IonLabel>
                     </IonItem>

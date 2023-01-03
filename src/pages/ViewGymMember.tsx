@@ -76,7 +76,7 @@ const ViewGymMember: React.FC = () => {
                     </IonItem>
                 }
                 <IonCard style={{ textAlign: "center", paddingTop: "1rem" }}>
-                <ProfilePhoto url={currentGymMember["Profile Photo"]} />
+                <ProfilePhoto url={currentGymMember["Profile Photo"]} title={currentGymMember["Name"]} />
                     <IonCardHeader>
                         <IonCardTitle>{currentGymMember["Name"]}</IonCardTitle>
                         <IonCardSubtitle><IonIcon icon={mailOutline} /> {currentGymMember["Email"]}</IonCardSubtitle>

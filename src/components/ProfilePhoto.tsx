@@ -36,6 +36,7 @@ const ProfilePhoto = ({ url, title }: any) => {
     return (
         <>
             <Avatar
+                name={title}
                 src={profilePhotoUrl}
                 round
                 style={{ display: 'block', marginLeft: 'auto', marginRight: 'auto', marginTop: '1rem' }}
