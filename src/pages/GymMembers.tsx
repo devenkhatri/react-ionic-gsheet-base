@@ -1,5 +1,5 @@
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonButton, IonIcon, IonItem, IonLabel, IonNavLink, IonRefresher, IonRefresherContent, IonToast, IonItemDivider, IonItemGroup, IonSearchbar, IonProgressBar, IonBadge, IonSegment, IonSegmentButton } from '@ionic/react';
-import { add, calendar, person } from 'ionicons/icons';
+import { add, calendar, cloudOffline, person } from 'ionicons/icons';
 import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
 import { refreshPage } from '../utils';
@@ -35,14 +35,21 @@ const GymMembers: React.FC = () => {
 
   const [groupedGymMembers, setGroupedGymMembers] = useState<any>();
   const [groupByValue, setGroupByValue] = useState<any>("Months");
-  useEffect(()=>{
+  useEffect(() => {
     if (filteredGymMembers) {
-      if(groupByValue === 'Name') 
-        setGroupedGymMembers(_.groupBy(filteredGymMembers, (item: any) => item["Name"].charAt(0).toUpperCase()))
-      else 
-        setGroupedGymMembers(_.groupBy(filteredGymMembers, (item: any) => _.toNumber(item["Months"] || 0)))
+      if (groupByValue === 'Inactive') {
+        const inactiveMembers = _.filter(filteredGymMembers, (item: any) => moment(item["Ending Date"], "DD-MMM-YYYY") < moment())
+        setGroupedGymMembers(_.groupBy(inactiveMembers, (item: any) => item["Name"].charAt(0).toUpperCase()))
+      }
+      else {
+        const activeMembers = _.filter(filteredGymMembers, (item: any) => moment(item["Ending Date"], "DD-MMM-YYYY") >= moment())
+        if (groupByValue === 'Name')
+          setGroupedGymMembers(_.groupBy(activeMembers, (item: any) => item["Name"].charAt(0).toUpperCase()))
+        else
+          setGroupedGymMembers(_.groupBy(activeMembers, (item: any) => _.toNumber(item["Months"] || 0)))
+      }
     }
-  },[groupByValue]);
+  }, [groupByValue, data]);
 
   let groupedGymMemberKeys = null;
   if (groupedGymMembers) {
@@ -76,6 +83,10 @@ const GymMembers: React.FC = () => {
             </IonSegmentButton>
             <IonSegmentButton value={'Name'}>
               <IonIcon icon={person}></IonIcon>
+            </IonSegmentButton>
+            <IonSegmentButton value={'Inactive'}>
+              InActive
+              <IonIcon icon={cloudOffline}></IonIcon>
             </IonSegmentButton>
           </IonSegment>
         </IonToolbar>
