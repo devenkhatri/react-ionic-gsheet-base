@@ -1,13 +1,15 @@
-import { IonBackButton, IonButton, IonButtons, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonGrid, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonLoading, IonModal, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonRow, IonSelect, IonSelectOption, IonTitle, IonToast, IonToggle, IonToolbar, useIonToast } from '@ionic/react';
+import { IonAvatar, IonBackButton, IonButton, IonButtons, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonFab, IonFabButton, IonGrid, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonLabel, IonLoading, IonModal, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonRow, IonSelect, IonSelectOption, IonTitle, IonToast, IonToggle, IonToolbar, useIonToast } from '@ionic/react';
 import axios from 'axios';
-import { saveOutline, thumbsDown, thumbsUp } from 'ionicons/icons';
+import { camera, saveOutline, thumbsDown, thumbsUp } from 'ionicons/icons';
 import _ from 'lodash';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import useGoogleSheets from 'use-google-sheets';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
-import { refreshPage } from '../utils';
+import ProfilePhoto from '../components/ProfilePhoto';
+import { usePhotoGallery } from '../hooks/usePhotoGallery';
+import { refreshPage, uploadFileToFirebase } from '../utils';
 
 type PageParams = {
   id?: string;
@@ -26,6 +28,7 @@ const ManageGymMembers: React.FC = () => {
   const isGymAdminAccess = (category === "gymadmin")
 
   const [name, setName] = useState("")
+  const [profilePhoto, setProfilePhoto] = useState<any>()
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
   const [joiningDate, setJoiningDate] = useState<any>(moment().format())
@@ -53,10 +56,13 @@ const ManageGymMembers: React.FC = () => {
   const [present] = useIonToast();
   const [showLoading, setShowLoading] = useState(false);
 
+  const { photos, takePhoto } = usePhotoGallery();
+
   useEffect(() => {
     if (!paymentMode) setPaymentMode(defaultPaymentMode && defaultPaymentMode["Payment Modes"]);
     if (isEdit && currentGymMember) {
       setName(currentGymMember["Name"])
+      setProfilePhoto(currentGymMember["Profile Photo"])
       setEmail(currentGymMember["Email"])
       setPhone(currentGymMember["Phone"])
       currentGymMember["Joining Date"] && setJoiningDate(moment(currentGymMember["Joining Date"], "DD-MMM-YYYY").format())
@@ -79,7 +85,7 @@ const ManageGymMembers: React.FC = () => {
     });
   };
 
-  const saveRecord = () => {
+  const saveRecord = async () => {
 
     if (!name) {
       presentToast('danger', thumbsDown, 'Please enter Member Name...')
@@ -94,6 +100,12 @@ const ManageGymMembers: React.FC = () => {
       return;
     }
 
+    setShowLoading(true);
+
+    const uploadedPhotoUrl = await uploadPhoto();
+
+    console.log("******* uploaded image URL ", uploadedPhotoUrl)
+
     const requestOptions: any = {
       baseURL: process.env.REACT_APP_API_BASE || '',
       url: `.netlify/functions/gymmembermgmt`,
@@ -103,6 +115,7 @@ const ManageGymMembers: React.FC = () => {
       },
       data: {
         name: name,
+        profilePhoto: uploadedPhotoUrl,
         email: email,
         phone: phone,
         joiningDate: joiningDate,
@@ -117,8 +130,7 @@ const ManageGymMembers: React.FC = () => {
         'Access-Control-Allow-Origin': '*',
       },
     };
-
-    setShowLoading(true);
+    
     axios(requestOptions)
       .then(function (response: any) {
         console.log(response);
@@ -131,6 +143,10 @@ const ManageGymMembers: React.FC = () => {
         setShowLoading(false)
         presentToast('danger', thumbsDown, 'Sorry some error occured. Please try again to save.....')
       });
+  }
+
+  const uploadPhoto = async () => {
+    return await uploadFileToFirebase('/gymmembers', photos && photos.length > 0 && photos[0])
   }
 
   return (
@@ -174,6 +190,12 @@ const ManageGymMembers: React.FC = () => {
           onDidDismiss={() => setShowLoading(false)}
           message={'Please wait while the data is being saved...'}
         />
+        <IonFab vertical="bottom" horizontal="end" slot="fixed">
+          <IonFabButton onClick={() => takePhoto(name)}>
+            <IonIcon icon={camera}></IonIcon>
+          </IonFabButton>
+        </IonFab>
+        <ProfilePhoto url={profilePhoto || (photos && photos.length > 0 && photos[0].webviewPath)} />
         <IonGrid>
           <IonRow>
             <IonCol>

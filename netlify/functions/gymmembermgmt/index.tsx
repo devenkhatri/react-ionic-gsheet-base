@@ -37,6 +37,7 @@ exports.handler = async (event, context) => {
 
         const name = body.name;
         const email = body.email;
+        const profilePhoto = body.profilePhoto;
         const sphone = body.phone;
         const joiningDate = moment(body.joiningDate).tz("Asia/Kolkata").format("DD-MMM-YYYY");
         const months = body.months || 0;
@@ -83,6 +84,7 @@ exports.handler = async (event, context) => {
                 'Reminder-1': remainder1.format("DD-MMM-YYYY"),
                 'Reminder-2': remainder2.format("DD-MMM-YYYY"),
                 'Reminder-3': remainder3.format("DD-MMM-YYYY"),
+                'Profile Photo': profilePhoto,
             }
             console.log("****** dataToAdd", dataToAdd)
             await sheet.addRow(dataToAdd);
@@ -104,6 +106,7 @@ exports.handler = async (event, context) => {
                 rows[rowIndex]['Reminder-1'] = remainder1.format("DD-MMM-YYYY")
                 rows[rowIndex]['Reminder-2'] = remainder2.format("DD-MMM-YYYY")
                 rows[rowIndex]['Reminder-3'] = remainder3.format("DD-MMM-YYYY")
+                rows[rowIndex]['Profile Photo'] = profilePhoto
                 await rows[rowIndex].save();
                 message = "Session Updated Successfully."
             }            

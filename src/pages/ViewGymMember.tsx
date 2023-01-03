@@ -7,6 +7,7 @@ import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import { alarmOutline, callOutline, mailOutline, pencil } from "ionicons/icons";
 import ManageGymMembers from "./ManageGymMembers";
 import moment from "moment";
+import ProfilePhoto from "../components/ProfilePhoto";
 
 type PageParams = {
     id?: string;
@@ -75,7 +76,7 @@ const ViewGymMember: React.FC = () => {
                     </IonItem>
                 }
                 <IonCard style={{ textAlign: "center", paddingTop: "1rem" }}>
-                    {/* <Avatar name={currentGymMember["Name"]} round /> */}
+                <ProfilePhoto url={currentGymMember["Profile Photo"]} />
                     <IonCardHeader>
                         <IonCardTitle>{currentGymMember["Name"]}</IonCardTitle>
                         <IonCardSubtitle><IonIcon icon={mailOutline} /> {currentGymMember["Email"]}</IonCardSubtitle>
