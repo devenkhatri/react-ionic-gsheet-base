@@ -1,6 +1,6 @@
-import { IonBackButton, IonButton, IonButtons, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonFab, IonFabButton, IonGrid, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonLoading, IonModal, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonRow, IonSelect, IonSelectOption, IonTitle, IonToast, IonToggle, IonToolbar, useIonToast } from '@ionic/react';
+import { IonBackButton, IonButton, IonButtons, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonFab, IonFabButton, IonFabList, IonGrid, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonLoading, IonModal, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonRow, IonSelect, IonSelectOption, IonTitle, IonToast, IonToggle, IonToolbar, useIonAlert, useIonToast } from '@ionic/react';
 import axios from 'axios';
-import { camera, saveOutline, thumbsDown, thumbsUp } from 'ionicons/icons';
+import { camera, image, saveOutline, thumbsDown, thumbsUp, trash } from 'ionicons/icons';
 import _ from 'lodash';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
@@ -55,8 +55,9 @@ const ManageGymMembers: React.FC = () => {
 
   const [present] = useIonToast();
   const [showLoading, setShowLoading] = useState(false);
+  const [presentAlert] = useIonAlert();
 
-  const { photos, takePhoto } = usePhotoGallery();
+  const { photos, takePhoto, deletePhoto } = usePhotoGallery();
 
   useEffect(() => {
     if (!paymentMode) setPaymentMode(defaultPaymentMode && defaultPaymentMode["Payment Modes"]);
@@ -130,7 +131,7 @@ const ManageGymMembers: React.FC = () => {
         'Access-Control-Allow-Origin': '*',
       },
     };
-    
+
     axios(requestOptions)
       .then(function (response: any) {
         console.log(response);
@@ -147,6 +148,27 @@ const ManageGymMembers: React.FC = () => {
 
   const uploadPhoto = async () => {
     return await uploadFileToFirebase('/gymmembers', photos && photos.length > 0 && photos[0])
+  }
+
+  const removePhoto = () => {
+    presentAlert({
+      header: 'Alert',
+      subHeader: 'Are you sure, you want to remove this profile photo?',
+      buttons: [
+        {
+          text: 'Cancel',
+        },
+        {
+          text: 'OK',
+          role: 'confirm',
+          handler: () => {
+            photos && photos.map((photo: any) => deletePhoto(photo));
+            setProfilePhoto(null);
+            // set
+          },
+        },
+      ],
+    })
   }
 
   return (
@@ -191,9 +213,19 @@ const ManageGymMembers: React.FC = () => {
           message={'Please wait while the data is being saved...'}
         />
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
-          <IonFabButton onClick={() => takePhoto(name)}>
-            <IonIcon icon={camera}></IonIcon>
+          <IonFabButton>
+            <IonIcon icon={image}></IonIcon>
           </IonFabButton>
+          <IonFabList side="top">
+            <IonFabButton color={'secondary'} onClick={() => takePhoto(name)}>
+              <IonIcon icon={camera}></IonIcon>
+            </IonFabButton>
+            {(profilePhoto || (photos && photos.length > 0)) && <IonFabButton color={'danger'} onClick={() => removePhoto()}>
+              <IonIcon icon={trash}></IonIcon>
+            </IonFabButton>
+            }
+          </IonFabList>
+
         </IonFab>
         <ProfilePhoto url={profilePhoto || (photos && photos.length > 0 && photos[0].webviewPath)} title={name} />
         <IonGrid>

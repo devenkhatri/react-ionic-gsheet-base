@@ -4,7 +4,7 @@ import { useState } from "react";
 import Avatar from "react-avatar";
 
 const ProfilePhoto = ({ url, title }: any) => {
-    let profilePhotoUrl: any = url || `https://ionicframework.com/docs/img/demos/avatar.svg`;
+    // let profilePhotoUrl: any = url || `https://ionicframework.com/docs/img/demos/avatar.svg`;
 
     const [isProfilePhotoOpen, setIsProfilePhotoOpen] = useState(false);
 
@@ -37,10 +37,10 @@ const ProfilePhoto = ({ url, title }: any) => {
         <>
             <Avatar
                 name={title}
-                src={profilePhotoUrl}
+                src={url || ""}
                 round
                 style={{ display: 'block', marginLeft: 'auto', marginRight: 'auto', marginTop: '1rem' }}
-                onClick={() => { setIsProfilePhotoOpen(true) }}
+                onClick={() => { url && setIsProfilePhotoOpen(true) }}
             />
             <IonModal
                 isOpen={isProfilePhotoOpen}
@@ -58,7 +58,7 @@ const ProfilePhoto = ({ url, title }: any) => {
                     </IonToolbar>
                 </IonHeader>
                 <IonContent className="ion-padding">
-                    <IonImg src={profilePhotoUrl} />
+                    <IonImg src={url} />
                 </IonContent>
             </IonModal></>
     );
