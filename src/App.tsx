@@ -10,7 +10,7 @@ import {
   setupIonicReact
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { peopleOutline, barChartOutline, calendarOutline, informationCircle, barbellOutline } from 'ionicons/icons';
+import { peopleOutline, barChartOutline, calendarOutline, informationCircle, barbellOutline, helpCircleOutline } from 'ionicons/icons';
 import Sessions from './pages/Sessions';
 import Patients from './pages/Patients';
 import PhysioReports from './pages/PhysioReports';
@@ -45,6 +45,9 @@ import GymMembers from './pages/GymMembers';
 import ManageGymMembers from './pages/ManageGymMembers';
 import ViewGymMember from './pages/ViewGymMember';
 import GymReports from './pages/GymReports';
+import Inquires from './pages/Inquires';
+import ViewInqury from './pages/ViewInqury';
+import ManageInquires from './pages/ManageInquires';
 
 setupIonicReact();
 
@@ -112,6 +115,15 @@ const App: React.FC = () => {
             <Route path="/viewgymmember/:id">
               <ViewGymMember />
             </Route>
+            <Route exact path="/inquires">
+              <Inquires />
+            </Route>
+            <Route path="/viewinqury/:id">
+              <ViewInqury />
+            </Route>
+            <Route exact path="/manageinquires">
+              <ManageInquires />
+            </Route>
             <Route path="/gymreports">
               <GymReports />
             </Route>
@@ -136,6 +148,10 @@ const App: React.FC = () => {
             <IonTabButton tab="gymmembers" href="/gymmembers" style={{display: isGymAccess?'':'none'}}>
               <IonIcon icon={barbellOutline} />
               <IonLabel>Gym Members</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="inquires" href="/inquires" style={{display: isGymAccess?'':'none'}}>
+              <IonIcon icon={helpCircleOutline} />
+              <IonLabel>Inquries</IonLabel>
             </IonTabButton>
             <IonTabButton tab="gymreports" href="/gymreports" style={{display: isGymAdminAccess?'':'none'}}>
               <IonIcon icon={barChartOutline} />
