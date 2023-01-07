@@ -41,6 +41,7 @@ exports.handler = async (event, context) => {
         const sdate = moment(body.date).tz("Asia/Kolkata").format("DD-MMM-YYYY");
         const remarks = body.remarks;
         const category = body.category;                
+        const photo = body.photo;                
 
         const doc = new GoogleSpreadsheet(process.env.REACT_APP_GOOGLE_SHEETS_ID);
         let privateKey = process.env.GOOGLE_PRIVATE_KEY && process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/gm, '\n')
@@ -60,6 +61,7 @@ exports.handler = async (event, context) => {
                 'Date': sdate,
                 'Remarks': remarks,                
                 'Category': category,
+                'Photo': photo,
             }
             console.log("****** dataToAdd", dataToAdd)
             await sheet.addRow(dataToAdd);
@@ -74,6 +76,7 @@ exports.handler = async (event, context) => {
                 rows[rowIndex]['Date'] = sdate
                 rows[rowIndex]['Remarks'] = remarks
                 rows[rowIndex]['Category'] = category
+                rows[rowIndex]['Photo'] = photo
                 await rows[rowIndex].save();
                 message = "Session Updated Successfully."
             }            

@@ -11,7 +11,7 @@ type PageParams = {
     id?: string;
 };
 
-const ViewInqury: React.FC = () => {
+const ViewInquiry: React.FC = () => {
     const { id } = useParams<PageParams>();
 
     const title = "Inqury Details"
@@ -58,7 +58,7 @@ const ViewInqury: React.FC = () => {
                     </IonItem>
                 }
                 <IonCard style={{ textAlign: "center", paddingTop: "1rem" }}>
-                    <ProfilePhoto title={currentInquiry["Name"]} />
+                    <ProfilePhoto url={currentInquiry["Photo"]} title={currentInquiry["Name"]} />
                     <IonCardHeader>
                         <IonCardTitle>{currentInquiry["Name"]}</IonCardTitle>
                         <IonCardSubtitle><IonIcon icon={mailOutline} /> {currentInquiry["Email"]}</IonCardSubtitle>
@@ -88,4 +88,4 @@ const ViewInqury: React.FC = () => {
     );
 }
 
-export default ViewInqury;
+export default ViewInquiry;

@@ -46,7 +46,7 @@ import ManageGymMembers from './pages/ManageGymMembers';
 import ViewGymMember from './pages/ViewGymMember';
 import GymReports from './pages/GymReports';
 import Inquires from './pages/Inquires';
-import ViewInqury from './pages/ViewInqury';
+import ViewInquiry from './pages/ViewInquiry';
 import ManageInquires from './pages/ManageInquires';
 
 setupIonicReact();
@@ -118,10 +118,13 @@ const App: React.FC = () => {
             <Route exact path="/inquires">
               <Inquires />
             </Route>
-            <Route path="/viewinqury/:id">
-              <ViewInqury />
+            <Route path="/viewinquiry/:id">
+              <ViewInquiry />
             </Route>
             <Route exact path="/manageinquires">
+              <ManageInquires />
+            </Route>
+            <Route path="/manageinquires/:id">
               <ManageInquires />
             </Route>
             <Route path="/gymreports">
