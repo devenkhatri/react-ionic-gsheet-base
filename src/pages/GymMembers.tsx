@@ -49,12 +49,13 @@ const GymMembers: React.FC = () => {
           setGroupedGymMembers(_.groupBy(activeMembers, (item: any) => _.toNumber(item["Months"] || 0)))
       }
     }
-  }, [groupByValue, data]);
+  }, [groupByValue, data, query]);
 
   let groupedGymMemberKeys = null;
   if (groupedGymMembers) {
     groupedGymMemberKeys = _.orderBy(Object.keys(groupedGymMembers), (item: any) => groupByValue === 'Months' ? _.toNumber(item) : item);
   }
+  // console.log("******* filteredGymMembers", filteredGymMembers)
 
   return (
     <IonPage id="main-content">
