@@ -297,7 +297,7 @@ const ManageGymMembers: React.FC = () => {
           </IonRow>
           <IonRow>
             <IonCol>
-              <IonInput clearInput={true} style={{ background: "var(--ion-color-light)" }}
+              <IonInput type={'number'} clearInput={true} style={{ background: "var(--ion-color-light)" }}
                 onIonInput={(e: any) => setMonths(e.target.value)}
                 value={months}
                 placeholder="0"
