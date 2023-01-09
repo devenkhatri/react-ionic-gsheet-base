@@ -39,6 +39,9 @@ const ViewPatient: React.FC = () => {
     const totalAmountPending = _.sumBy(sortedSessions, (session: any) => _.toNumber(session["Amount Pending"]));
     const totalAmountPaid = _.sumBy(sortedSessions, (session: any) => _.toNumber(session["Amount Paid"]));
 
+    console.log("****** currentPatient[Start Date]", currentPatient["Start Date"])
+    console.log("****** moment", (currentPatient["Start Date"] && moment(currentPatient["Start Date"], 'MM/DD/YYYY').format('DD-MMM-YYYY')))
+
     return (
         <IonPage id="main-content">
             <IonHeader translucent={true}>
@@ -85,7 +88,7 @@ const ViewPatient: React.FC = () => {
 
                     <IonCardContent>
                         <IonLabel color={"dark"}><h2 style={{ paddingTop: "0.5rem" }}>Start Date: </h2></IonLabel>
-                        <IonLabel>{currentPatient["Start Date"] && moment(currentPatient["Start Date"], 'DD-MMM-YYYY')}</IonLabel>
+                        <IonLabel>{currentPatient["Start Date"] && moment(currentPatient["Start Date"], 'MM/DD/YYYY').format('DD-MMM-YYYY')}</IonLabel>
 
                         <IonLabel color={"dark"}><h2 style={{ paddingTop: "0.5rem" }}>Description: </h2></IonLabel>
                         <IonLabel>{currentPatient["Description"]}</IonLabel>
