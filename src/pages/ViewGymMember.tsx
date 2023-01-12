@@ -17,7 +17,7 @@ type PageParams = {
 const ViewGymMember: React.FC = () => {
     const { id } = useParams<PageParams>();
 
-    const title = "Gym Member Details"
+    const title = "GymMember Detail"
 
     const category = process.env.REACT_APP_CATEGORY || "";
     const isGymAdminAccess = (category === "gymadmin")

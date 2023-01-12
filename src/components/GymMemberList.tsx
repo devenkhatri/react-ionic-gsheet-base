@@ -25,10 +25,10 @@ const GymMemberList = ({ allGymMembers }: any) => {
                     </IonItem>
 
                     <IonItemOptions>
-                        {/* {member["Phone"] && <IonItemOption onClick={() => sendWhatsappMessage(`+91${member["Phone"]}`, getWelcomeMessage(member))}>
+                        {member["Phone"] && <IonItemOption onClick={() => sendWhatsappMessage(`+91${member["Phone"]}`, getWelcomeMessage(member))}>
                             <IonIcon slot="icon-only" icon={logoWhatsapp} />
                         </IonItemOption>
-                        } */}
+                        }
                         <RWebShare
                             data={{
                                 text: getWelcomeMessage(member),
