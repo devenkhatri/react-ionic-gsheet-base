@@ -5,6 +5,9 @@ import { refreshPage } from '../utils';
 import { shareOutline } from 'ionicons/icons';
 import { RWebShare } from "react-web-share";
 import moment from 'moment';
+import preval from 'preval.macro';
+
+const buildTimestamp = preval`module.exports = new Date().getTime();`;
 
 const Info: React.FC = () => {
   const title = "Info"
@@ -14,6 +17,13 @@ const Info: React.FC = () => {
     subtitle: process.env.REACT_APP_SUBTITLE,
     url: process.env.REACT_APP_URL,
   }
+
+  const getBuildTimeString = () => {
+      const lastUpdateMoment = moment.unix(buildTimestamp / 1000);
+      const formattedDate    = lastUpdateMoment.format('DD.MM.YYYY HH:mm:ss');
+      return formattedDate;
+  }
+
   return (
     <IonPage id="main-content">
       <IonHeader translucent={true}>
@@ -70,7 +80,7 @@ const Info: React.FC = () => {
               <IonLabel slot='end'>Deven Goratela</IonLabel>
             </IonItem>
             <IonItem>
-              <IonNote><p>Last Build Time: {moment().format("DD-MMM-YYYY HH:MM")}</p></IonNote>
+              <IonNote><p>Last Build Time: {getBuildTimeString()}</p></IonNote>
             </IonItem>
           </IonCardContent>
         </IonCard>

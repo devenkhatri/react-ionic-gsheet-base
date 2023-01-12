@@ -32,6 +32,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.40",
+    "preval.macro": "^5.0.0",
     "querystring": "^0.2.1",
     "react": "^18.2.0",
     "react-avatar": "^5.0.3",
@@ -86,7 +87,8 @@
   },
   "devDependencies": {
     "@capacitor/cli": "4.5.0",
-    "@types/lodash": "^4.14.190"
+    "@types/lodash": "^4.14.190",
+    "@types/preval.macro": "^3.0.0"
   },
   "description": "An Ionic project"
 }
