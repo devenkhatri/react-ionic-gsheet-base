@@ -136,7 +136,7 @@ const ManageSessions: React.FC = () => {
 
   return (
     <IonPage id="main-content">
-      <IonHeader translucent={true}>
+      <IonHeader>
         <IonToolbar>
           <IonTitle>{title}</IonTitle>
           {loading && <IonProgressBar type="indeterminate"></IonProgressBar>}
@@ -151,7 +151,7 @@ const ManageSessions: React.FC = () => {
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
+      <IonContent>
         <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
           <IonRefresherContent></IonRefresherContent>
         </IonRefresher>
