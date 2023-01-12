@@ -1,9 +1,10 @@
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonLabel, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonItem, IonRefresher, IonRefresherContent, IonRow, IonGrid, IonCol, IonButton, IonIcon } from '@ionic/react';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonLabel, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonItem, IonRefresher, IonRefresherContent, IonRow, IonGrid, IonCol, IonButton, IonIcon, IonNote } from '@ionic/react';
 import { QRCode } from 'react-qrcode-logo';
 import Avatar from 'react-avatar';
 import { refreshPage } from '../utils';
 import { shareOutline } from 'ionicons/icons';
 import { RWebShare } from "react-web-share";
+import moment from 'moment';
 
 const Info: React.FC = () => {
   const title = "Info"
@@ -67,6 +68,9 @@ const Info: React.FC = () => {
             <IonItem>
               <IonLabel color={"medium"}>Author</IonLabel>
               <IonLabel slot='end'>Deven Goratela</IonLabel>
+            </IonItem>
+            <IonItem>
+              <IonNote><p>Last Build Time: {moment().format("DD-MMM-YYYY HH:MM")}</p></IonNote>
             </IonItem>
           </IonCardContent>
         </IonCard>
