@@ -4,6 +4,7 @@ import _ from "lodash";
 import moment from "moment";
 import Avatar from "react-avatar";
 import { RWebShare } from "react-web-share";
+import { sendWhatsappMessage } from "../utils";
 import './PhysioReportDaywise.css'
 
 const GymReportExpiringList = ({ data }: any) => {
@@ -12,22 +13,7 @@ const GymReportExpiringList = ({ data }: any) => {
     const filtedMember_2Days = sortedGymMembers && _.filter(sortedGymMembers, (item: any) => (moment(item["Ending Date"], 'DD-MMM-YYYY').diff(moment(), "hours")) > 0 && (moment(item["Ending Date"], 'DD-MMM-YYYY').diff(moment(), "hours")) <= 2 * 24)
     const filtedMember_7Days = sortedGymMembers && _.filter(sortedGymMembers, (item: any) => (moment(item["Ending Date"], 'DD-MMM-YYYY').diff(moment(), "hours")) > 2 * 24 && (moment(item["Ending Date"], 'DD-MMM-YYYY').diff(moment(), "hours")) <= 7 * 24)
     const filtedMember_15Days = sortedGymMembers && _.filter(sortedGymMembers, (item: any) => (moment(item["Ending Date"], 'DD-MMM-YYYY').diff(moment(), "hours")) > 7 * 24 && (moment(item["Ending Date"], 'DD-MMM-YYYY').diff(moment(), "hours")) <= 15 * 24)
-    const filtedMember_30Days = sortedGymMembers && _.filter(sortedGymMembers, (item: any) => (moment(item["Ending Date"], 'DD-MMM-YYYY').diff(moment(), "hours")) > 15 * 24 && (moment(item["Ending Date"], 'DD-MMM-YYYY').diff(moment(), "hours")) <= 30 * 24)
-    
-    const sendWhatsappMessage = (mobileNumber: any, message: any) => {
-
-        // Regex expression to remove all characters which are NOT alphanumeric
-        let number = mobileNumber.replace(/[^\w\s]/gi, "").replace(/ /g, "");
-
-        // Appending the phone number to the URL
-        let url = `https://api.whatsapp.com/send?phone=${number}`;
-
-        // Appending the message to the URL by encoding it
-        url += `&text=${encodeURI(message)}&app_absent=0`;
-
-        // Open our newly created URL in a new tab to send the message
-        window.open(url);
-    };
+    const filtedMember_30Days = sortedGymMembers && _.filter(sortedGymMembers, (item: any) => (moment(item["Ending Date"], 'DD-MMM-YYYY').diff(moment(), "hours")) > 15 * 24 && (moment(item["Ending Date"], 'DD-MMM-YYYY').diff(moment(), "hours")) <= 30 * 24)    
 
     const ShowExpiringMemberList = ({ items, title, theme }: any) => {
         return (

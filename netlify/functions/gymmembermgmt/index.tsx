@@ -49,7 +49,7 @@ exports.handler = async (event, context) => {
         //calculating membership end date
         const endDate = moment(body.joiningDate)
         endDate.add(_.toNumber(months), "month").add(-1, "day")
-        const endingDate = endDate.format("DD-MMM-YYYY");
+        const endingDate = endDate.tz("Asia/Kolkata").format("DD-MMM-YYYY");
         //calculating reminders
         const remainder1 = moment(endDate)
         remainder1.add(-15, "days");

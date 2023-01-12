@@ -2,12 +2,13 @@ import { IonBackButton, IonBadge, IonButton, IonButtons, IonCard, IonCardContent
 import { useParams } from 'react-router-dom';
 import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
-import { formatCurrency, refreshPage } from '../utils';
+import { formatCurrency, refreshPage, sendWhatsappMessage } from '../utils';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
-import { alarmOutline, callOutline, mailOutline, pencil } from "ionicons/icons";
+import { alarmOutline, callOutline, logoWhatsapp, mailOutline, pencil, shareOutline } from "ionicons/icons";
 import ManageGymMembers from "./ManageGymMembers";
 import moment from "moment";
 import ProfilePhoto from "../components/ProfilePhoto";
+import { RWebShare } from "react-web-share";
 
 type PageParams = {
     id?: string;
@@ -38,6 +39,8 @@ const ViewGymMember: React.FC = () => {
     else if (daysRemaining <= 10 * 24) status = "warning";
     else if (daysRemaining <= 30 * 24) status = "secondary"
 
+    const welcomeMesage = `Dear ${currentGymMember["Name"]}, Your Gym Membership details at Aastha Health Plus are: Duration='${currentGymMember["Months"]} month(s)', Joining Date='${currentGymMember["Joining Date"]}' and Ending Date='${currentGymMember["Ending Date"]}'`
+
     return (
         <IonPage id="main-content">
             <IonHeader translucent={true}>
@@ -48,6 +51,23 @@ const ViewGymMember: React.FC = () => {
                         <IonBackButton defaultHref={"/gymmembers"}></IonBackButton>
                     </IonButtons>
                     <IonButtons slot="end">
+                        {currentGymMember["Phone"] &&
+                            <IonButton onClick={() => sendWhatsappMessage(`+91${currentGymMember["Phone"]}`, welcomeMesage)}>
+                                <IonIcon icon={logoWhatsapp} />
+                            </IonButton>
+                        }
+                        <RWebShare
+                            data={{
+                                text: welcomeMesage,
+                                url: "https://aastha-health.business.site/",
+                                title: "Send Gym Membership Details",
+                            }}
+                            onClick={() => console.log("shared successfully!")}
+                        >
+                            <IonButton>
+                                <IonIcon slot="icon-only" icon={shareOutline} ></IonIcon>
+                            </IonButton>
+                        </RWebShare>
                         <IonNavLink component={() => <ManageGymMembers />} routerDirection={"forward"}>
                             <IonButton href={`/managegymmember/${id}`}>
                                 <IonIcon slot="icon-only" icon={pencil} color="primary"></IonIcon>
@@ -76,7 +96,7 @@ const ViewGymMember: React.FC = () => {
                     </IonItem>
                 }
                 <IonCard style={{ textAlign: "center", paddingTop: "1rem" }}>
-                <ProfilePhoto url={currentGymMember["Profile Photo"]} title={currentGymMember["Name"]} />
+                    <ProfilePhoto url={currentGymMember["Profile Photo"]} title={currentGymMember["Name"]} />
                     <IonCardHeader>
                         <IonCardTitle>{currentGymMember["Name"]}</IonCardTitle>
                         <IonCardSubtitle><IonIcon icon={mailOutline} /> {currentGymMember["Email"]}</IonCardSubtitle>
@@ -100,7 +120,7 @@ const ViewGymMember: React.FC = () => {
                         </IonItem>
 
                         <IonCard>
-                            <IonCardSubtitle>                                
+                            <IonCardSubtitle>
                                 <IonIcon icon={alarmOutline}></IonIcon>
                                 <IonLabel>{`  Reminders`}</IonLabel>
                             </IonCardSubtitle>

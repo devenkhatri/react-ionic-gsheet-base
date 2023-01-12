@@ -22,3 +22,19 @@ export const uploadFileToFirebase = (pathprefix: any, file: any) => {
     });
     
 }
+
+export const sendWhatsappMessage = (mobileNumber: any, message: any) => {
+
+    // Regex expression to remove all characters which are NOT alphanumeric
+    let number = mobileNumber.replace(/[^\w\s]/gi, "").replace(/ /g, "");
+
+    // Appending the phone number to the URL
+    let url = `https://api.whatsapp.com/send?phone=${number}`;
+
+    // Appending the message to the URL by encoding it
+    url += `&text=${encodeURIComponent(message)}&app_absent=0`;
+    // url += `&text=${message}&app_absent=0`;
+
+    // Open our newly created URL in a new tab to send the message
+    window.open(url);
+};
