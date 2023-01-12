@@ -23,6 +23,11 @@ export const uploadFileToFirebase = (pathprefix: any, file: any) => {
     
 }
 
+export const getWelcomeMessage = (currentGymMember: any) => {
+    const welcomeMesage = `Dear ${currentGymMember["Name"]}, Your Gym Membership details at Aastha Health Plus are: Duration='${currentGymMember["Months"]} month(s)', Joining Date='${currentGymMember["Joining Date"]}' and Ending Date='${currentGymMember["Ending Date"]}'`
+    return welcomeMesage;
+}
+
 export const sendWhatsappMessage = (mobileNumber: any, message: any) => {
 
     // Regex expression to remove all characters which are NOT alphanumeric

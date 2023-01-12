@@ -2,7 +2,7 @@ import { IonBackButton, IonBadge, IonButton, IonButtons, IonCard, IonCardContent
 import { useParams } from 'react-router-dom';
 import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
-import { formatCurrency, refreshPage, sendWhatsappMessage } from '../utils';
+import { formatCurrency, getWelcomeMessage, refreshPage, sendWhatsappMessage } from '../utils';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import { alarmOutline, callOutline, logoWhatsapp, mailOutline, pencil, shareOutline } from "ionicons/icons";
 import ManageGymMembers from "./ManageGymMembers";
@@ -39,8 +39,6 @@ const ViewGymMember: React.FC = () => {
     else if (daysRemaining <= 10 * 24) status = "warning";
     else if (daysRemaining <= 30 * 24) status = "secondary"
 
-    const welcomeMesage = `Dear ${currentGymMember["Name"]}, Your Gym Membership details at Aastha Health Plus are: Duration='${currentGymMember["Months"]} month(s)', Joining Date='${currentGymMember["Joining Date"]}' and Ending Date='${currentGymMember["Ending Date"]}'`
-
     return (
         <IonPage id="main-content">
             <IonHeader translucent={true}>
@@ -52,13 +50,13 @@ const ViewGymMember: React.FC = () => {
                     </IonButtons>
                     <IonButtons slot="end">
                         {currentGymMember["Phone"] &&
-                            <IonButton onClick={() => sendWhatsappMessage(`+91${currentGymMember["Phone"]}`, welcomeMesage)}>
+                            <IonButton onClick={() => sendWhatsappMessage(`+91${currentGymMember["Phone"]}`, getWelcomeMessage(currentGymMember))}>
                                 <IonIcon icon={logoWhatsapp} />
                             </IonButton>
                         }
                         <RWebShare
                             data={{
-                                text: welcomeMesage,
+                                text: getWelcomeMessage(currentGymMember),
                                 url: "https://aastha-health.business.site/",
                                 title: "Send Gym Membership Details",
                             }}
