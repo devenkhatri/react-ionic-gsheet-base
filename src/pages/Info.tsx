@@ -20,7 +20,7 @@ const Info: React.FC = () => {
 
   const getBuildTimeString = () => {
       const lastUpdateMoment = moment.unix(buildTimestamp / 1000);
-      const formattedDate    = lastUpdateMoment.format('DD.MM.YYYY HH:mm:ss');
+      const formattedDate    = lastUpdateMoment.format('DD-MMM-YYYY HH:mm:ss');
       return formattedDate;
   }
 
