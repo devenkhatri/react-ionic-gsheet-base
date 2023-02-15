@@ -1,14 +1,15 @@
-import { IonBackButton, IonBadge, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonNavLink, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar } from "@ionic/react";
+import { IonBackButton, IonBadge, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonNavLink, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar, useIonToast } from "@ionic/react";
 import { useParams } from 'react-router-dom';
 import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
 import { refreshPage } from '../utils';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
-import { pencil } from "ionicons/icons";
+import { callOutline, copyOutline, pencil } from "ionicons/icons";
 import Avatar from 'react-avatar';
 import ManagePatients from "./ManagePatients";
 import SessionList from "../components/SessionList";
 import moment from "moment";
+import copy from 'copy-to-clipboard';
 
 type PageParams = {
     id?: string;
@@ -24,7 +25,7 @@ const ViewPatient: React.FC = () => {
         apiKey: process.env.REACT_APP_GOOGLE_API_KEY || "",
         sheetId: process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
         sheetsOptions: [],
-    });
+    });    
 
     const sessionsData = _.filter(data, { id: "Sessions" });
     const patientsData = _.filter(data, { id: "Patients" });
@@ -41,6 +42,18 @@ const ViewPatient: React.FC = () => {
 
     console.log("****** currentPatient[Start Date]", currentPatient["Start Date"])
     console.log("****** moment", (currentPatient["Start Date"] && moment(currentPatient["Start Date"], 'MM/DD/YYYY').format('DD-MMM-YYYY')))
+
+    const [present] = useIonToast();
+    const postCopyToClipboard = (text: any) => {
+        copy(text);
+        present({
+            message: 'Copied to Clipboard',
+            duration: 1500,
+            position: 'top',
+            icon: copyOutline,
+            color: 'primary'
+        });
+    };
 
     return (
         <IonPage id="main-content">
@@ -83,7 +96,19 @@ const ViewPatient: React.FC = () => {
                     <Avatar name={currentPatient["Name"]} round />
                     <IonCardHeader>
                         <IonCardTitle>{currentPatient["Name"]}</IonCardTitle>
-                        <IonCardSubtitle>{currentPatient["Phone"]}</IonCardSubtitle>
+                        <IonCardSubtitle>
+                            {currentPatient["Phone"]}
+                        </IonCardSubtitle>
+                        {currentPatient["Phone"] &&
+                            <>
+                                <IonButton href={`tel:${currentPatient["Phone"]}`} fill="clear" size="small">
+                                    <IonIcon slot="icon-only" icon={callOutline}></IonIcon>
+                                </IonButton>
+                                <IonButton fill="clear" size="small" color={'medium'} onClick={()=>postCopyToClipboard(currentPatient["Phone"])}>
+                                    <IonIcon slot="icon-only" icon={copyOutline}></IonIcon>
+                                </IonButton>
+                            </>
+                        }
                     </IonCardHeader>
 
                     <IonCardContent>

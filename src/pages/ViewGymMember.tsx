@@ -1,14 +1,15 @@
-import { IonBackButton, IonBadge, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonNavLink, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar } from "@ionic/react";
+import { IonBackButton, IonBadge, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonNavLink, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar, useIonToast } from "@ionic/react";
 import { useParams } from 'react-router-dom';
 import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
 import { formatCurrency, getWelcomeMessage, refreshPage, sendWhatsappMessage } from '../utils';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
-import { alarmOutline, callOutline, logoWhatsapp, mailOutline, pencil, shareOutline } from "ionicons/icons";
+import { alarmOutline, callOutline, copyOutline, logoWhatsapp, mailOutline, pencil, shareOutline } from "ionicons/icons";
 import ManageGymMembers from "./ManageGymMembers";
 import moment from "moment";
 import ProfilePhoto from "../components/ProfilePhoto";
 import { RWebShare } from "react-web-share";
+import copy from "copy-to-clipboard";
 
 type PageParams = {
     id?: string;
@@ -38,6 +39,18 @@ const ViewGymMember: React.FC = () => {
     if (daysRemaining <= 0) status = "danger";
     else if (daysRemaining <= 10 * 24) status = "warning";
     else if (daysRemaining <= 30 * 24) status = "secondary"
+
+    const [present] = useIonToast();
+    const postCopyToClipboard = (text: any) => {
+        copy(text);
+        present({
+            message: 'Copied to Clipboard',
+            duration: 1500,
+            position: 'top',
+            icon: copyOutline,
+            color: 'primary'
+        });
+    };
 
     return (
         <IonPage id="main-content">
@@ -97,8 +110,28 @@ const ViewGymMember: React.FC = () => {
                     <ProfilePhoto url={currentGymMember["Profile Photo"]} title={currentGymMember["Name"]} />
                     <IonCardHeader>
                         <IonCardTitle>{currentGymMember["Name"]}</IonCardTitle>
-                        <IonCardSubtitle><IonIcon icon={mailOutline} /> {currentGymMember["Email"]}</IonCardSubtitle>
-                        <IonCardSubtitle><IonIcon icon={callOutline} /> {currentGymMember["Phone"]}</IonCardSubtitle>
+                        {currentGymMember["Email"] &&
+                            <IonCardSubtitle>
+                                {currentGymMember["Email"]}
+                                <IonButton href={`mailto:${currentGymMember["Email"]}`} fill="clear" size="small">
+                                    <IonIcon slot="icon-only" icon={mailOutline}></IonIcon>
+                                </IonButton>
+                                <IonButton fill="clear" size="small" color={'medium'} onClick={() => postCopyToClipboard(currentGymMember["Email"])}>
+                                    <IonIcon slot="icon-only" icon={copyOutline}></IonIcon>
+                                </IonButton>
+                            </IonCardSubtitle>
+                        }
+                        {currentGymMember["Phone"] &&
+                            <IonCardSubtitle>
+                                {currentGymMember["Phone"]}
+                                <IonButton href={`tel:${currentGymMember["Phone"]}`} fill="clear" size="small">
+                                    <IonIcon slot="icon-only" icon={callOutline}></IonIcon>
+                                </IonButton>
+                                <IonButton fill="clear" size="small" color={'medium'} onClick={() => postCopyToClipboard(currentGymMember["Phone"])}>
+                                    <IonIcon slot="icon-only" icon={copyOutline}></IonIcon>
+                                </IonButton>
+                            </IonCardSubtitle>
+                        }
                     </IonCardHeader>
 
                     <IonCardContent>

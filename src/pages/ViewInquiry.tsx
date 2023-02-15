@@ -1,11 +1,12 @@
-import { IonBackButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonNote, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar } from "@ionic/react";
+import { IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonNote, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar, useIonToast } from "@ionic/react";
 import { useParams } from 'react-router-dom';
 import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
-import {  callOutline, mailOutline } from "ionicons/icons";
+import { callOutline, copyOutline, mailOutline } from "ionicons/icons";
 import ProfilePhoto from "../components/ProfilePhoto";
 import { refreshPage } from "../utils";
+import copy from "copy-to-clipboard";
 
 type PageParams = {
     id?: string;
@@ -26,6 +27,18 @@ const ViewInquiry: React.FC = () => {
 
     const filteredInquiry = inquriesData && inquriesData.length > 0 && _.filter(inquriesData[0].data, { "🔒 Row ID": id })
     const currentInquiry: any = (filteredInquiry && filteredInquiry.length > 0) ? filteredInquiry[0] : {}
+
+    const [present] = useIonToast();
+    const postCopyToClipboard = (text: any) => {
+        copy(text);
+        present({
+            message: 'Copied to Clipboard',
+            duration: 1500,
+            position: 'top',
+            icon: copyOutline,
+            color: 'primary'
+        });
+    };
 
     return (
         <IonPage id="main-content">
@@ -61,8 +74,28 @@ const ViewInquiry: React.FC = () => {
                     <ProfilePhoto url={currentInquiry["Photo"]} title={currentInquiry["Name"]} />
                     <IonCardHeader>
                         <IonCardTitle>{currentInquiry["Name"]}</IonCardTitle>
-                        <IonCardSubtitle><IonIcon icon={mailOutline} /> {currentInquiry["Email"]}</IonCardSubtitle>
-                        <IonCardSubtitle><IonIcon icon={callOutline} /> {currentInquiry["Phone"]}</IonCardSubtitle>
+                        {currentInquiry["Email"] &&
+                            <IonCardSubtitle>
+                                {currentInquiry["Email"]}
+                                <IonButton href={`mailto:${currentInquiry["Email"]}`} fill="clear" size="small">
+                                    <IonIcon slot="icon-only" icon={mailOutline}></IonIcon>
+                                </IonButton>
+                                <IonButton fill="clear" size="small" color={'medium'} onClick={() => postCopyToClipboard(currentInquiry["Email"])}>
+                                    <IonIcon slot="icon-only" icon={copyOutline}></IonIcon>
+                                </IonButton>
+                            </IonCardSubtitle>
+                        }
+                        {currentInquiry["Phone"] &&
+                            <IonCardSubtitle>
+                                {currentInquiry["Phone"]}
+                                <IonButton href={`tel:${currentInquiry["Phone"]}`} fill="clear" size="small">
+                                    <IonIcon slot="icon-only" icon={callOutline}></IonIcon>
+                                </IonButton>
+                                <IonButton fill="clear" size="small" color={'medium'} onClick={() => postCopyToClipboard(currentInquiry["Phone"])}>
+                                    <IonIcon slot="icon-only" icon={copyOutline}></IonIcon>
+                                </IonButton>
+                            </IonCardSubtitle>
+                        }
                     </IonCardHeader>
 
                     <IonCardContent>
