@@ -1,6 +1,5 @@
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonRefresher, IonRefresherContent, IonItem, IonLabel, IonToast, IonProgressBar } from '@ionic/react';
-import { refreshPage } from '../utils';
-import useGoogleSheets from 'use-google-sheets';
+import { refreshPage, useDataFromGoogleSheet } from '../utils';
 import * as _ from "lodash";
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import PhysioReportDaywise from '../components/PhysioReportDaywise';
@@ -10,11 +9,12 @@ import PhysioReportMonthwise from '../components/PhysioReportMonthwise';
 const PhysioReports: React.FC = () => {
   const title = "Physio Reports"
 
-  const { data, loading, error } = useGoogleSheets({
-    apiKey: process.env.REACT_APP_GOOGLE_API_KEY || "",
-    sheetId: process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
-    sheetsOptions: [],
-  });
+  const { status, data, error, isFetching } = useDataFromGoogleSheet(
+    process.env.REACT_APP_GOOGLE_API_KEY || "",
+    process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
+    [],
+  );
+  const loading = (status === "loading");
 
   const sessionsData = _.filter(data, { id: "Sessions" });
 
@@ -23,13 +23,14 @@ const PhysioReports: React.FC = () => {
       <IonHeader translucent={true}>
         <IonToolbar>
           <IonTitle>{title}</IonTitle>
-          {loading && <IonProgressBar type="indeterminate"></IonProgressBar>}
+          {isFetching && <IonProgressBar type="indeterminate"></IonProgressBar>}
           <IonButtons slot="start">
             <IonMenuButton color="primary"></IonMenuButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
+        <>
         <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
           <IonRefresherContent></IonRefresherContent>
         </IonRefresher>
@@ -51,7 +52,7 @@ const PhysioReports: React.FC = () => {
         <PhysioReportMonthwise data={sessionsData} />
         <br/>
         <PhysioReportDaywise data={sessionsData} />
-
+        </>
       </IonContent>
     </IonPage>
   );

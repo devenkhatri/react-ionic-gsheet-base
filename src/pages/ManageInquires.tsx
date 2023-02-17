@@ -5,11 +5,10 @@ import _ from 'lodash';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import useGoogleSheets from 'use-google-sheets';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import ProfilePhoto from '../components/ProfilePhoto';
 import { usePhotoGallery } from '../hooks/usePhotoGallery';
-import { refreshPage, uploadFileToFirebase } from '../utils';
+import { refreshPage, uploadFileToFirebase, useDataFromGoogleSheet } from '../utils';
 
 type PageParams = {
   id?: string;
@@ -32,11 +31,12 @@ const ManageInquires: React.FC = () => {
   const [category, setCategory] = useState("Gym")
   const [photo, setPhoto] = useState<any>()
 
-  const { data, loading, error } = useGoogleSheets({
-    apiKey: process.env.REACT_APP_GOOGLE_API_KEY || "",
-    sheetId: process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
-    sheetsOptions: [],
-  });
+  const { status, data, error, isFetching } = useDataFromGoogleSheet(
+    process.env.REACT_APP_GOOGLE_API_KEY || "",
+    process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
+    [],
+  );
+  const loading = (status === "loading");
 
   const { photos, takePhoto, deletePhoto } = usePhotoGallery();
 
@@ -159,7 +159,7 @@ const ManageInquires: React.FC = () => {
       <IonHeader translucent={true}>
         <IonToolbar>
           <IonTitle>{title}</IonTitle>
-          {loading && <IonProgressBar type="indeterminate"></IonProgressBar>}
+          {isFetching && <IonProgressBar type="indeterminate"></IonProgressBar>}
           <IonButtons slot="start">
             <IonBackButton defaultHref={id ? `/viewinquiry/${id}` : "/inquires"}></IonBackButton>
           </IonButtons>
@@ -172,137 +172,139 @@ const ManageInquires: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
-          <IonRefresherContent></IonRefresherContent>
-        </IonRefresher>
-        {loading &&
-          <ListLoadingSkeleton />
-        }
-        <IonToast
-          isOpen={!!error}
-          position={'top'}
-          color={'danger'}
-          message="Error occurred while fetching the details. Please try again !!!"
-          duration={1500}
-        />
-        {error &&
-          <IonItem color={'light'}>
-            <IonLabel color={'danger'}>Error loading data. Please refresh the page to try again !!!</IonLabel>
-          </IonItem>
-        }
-        <IonLoading
-          isOpen={showLoading}
-          onDidDismiss={() => setShowLoading(false)}
-          message={'Please wait while the data is being saved...'}
-        />
-        <IonFab vertical="bottom" horizontal="end" slot="fixed">
-          <IonFabButton>
-            <IonIcon icon={image}></IonIcon>
-          </IonFabButton>
-          <IonFabList side="top">
-            <IonFabButton color={'secondary'} onClick={() => takePhoto(name)}>
-              <IonIcon icon={camera}></IonIcon>
+        <>
+          <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
+            <IonRefresherContent></IonRefresherContent>
+          </IonRefresher>
+          {loading &&
+            <ListLoadingSkeleton />
+          }
+          <IonToast
+            isOpen={!!error}
+            position={'top'}
+            color={'danger'}
+            message="Error occurred while fetching the details. Please try again !!!"
+            duration={1500}
+          />
+          {error &&
+            <IonItem color={'light'}>
+              <IonLabel color={'danger'}>Error loading data. Please refresh the page to try again !!!</IonLabel>
+            </IonItem>
+          }
+          <IonLoading
+            isOpen={showLoading}
+            onDidDismiss={() => setShowLoading(false)}
+            message={'Please wait while the data is being saved...'}
+          />
+          <IonFab vertical="bottom" horizontal="end" slot="fixed">
+            <IonFabButton>
+              <IonIcon icon={image}></IonIcon>
             </IonFabButton>
-            {(photo || (photos && photos.length > 0)) && <IonFabButton color={'danger'} onClick={() => removePhoto()}>
-              <IonIcon icon={trash}></IonIcon>
-            </IonFabButton>
-            }
-          </IonFabList>
+            <IonFabList side="top">
+              <IonFabButton color={'secondary'} onClick={() => takePhoto(name)}>
+                <IonIcon icon={camera}></IonIcon>
+              </IonFabButton>
+              {(photo || (photos && photos.length > 0)) && <IonFabButton color={'danger'} onClick={() => removePhoto()}>
+                <IonIcon icon={trash}></IonIcon>
+              </IonFabButton>
+              }
+            </IonFabList>
 
-        </IonFab>
-        <ProfilePhoto url={photo || (photos && photos.length > 0 && photos[0].webviewPath)} title={name} />
-        <IonGrid>
-          <IonRow>
-            <IonCol><IonLabel>Inquiry Type</IonLabel></IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonSelect interface="action-sheet" interfaceOptions={{ header: "Select Inquiry Type" }} placeholder="Select Inquiry Type"
-                value={category}
-                onIonChange={(e) => setCategory(e.detail.value)}
-                style={{ background: "var(--ion-color-light)" }}
-              >
-                {allInquriyCategory && allInquriyCategory.map((options: any) => (
-                  <IonSelectOption key={options["Inquiry Category"]} value={options["Inquiry Category"]}>{options["Inquiry Category"]}</IonSelectOption>
-                ))}
-              </IonSelect>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonLabel>Name</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonInput clearInput={true} style={{ background: "var(--ion-color-light)" }}
-                onIonInput={(e: any) => setName(e.target.value)}
-                value={name}
-              ></IonInput>
-            </IonCol>
-          </IonRow>
-
-          <IonRow>
-            <IonCol>
-              <IonLabel>Email</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonInput type={'email'} clearInput={true} style={{ background: "var(--ion-color-light)" }}
-                onIonInput={(e: any) => setEmail(e.target.value)}
-                value={email}
-              ></IonInput>
-            </IonCol>
-          </IonRow>
-
-          <IonRow>
-            <IonCol>
-              <IonLabel>Phone</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonInput type={'number'} clearInput={true} style={{ background: "var(--ion-color-light)" }}
-                onIonInput={(e: any) => setPhone(e.target.value)}
-                value={phone}
-              ></IonInput>
-            </IonCol>
-          </IonRow>
-
-          <IonRow>
-            <IonCol>
-              <IonLabel>Date</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonDatetimeButton datetime="datetime" style={{ background: "var(--ion-color-light)" }}></IonDatetimeButton>
-              <IonModal keepContentsMounted={true}>
-                <IonDatetime id="datetime" showDefaultTitle={true} showDefaultButtons={true}
-                  onIonChange={(e) => setDate(e.detail.value)}
-                  value={date}
+          </IonFab>
+          <ProfilePhoto url={photo || (photos && photos.length > 0 && photos[0].webviewPath)} title={name} />
+          <IonGrid>
+            <IonRow>
+              <IonCol><IonLabel>Inquiry Type</IonLabel></IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonSelect interface="action-sheet" interfaceOptions={{ header: "Select Inquiry Type" }} placeholder="Select Inquiry Type"
+                  value={category}
+                  onIonChange={(e) => setCategory(e.detail.value)}
+                  style={{ background: "var(--ion-color-light)" }}
                 >
-                  <span slot="title">Date</span>
-                </IonDatetime>
-              </IonModal>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonLabel>Remarks</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonTextarea style={{ background: "var(--ion-color-light)" }}
-                onIonInput={(e: any) => setRemarks(e.target.value)}
-                value={remarks}
-              ></IonTextarea>
-            </IonCol>
-          </IonRow>
+                  {allInquriyCategory && allInquriyCategory.map((options: any) => (
+                    <IonSelectOption key={options["Inquiry Category"]} value={options["Inquiry Category"]}>{options["Inquiry Category"]}</IonSelectOption>
+                  ))}
+                </IonSelect>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonLabel>Name</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonInput clearInput={true} style={{ background: "var(--ion-color-light)" }}
+                  onIonInput={(e: any) => setName(e.target.value)}
+                  value={name}
+                ></IonInput>
+              </IonCol>
+            </IonRow>
 
-        </IonGrid>
+            <IonRow>
+              <IonCol>
+                <IonLabel>Email</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonInput type={'email'} clearInput={true} style={{ background: "var(--ion-color-light)" }}
+                  onIonInput={(e: any) => setEmail(e.target.value)}
+                  value={email}
+                ></IonInput>
+              </IonCol>
+            </IonRow>
+
+            <IonRow>
+              <IonCol>
+                <IonLabel>Phone</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonInput type={'number'} clearInput={true} style={{ background: "var(--ion-color-light)" }}
+                  onIonInput={(e: any) => setPhone(e.target.value)}
+                  value={phone}
+                ></IonInput>
+              </IonCol>
+            </IonRow>
+
+            <IonRow>
+              <IonCol>
+                <IonLabel>Date</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonDatetimeButton datetime="datetime" style={{ background: "var(--ion-color-light)" }}></IonDatetimeButton>
+                <IonModal keepContentsMounted={true}>
+                  <IonDatetime id="datetime" showDefaultTitle={true} showDefaultButtons={true}
+                    onIonChange={(e) => setDate(e.detail.value)}
+                    value={date}
+                  >
+                    <span slot="title">Date</span>
+                  </IonDatetime>
+                </IonModal>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonLabel>Remarks</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonTextarea style={{ background: "var(--ion-color-light)" }}
+                  onIonInput={(e: any) => setRemarks(e.target.value)}
+                  value={remarks}
+                ></IonTextarea>
+              </IonCol>
+            </IonRow>
+
+          </IonGrid>
+        </>
       </IonContent>
     </IonPage>
   );

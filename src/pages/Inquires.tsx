@@ -1,10 +1,9 @@
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonButton, IonIcon, IonItem, IonLabel, IonNavLink, IonRefresher, IonRefresherContent, IonToast, IonSearchbar, IonProgressBar } from '@ionic/react';
 import { add } from 'ionicons/icons';
-import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
-import { refreshPage } from '../utils';
+import { refreshPage, useDataFromGoogleSheet } from '../utils';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
-import React, {  useState } from 'react';
+import React, { useState } from 'react';
 import moment from 'moment';
 import InquiryList from '../components/InquiryList';
 import ManageInquires from './ManageInquires';
@@ -12,11 +11,12 @@ import ManageInquires from './ManageInquires';
 const Inquires: React.FC = () => {
   const title = "Inquires"
 
-  const { data, loading, error } = useGoogleSheets({
-    apiKey: process.env.REACT_APP_GOOGLE_API_KEY || "",
-    sheetId: process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
-    sheetsOptions: [],
-  });
+  const { status, data, error, isFetching } = useDataFromGoogleSheet(
+    process.env.REACT_APP_GOOGLE_API_KEY || "",
+    process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
+    [],
+  );
+  const loading = (status === "loading");
 
   const inquriesData = _.filter(data, { id: "Inquires" });
 
@@ -29,7 +29,7 @@ const Inquires: React.FC = () => {
     setQuery(q)
   }
 
-  const sortedInquriesMembers = inquriesData && inquriesData.length > 0 && _.orderBy(inquriesData[0].data, (item: any) => moment(item["Date"], "DD-MMM-YYYY"),'desc')
+  const sortedInquriesMembers = inquriesData && inquriesData.length > 0 && _.orderBy(inquriesData[0].data, (item: any) => moment(item["Date"], "DD-MMM-YYYY"), 'desc')
   const filteredInquriesMembers = sortedInquriesMembers && query ? _.filter(sortedInquriesMembers, (item: any) => item["Name"] && item["Name"].toLowerCase().indexOf(query) > -1) : sortedInquriesMembers;
 
   return (
@@ -37,7 +37,7 @@ const Inquires: React.FC = () => {
       <IonHeader translucent={true}>
         <IonToolbar>
           <IonTitle>{title}</IonTitle>
-          {loading && <IonProgressBar type="indeterminate"></IonProgressBar>}
+          {isFetching && <IonProgressBar type="indeterminate"></IonProgressBar>}
           <IonButtons slot="start">
             <IonMenuButton color="primary"></IonMenuButton>
           </IonButtons>
@@ -54,26 +54,28 @@ const Inquires: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
-          <IonRefresherContent></IonRefresherContent>
-        </IonRefresher>
-        {loading &&
-          <ListLoadingSkeleton />
-        }
-        <IonToast
-          isOpen={!!error}
-          position={'top'}
-          color={'danger'}
-          message="Error occurred while fetching the details. Please try again !!!"
-          duration={1500}
-        />
-        {error &&
-          <IonItem color={'light'}>
-            <IonLabel color={'danger'}>Error loading data. Please refresh the page to try again !!!</IonLabel>
-          </IonItem>
-        }
-        {filteredInquriesMembers && <InquiryList allInquires={filteredInquriesMembers} />}
-        {!loading && filteredInquriesMembers && filteredInquriesMembers.length <=0 && <IonItem>No Data Found...</IonItem>}        
+        <>
+          <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
+            <IonRefresherContent></IonRefresherContent>
+          </IonRefresher>
+          {loading &&
+            <ListLoadingSkeleton />
+          }
+          <IonToast
+            isOpen={!!error}
+            position={'top'}
+            color={'danger'}
+            message="Error occurred while fetching the details. Please try again !!!"
+            duration={1500}
+          />
+          {error &&
+            <IonItem color={'light'}>
+              <IonLabel color={'danger'}>Error loading data. Please refresh the page to try again !!!</IonLabel>
+            </IonItem>
+          }
+          {filteredInquriesMembers && <InquiryList allInquires={filteredInquriesMembers} />}
+          {!loading && filteredInquriesMembers && filteredInquriesMembers.length <= 0 && <IonItem>No Data Found...</IonItem>}
+        </>
       </IonContent>
     </IonPage>
   );

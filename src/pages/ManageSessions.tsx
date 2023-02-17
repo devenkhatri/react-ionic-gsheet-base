@@ -2,8 +2,7 @@ import { IonBackButton, IonButton, IonButtons, IonCol, IonContent, IonDatetime, 
 import { saveOutline, thumbsDown, thumbsUp } from 'ionicons/icons';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { refreshPage } from '../utils';
-import useGoogleSheets from 'use-google-sheets';
+import { refreshPage, useDataFromGoogleSheet } from '../utils';
 import * as _ from "lodash";
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import { useEffect, useState } from 'react';
@@ -22,11 +21,12 @@ const ManageSessions: React.FC = () => {
 
   const title = (isEdit ? "Edit" : "Add") + " Sessions";
 
-  const { data, loading, error } = useGoogleSheets({
-    apiKey: process.env.REACT_APP_GOOGLE_API_KEY || "",
-    sheetId: process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
-    sheetsOptions: [],
-  });
+  const { status, data, error, isFetching } = useDataFromGoogleSheet(
+    process.env.REACT_APP_GOOGLE_API_KEY || "",
+    process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
+    [],
+  );
+  const loading = (status === "loading");
 
   const patientsData = _.filter(data, { id: "Patients" });
   const sortedPatients = patientsData && patientsData.length > 0 && _.orderBy(patientsData[0].data, (item: any) => item["Name"])
@@ -131,7 +131,7 @@ const ManageSessions: React.FC = () => {
     const filteredPatients = _.filter(sortedPatients, (item: any) => item["Name"] && item["Name"].toLowerCase().indexOf(q) >= 0)
     setAllPatients(filteredPatients)
     const currentPatient: any = (filteredPatients && filteredPatients.length > 0) ? filteredPatients[0] : {}
-    setPatientID(q?currentPatient["🔒 Row ID"]:"")
+    setPatientID(q ? currentPatient["🔒 Row ID"] : "")
   }
 
   return (
@@ -139,7 +139,7 @@ const ManageSessions: React.FC = () => {
       <IonHeader translucent={true}>
         <IonToolbar>
           <IonTitle>{title}</IonTitle>
-          {loading && <IonProgressBar type="indeterminate"></IonProgressBar>}
+          {isFetching && <IonProgressBar type="indeterminate"></IonProgressBar>}
           <IonButtons slot="start">
             <IonBackButton defaultHref={id ? `/viewsession/${id}` : "/sessions"}></IonBackButton>
           </IonButtons>
@@ -152,134 +152,136 @@ const ManageSessions: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen={true} scrollY={true}>
-        <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
-          <IonRefresherContent></IonRefresherContent>
-        </IonRefresher>
-        {loading &&
-          <ListLoadingSkeleton />
-        }
-        <IonToast
-          isOpen={!!error}
-          position={'top'}
-          color={'danger'}
-          message="Error occurred while fetching the details. Please try again !!!"
-          duration={1500}
-        />
-        {error &&
-          <IonItem color={'light'}>
-            <IonLabel color={'danger'}>Error loading data. Please refresh the page to try again !!!</IonLabel>
-          </IonItem>
-        }
-        <IonLoading
-          isOpen={showLoading}
-          onDidDismiss={() => setShowLoading(false)}
-          message={'Please wait while the data is being saved...'}
-        />
-        <IonGrid>
-          <IonRow>
-            <IonCol>
-              <IonLabel>Patient Name</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonSearchbar animated={true} showClearButton="focus" placeholder="Search Patient" onIonChange={(ev) => handleSearch(ev)}></IonSearchbar>
-              <IonSelect
-                interface="action-sheet"
-                interfaceOptions={{ header: "Select Patient" }}
-                onIonChange={(e) => {
-                  setPatientID(e.detail.value);
-                  setPatientName(getPatientNameFromID(e.detail.value))
-                }}
-                value={patientID}
-                style={{ background: "var(--ion-color-light)" }}
-              >
-                {allPatients && allPatients.map((patient: any) => (
-                  <IonSelectOption key={patient["🔒 Row ID"]} value={patient["🔒 Row ID"]}>{patient["Name"]}</IonSelectOption>
-                ))}
-              </IonSelect>
-            </IonCol>
-          </IonRow>
-
-          <IonRow>
-            <IonCol>
-              <IonLabel>Session Date</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonDatetimeButton datetime="datetime" style={{ background: "var(--ion-color-light)" }}></IonDatetimeButton>
-              <IonModal keepContentsMounted={true}>
-                <IonDatetime
-                  id="datetime"
-                  showDefaultTitle={true}
-                  showDefaultButtons={true}
-                  onIonChange={(e) => setSessionDate(e.detail.value)}
-                  value={sessionDate}
+        <>
+          <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
+            <IonRefresherContent></IonRefresherContent>
+          </IonRefresher>
+          {loading &&
+            <ListLoadingSkeleton />
+          }
+          <IonToast
+            isOpen={!!error}
+            position={'top'}
+            color={'danger'}
+            message="Error occurred while fetching the details. Please try again !!!"
+            duration={1500}
+          />
+          {error &&
+            <IonItem color={'light'}>
+              <IonLabel color={'danger'}>Error loading data. Please refresh the page to try again !!!</IonLabel>
+            </IonItem>
+          }
+          <IonLoading
+            isOpen={showLoading}
+            onDidDismiss={() => setShowLoading(false)}
+            message={'Please wait while the data is being saved...'}
+          />
+          <IonGrid>
+            <IonRow>
+              <IonCol>
+                <IonLabel>Patient Name</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonSearchbar animated={true} showClearButton="focus" placeholder="Search Patient" onIonChange={(ev) => handleSearch(ev)}></IonSearchbar>
+                <IonSelect
+                  interface="action-sheet"
+                  interfaceOptions={{ header: "Select Patient" }}
+                  onIonChange={(e) => {
+                    setPatientID(e.detail.value);
+                    setPatientName(getPatientNameFromID(e.detail.value))
+                  }}
+                  value={patientID}
+                  style={{ background: "var(--ion-color-light)" }}
                 >
-                  <span slot="title">Session Date</span>
-                </IonDatetime>
-              </IonModal>
-            </IonCol>
-          </IonRow>
+                  {allPatients && allPatients.map((patient: any) => (
+                    <IonSelectOption key={patient["🔒 Row ID"]} value={patient["🔒 Row ID"]}>{patient["Name"]}</IonSelectOption>
+                  ))}
+                </IonSelect>
+              </IonCol>
+            </IonRow>
 
-          <IonRow>
-            <IonCol><IonLabel>Payment Mode</IonLabel></IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonSelect interface="action-sheet" interfaceOptions={{ header: "Select Payment Mode" }} placeholder="Select Payment Mode"
-                value={paymentMode}
-                onIonChange={(e) => setPaymentMode(e.detail.value)}
-                style={{ background: "var(--ion-color-light)" }}
-              >
-                {allPaymentModes && allPaymentModes.map((options: any) => (
-                  <IonSelectOption key={options["Payment Modes"]} value={options["Payment Modes"]}>{options["Payment Modes"]}</IonSelectOption>
-                ))}
-              </IonSelect>
-            </IonCol>
-          </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonLabel>Session Date</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonDatetimeButton datetime="datetime" style={{ background: "var(--ion-color-light)" }}></IonDatetimeButton>
+                <IonModal keepContentsMounted={true}>
+                  <IonDatetime
+                    id="datetime"
+                    showDefaultTitle={true}
+                    showDefaultButtons={true}
+                    onIonChange={(e) => setSessionDate(e.detail.value)}
+                    value={sessionDate}
+                  >
+                    <span slot="title">Session Date</span>
+                  </IonDatetime>
+                </IonModal>
+              </IonCol>
+            </IonRow>
 
-          <IonRow>
-            <IonCol>
-              <IonLabel>Amount Received</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonInput type='number' defaultValue="0" placeholder='0'
-                onIonInput={(e) => setAmountPaid(e.target.value)}
-                style={{ background: "var(--ion-color-light)" }}
-                value={amountPaid}></IonInput>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonLabel>Amount Pending</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonInput type='number' defaultValue="0" placeholder='0'
-                onIonInput={(e) => setAmountPending(e.target.value)}
-                style={{ background: "var(--ion-color-light)" }}
-                value={amountPending}></IonInput>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonLabel>Amount Deposited</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonInput type='number' defaultValue="0" placeholder='0'
-                onIonInput={(e) => setDepositAmount(e.target.value)}
-                style={{ background: "var(--ion-color-light)" }}
-                value={depositAmount}></IonInput>
-            </IonCol>
-          </IonRow>
-        </IonGrid>
+            <IonRow>
+              <IonCol><IonLabel>Payment Mode</IonLabel></IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonSelect interface="action-sheet" interfaceOptions={{ header: "Select Payment Mode" }} placeholder="Select Payment Mode"
+                  value={paymentMode}
+                  onIonChange={(e) => setPaymentMode(e.detail.value)}
+                  style={{ background: "var(--ion-color-light)" }}
+                >
+                  {allPaymentModes && allPaymentModes.map((options: any) => (
+                    <IonSelectOption key={options["Payment Modes"]} value={options["Payment Modes"]}>{options["Payment Modes"]}</IonSelectOption>
+                  ))}
+                </IonSelect>
+              </IonCol>
+            </IonRow>
+
+            <IonRow>
+              <IonCol>
+                <IonLabel>Amount Received</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonInput type='number' defaultValue="0" placeholder='0'
+                  onIonInput={(e) => setAmountPaid(e.target.value)}
+                  style={{ background: "var(--ion-color-light)" }}
+                  value={amountPaid}></IonInput>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonLabel>Amount Pending</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonInput type='number' defaultValue="0" placeholder='0'
+                  onIonInput={(e) => setAmountPending(e.target.value)}
+                  style={{ background: "var(--ion-color-light)" }}
+                  value={amountPending}></IonInput>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonLabel>Amount Deposited</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonInput type='number' defaultValue="0" placeholder='0'
+                  onIonInput={(e) => setDepositAmount(e.target.value)}
+                  style={{ background: "var(--ion-color-light)" }}
+                  value={depositAmount}></IonInput>
+              </IonCol>
+            </IonRow>
+          </IonGrid>
+        </>
       </IonContent>
     </IonPage>
   );

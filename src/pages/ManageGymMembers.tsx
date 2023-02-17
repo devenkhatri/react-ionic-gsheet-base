@@ -5,11 +5,10 @@ import _ from 'lodash';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import useGoogleSheets from 'use-google-sheets';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import ProfilePhoto from '../components/ProfilePhoto';
 import { usePhotoGallery } from '../hooks/usePhotoGallery';
-import { refreshPage, uploadFileToFirebase } from '../utils';
+import { refreshPage, uploadFileToFirebase, useDataFromGoogleSheet } from '../utils';
 
 type PageParams = {
   id?: string;
@@ -38,11 +37,12 @@ const ManageGymMembers: React.FC = () => {
   const [amountReceived, setAmountReceived] = useState()
   const [amountPending, setAmountPending] = useState()
 
-  const { data, loading, error } = useGoogleSheets({
-    apiKey: process.env.REACT_APP_GOOGLE_API_KEY || "",
-    sheetId: process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
-    sheetsOptions: [],
-  });
+  const { status, data, error, isFetching } = useDataFromGoogleSheet(
+    process.env.REACT_APP_GOOGLE_API_KEY || "",
+    process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
+    [],
+  );
+  const loading = (status === "loading");
 
   const optionsData = _.filter(data, { id: "Options" });
   const allPaymentModes = optionsData && optionsData.length > 0 && _.filter(optionsData[0].data, (item: any) => item["Payment Modes"])
@@ -176,7 +176,7 @@ const ManageGymMembers: React.FC = () => {
       <IonHeader translucent={true}>
         <IonToolbar>
           <IonTitle>{title}</IonTitle>
-          {loading && <IonProgressBar type="indeterminate"></IonProgressBar>}
+          {isFetching && <IonProgressBar type="indeterminate"></IonProgressBar>}
           <IonButtons slot="start">
             <IonBackButton defaultHref={id ? `/viewgymmember/${id}` : "/gymmembers"}></IonBackButton>
           </IonButtons>
@@ -189,184 +189,186 @@ const ManageGymMembers: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
-          <IonRefresherContent></IonRefresherContent>
-        </IonRefresher>
-        {loading &&
-          <ListLoadingSkeleton />
-        }
-        <IonToast
-          isOpen={!!error}
-          position={'top'}
-          color={'danger'}
-          message="Error occurred while fetching the details. Please try again !!!"
-          duration={1500}
-        />
-        {error &&
-          <IonItem color={'light'}>
-            <IonLabel color={'danger'}>Error loading data. Please refresh the page to try again !!!</IonLabel>
-          </IonItem>
-        }
-        <IonLoading
-          isOpen={showLoading}
-          onDidDismiss={() => setShowLoading(false)}
-          message={'Please wait while the data is being saved...'}
-        />
-        <IonFab vertical="bottom" horizontal="end" slot="fixed">
-          <IonFabButton>
-            <IonIcon icon={image}></IonIcon>
-          </IonFabButton>
-          <IonFabList side="top">
-            <IonFabButton color={'secondary'} onClick={() => takePhoto(name)}>
-              <IonIcon icon={camera}></IonIcon>
-            </IonFabButton>
-            {(profilePhoto || (photos && photos.length > 0)) && <IonFabButton color={'danger'} onClick={() => removePhoto()}>
-              <IonIcon icon={trash}></IonIcon>
-            </IonFabButton>
-            }
-          </IonFabList>
-
-        </IonFab>
-        <ProfilePhoto url={profilePhoto || (photos && photos.length > 0 && photos[0].webviewPath)} title={name} />
-        <IonGrid>
-          <IonRow>
-            <IonCol>
-              <IonLabel>Name</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonInput clearInput={true} style={{ background: "var(--ion-color-light)" }}
-                onIonInput={(e: any) => setName(e.target.value)}
-                value={name}
-              ></IonInput>
-            </IonCol>
-          </IonRow>
-
-          <IonRow>
-            <IonCol>
-              <IonLabel>Email</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonInput type={'email'} clearInput={true} style={{ background: "var(--ion-color-light)" }}
-                onIonInput={(e: any) => setEmail(e.target.value)}
-                value={email}
-              ></IonInput>
-            </IonCol>
-          </IonRow>
-
-          <IonRow>
-            <IonCol>
-              <IonLabel>Phone</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonInput type={'number'} clearInput={true} style={{ background: "var(--ion-color-light)" }}
-                onIonInput={(e: any) => setPhone(e.target.value)}
-                value={phone}
-              ></IonInput>
-            </IonCol>
-          </IonRow>
-
-          <IonRow>
-            <IonCol>
-              <IonLabel>Joining Date</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonDatetimeButton datetime="datetime" style={{ background: "var(--ion-color-light)" }}></IonDatetimeButton>
-              <IonModal keepContentsMounted={true}>
-                <IonDatetime id="datetime" showDefaultTitle={true} showDefaultButtons={true}
-                  onIonChange={(e) => setJoiningDate(e.detail.value)}
-                  value={joiningDate}
-                >
-                  <span slot="title">Joining Date</span>
-                </IonDatetime>
-              </IonModal>
-            </IonCol>
-          </IonRow>
-
-          <IonRow>
-            <IonCol>
-              <IonLabel>Membership (in Months)</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonInput type={'number'} clearInput={true} style={{ background: "var(--ion-color-light)" }}
-                onIonInput={(e: any) => setMonths(e.target.value)}
-                value={months}
-                placeholder="0"
-              ></IonInput>
-            </IonCol>
-          </IonRow>
-          {isGymAdminAccess &&
-            <>
-              <IonRow>
-                <IonCol><IonLabel>Payment Mode</IonLabel></IonCol>
-              </IonRow>
-              <IonRow>
-                <IonCol>
-                  <IonSelect interface="action-sheet" interfaceOptions={{ header: "Select Payment Mode" }} placeholder="Select Payment Mode"
-                    value={paymentMode}
-                    onIonChange={(e) => setPaymentMode(e.detail.value)}
-                    style={{ background: "var(--ion-color-light)" }}
-                  >
-                    {allPaymentModes && allPaymentModes.map((options: any) => (
-                      <IonSelectOption key={options["Payment Modes"]} value={options["Payment Modes"]}>{options["Payment Modes"]}</IonSelectOption>
-                    ))}
-                  </IonSelect>
-                </IonCol>
-              </IonRow>
-
-              <IonRow>
-                <IonCol>
-                  <IonLabel>Amount Received</IonLabel>
-                </IonCol>
-              </IonRow>
-              <IonRow>
-                <IonCol>
-                  <IonInput type='number' clearInput={true} style={{ background: "var(--ion-color-light)" }}
-                    onIonInput={(e: any) => setAmountReceived(e.target.value)}
-                    value={amountReceived}
-                    placeholder="0"
-                  ></IonInput>
-                </IonCol>
-              </IonRow>
-
-              <IonRow>
-                <IonCol>
-                  <IonLabel>Amount Pending</IonLabel>
-                </IonCol>
-              </IonRow>
-              <IonRow>
-                <IonCol>
-                  <IonInput type='number' clearInput={true} style={{ background: "var(--ion-color-light)" }}
-                    onIonInput={(e: any) => setAmountPending(e.target.value)}
-                    value={amountPending}
-                    placeholder="0"
-                  ></IonInput>
-                </IonCol>
-              </IonRow>
-            </>
+        <>
+          <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
+            <IonRefresherContent></IonRefresherContent>
+          </IonRefresher>
+          {loading &&
+            <ListLoadingSkeleton />
           }
+          <IonToast
+            isOpen={!!error}
+            position={'top'}
+            color={'danger'}
+            message="Error occurred while fetching the details. Please try again !!!"
+            duration={1500}
+          />
+          {error &&
+            <IonItem color={'light'}>
+              <IonLabel color={'danger'}>Error loading data. Please refresh the page to try again !!!</IonLabel>
+            </IonItem>
+          }
+          <IonLoading
+            isOpen={showLoading}
+            onDidDismiss={() => setShowLoading(false)}
+            message={'Please wait while the data is being saved...'}
+          />
+          <IonFab vertical="bottom" horizontal="end" slot="fixed">
+            <IonFabButton>
+              <IonIcon icon={image}></IonIcon>
+            </IonFabButton>
+            <IonFabList side="top">
+              <IonFabButton color={'secondary'} onClick={() => takePhoto(name)}>
+                <IonIcon icon={camera}></IonIcon>
+              </IonFabButton>
+              {(profilePhoto || (photos && photos.length > 0)) && <IonFabButton color={'danger'} onClick={() => removePhoto()}>
+                <IonIcon icon={trash}></IonIcon>
+              </IonFabButton>
+              }
+            </IonFabList>
 
-          <IonRow>
-            <IonCol>
-              <IonLabel>isPersonalTraining</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonToggle checked={!!isPersonalTraining} onIonChange={(e: any) => setIsPersonalTraining(e.detail.checked ? 'Yes' : '')}></IonToggle>
-            </IonCol>
-          </IonRow>
+          </IonFab>
+          <ProfilePhoto url={profilePhoto || (photos && photos.length > 0 && photos[0].webviewPath)} title={name} />
+          <IonGrid>
+            <IonRow>
+              <IonCol>
+                <IonLabel>Name</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonInput clearInput={true} style={{ background: "var(--ion-color-light)" }}
+                  onIonInput={(e: any) => setName(e.target.value)}
+                  value={name}
+                ></IonInput>
+              </IonCol>
+            </IonRow>
 
-        </IonGrid>
+            <IonRow>
+              <IonCol>
+                <IonLabel>Email</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonInput type={'email'} clearInput={true} style={{ background: "var(--ion-color-light)" }}
+                  onIonInput={(e: any) => setEmail(e.target.value)}
+                  value={email}
+                ></IonInput>
+              </IonCol>
+            </IonRow>
+
+            <IonRow>
+              <IonCol>
+                <IonLabel>Phone</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonInput type={'number'} clearInput={true} style={{ background: "var(--ion-color-light)" }}
+                  onIonInput={(e: any) => setPhone(e.target.value)}
+                  value={phone}
+                ></IonInput>
+              </IonCol>
+            </IonRow>
+
+            <IonRow>
+              <IonCol>
+                <IonLabel>Joining Date</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonDatetimeButton datetime="datetime" style={{ background: "var(--ion-color-light)" }}></IonDatetimeButton>
+                <IonModal keepContentsMounted={true}>
+                  <IonDatetime id="datetime" showDefaultTitle={true} showDefaultButtons={true}
+                    onIonChange={(e) => setJoiningDate(e.detail.value)}
+                    value={joiningDate}
+                  >
+                    <span slot="title">Joining Date</span>
+                  </IonDatetime>
+                </IonModal>
+              </IonCol>
+            </IonRow>
+
+            <IonRow>
+              <IonCol>
+                <IonLabel>Membership (in Months)</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonInput type={'number'} clearInput={true} style={{ background: "var(--ion-color-light)" }}
+                  onIonInput={(e: any) => setMonths(e.target.value)}
+                  value={months}
+                  placeholder="0"
+                ></IonInput>
+              </IonCol>
+            </IonRow>
+            {isGymAdminAccess &&
+              <>
+                <IonRow>
+                  <IonCol><IonLabel>Payment Mode</IonLabel></IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol>
+                    <IonSelect interface="action-sheet" interfaceOptions={{ header: "Select Payment Mode" }} placeholder="Select Payment Mode"
+                      value={paymentMode}
+                      onIonChange={(e) => setPaymentMode(e.detail.value)}
+                      style={{ background: "var(--ion-color-light)" }}
+                    >
+                      {allPaymentModes && allPaymentModes.map((options: any) => (
+                        <IonSelectOption key={options["Payment Modes"]} value={options["Payment Modes"]}>{options["Payment Modes"]}</IonSelectOption>
+                      ))}
+                    </IonSelect>
+                  </IonCol>
+                </IonRow>
+
+                <IonRow>
+                  <IonCol>
+                    <IonLabel>Amount Received</IonLabel>
+                  </IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol>
+                    <IonInput type='number' clearInput={true} style={{ background: "var(--ion-color-light)" }}
+                      onIonInput={(e: any) => setAmountReceived(e.target.value)}
+                      value={amountReceived}
+                      placeholder="0"
+                    ></IonInput>
+                  </IonCol>
+                </IonRow>
+
+                <IonRow>
+                  <IonCol>
+                    <IonLabel>Amount Pending</IonLabel>
+                  </IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol>
+                    <IonInput type='number' clearInput={true} style={{ background: "var(--ion-color-light)" }}
+                      onIonInput={(e: any) => setAmountPending(e.target.value)}
+                      value={amountPending}
+                      placeholder="0"
+                    ></IonInput>
+                  </IonCol>
+                </IonRow>
+              </>
+            }
+
+            <IonRow>
+              <IonCol>
+                <IonLabel>isPersonalTraining</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonToggle checked={!!isPersonalTraining} onIonChange={(e: any) => setIsPersonalTraining(e.detail.checked ? 'Yes' : '')}></IonToggle>
+              </IonCol>
+            </IonRow>
+
+          </IonGrid>
+        </>
       </IonContent>
     </IonPage>
   );

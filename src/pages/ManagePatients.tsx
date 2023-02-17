@@ -5,9 +5,8 @@ import _ from 'lodash';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import useGoogleSheets from 'use-google-sheets';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
-import { refreshPage } from '../utils';
+import { refreshPage, useDataFromGoogleSheet } from '../utils';
 
 type PageParams = {
   id?: string;
@@ -30,11 +29,12 @@ const ManagePatients: React.FC = () => {
   const [referralType, setReferralType] = useState<any>("")
   const [referralDetails, setReferralDetails] = useState<any>("")
 
-  const { data, loading, error } = useGoogleSheets({
-    apiKey: process.env.REACT_APP_GOOGLE_API_KEY || "",
-    sheetId: process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
-    sheetsOptions: [],
-  });
+  const { status, data, error, isFetching } = useDataFromGoogleSheet(
+    process.env.REACT_APP_GOOGLE_API_KEY || "",
+    process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
+    [],
+  );
+  const loading = (status === "loading");
 
   const optionsData = _.filter(data, { id: "Options" });
   const allReferralType = optionsData && optionsData.length > 0 && _.filter(optionsData[0].data, (item: any) => item["Referral Type"])
@@ -48,7 +48,7 @@ const ManagePatients: React.FC = () => {
   const [showLoading, setShowLoading] = useState(false);
 
   useEffect(() => {
-    if(!referralType) setReferralType(defaultReferralType && defaultReferralType["Referral Type"]);
+    if (!referralType) setReferralType(defaultReferralType && defaultReferralType["Referral Type"]);
     if (isEdit && currentPatient) {
       setPatientName(currentPatient["Name"])
       currentPatient["Start Date"] && setStartDate(moment(currentPatient["Start Date"], "MM/DD/YYYY").format())
@@ -117,7 +117,7 @@ const ManagePatients: React.FC = () => {
       <IonHeader translucent={true}>
         <IonToolbar>
           <IonTitle>{title}</IonTitle>
-          {loading && <IonProgressBar type="indeterminate"></IonProgressBar> }
+          {isFetching && <IonProgressBar type="indeterminate"></IonProgressBar>}
           <IonButtons slot="start">
             <IonBackButton defaultHref="/patients"></IonBackButton>
           </IonButtons>
@@ -130,140 +130,141 @@ const ManagePatients: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
-          <IonRefresherContent></IonRefresherContent>
-        </IonRefresher>
-        {loading &&
-          <ListLoadingSkeleton />
-        }
-        <IonToast
-          isOpen={!!error}
-          position={'top'}
-          color={'danger'}
-          message="Error occurred while fetching the details. Please try again !!!"
-          duration={1500}
-        />
-        {error &&
-          <IonItem color={'light'}>
-            <IonLabel color={'danger'}>Error loading data. Please refresh the page to try again !!!</IonLabel>
-          </IonItem>
-        }
-        <IonLoading
-          isOpen={showLoading}
-          onDidDismiss={() => setShowLoading(false)}
-          message={'Please wait while the data is being saved...'}
-        />
-        <IonGrid>
-          <IonRow>
-            <IonCol>
-              <IonLabel>Patient Name</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonInput clearInput={true} style={{ background: "var(--ion-color-light)" }}
-                onIonInput={(e: any) => setPatientName(e.target.value)}
-                value={patientName}
-              ></IonInput>
-            </IonCol>
-          </IonRow>
+        <>
+          <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
+            <IonRefresherContent></IonRefresherContent>
+          </IonRefresher>
+          {loading &&
+            <ListLoadingSkeleton />
+          }
+          <IonToast
+            isOpen={!!error}
+            position={'top'}
+            color={'danger'}
+            message="Error occurred while fetching the details. Please try again !!!"
+            duration={1500}
+          />
+          {error &&
+            <IonItem color={'light'}>
+              <IonLabel color={'danger'}>Error loading data. Please refresh the page to try again !!!</IonLabel>
+            </IonItem>
+          }
+          <IonLoading
+            isOpen={showLoading}
+            onDidDismiss={() => setShowLoading(false)}
+            message={'Please wait while the data is being saved...'}
+          />
+          <IonGrid>
+            <IonRow>
+              <IonCol>
+                <IonLabel>Patient Name</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonInput clearInput={true} style={{ background: "var(--ion-color-light)" }}
+                  onIonInput={(e: any) => setPatientName(e.target.value)}
+                  value={patientName}
+                ></IonInput>
+              </IonCol>
+            </IonRow>
 
-          <IonRow>
-            <IonCol>
-              <IonLabel>Start Date</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonDatetimeButton datetime="datetime" style={{ background: "var(--ion-color-light)" }}></IonDatetimeButton>
-              <IonModal keepContentsMounted={true}>
-                <IonDatetime id="datetime" showDefaultTitle={true} showDefaultButtons={true}
-                  onIonChange={(e) => setStartDate(e.detail.value)}
-                  value={startDate}
+            <IonRow>
+              <IonCol>
+                <IonLabel>Start Date</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonDatetimeButton datetime="datetime" style={{ background: "var(--ion-color-light)" }}></IonDatetimeButton>
+                <IonModal keepContentsMounted={true}>
+                  <IonDatetime id="datetime" showDefaultTitle={true} showDefaultButtons={true}
+                    onIonChange={(e) => setStartDate(e.detail.value)}
+                    value={startDate}
+                  >
+                    <span slot="title">Start Date</span>
+                  </IonDatetime>
+                </IonModal>
+              </IonCol>
+            </IonRow>
+
+            <IonRow>
+              <IonCol>
+                <IonLabel>Description</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonTextarea
+                  autoCorrect='true'
+                  autoGrow={true}
+                  placeholder="Enter Patient Description here..."
+                  onIonInput={(e: any) => setDescription(e.target.value)}
+                  value={description}
+                  style={{ background: "var(--ion-color-light)" }} />
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonLabel>Phone</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonInput type='number' clearInput={true} style={{ background: "var(--ion-color-light)" }}
+                  onIonInput={(e: any) => setPhone(e.target.value)}
+                  value={phone}
+                ></IonInput>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonLabel>Occupation</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonInput clearInput={true} style={{ background: "var(--ion-color-light)" }}
+                  onIonInput={(e: any) => setOccupation(e.target.value)}
+                  value={occupation}
+                ></IonInput>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol><IonLabel>Referral Type</IonLabel></IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonSelect interface="action-sheet" interfaceOptions={{ header: "Select Referral Type" }} placeholder="Select Referral Type"
+                  value={referralType}
+                  onIonChange={(e) => setReferralType(e.detail.value)}
+                  style={{ background: "var(--ion-color-light)" }}
                 >
-                  <span slot="title">Start Date</span>
-                </IonDatetime>
-              </IonModal>
-            </IonCol>
-          </IonRow>
+                  {allReferralType && allReferralType.map((options: any) => (
+                    <IonSelectOption key={options["Referral Type"]} value={options["Referral Type"]}>{options["Referral Type"]}</IonSelectOption>
+                  ))}
+                </IonSelect>
+              </IonCol>
+            </IonRow>
 
-          <IonRow>
-            <IonCol>
-              <IonLabel>Description</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonTextarea
-                autoCorrect='true'
-                autoGrow={true}
-                placeholder="Enter Patient Description here..."
-                onIonInput={(e: any) => setDescription(e.target.value)}
-                value={description}
-                style={{ background: "var(--ion-color-light)" }} />
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonLabel>Phone</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonInput type='number' clearInput={true} style={{ background: "var(--ion-color-light)" }}
-                onIonInput={(e: any) => setPhone(e.target.value)}
-                value={phone}
-              ></IonInput>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonLabel>Occupation</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonInput clearInput={true} style={{ background: "var(--ion-color-light)" }}
-                onIonInput={(e: any) => setOccupation(e.target.value)}
-                value={occupation}
-              ></IonInput>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol><IonLabel>Referral Type</IonLabel></IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonSelect interface="action-sheet" interfaceOptions={{ header: "Select Referral Type" }} placeholder="Select Referral Type"
-                value={referralType}
-                onIonChange={(e) => setReferralType(e.detail.value)}
-                style={{ background: "var(--ion-color-light)" }}
-              >
-                {allReferralType && allReferralType.map((options: any) => (
-                  <IonSelectOption key={options["Referral Type"]} value={options["Referral Type"]}>{options["Referral Type"]}</IonSelectOption>
-                ))}
-              </IonSelect>
-            </IonCol>
-          </IonRow>
-
-          <IonRow>
-            <IonCol>
-              <IonLabel>Referral Details</IonLabel>
-            </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonTextarea
-                autoCorrect='true'
-                autoGrow={true}
-                style={{ background: "var(--ion-color-light)" }}
-                onIonInput={(e: any) => setReferralDetails(e.target.value)}
-                value={referralDetails}
-                placeholder="Enter Referral Details here..." />
-            </IonCol>
-          </IonRow>
-
-        </IonGrid>
+            <IonRow>
+              <IonCol>
+                <IonLabel>Referral Details</IonLabel>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonTextarea
+                  autoCorrect='true'
+                  autoGrow={true}
+                  style={{ background: "var(--ion-color-light)" }}
+                  onIonInput={(e: any) => setReferralDetails(e.target.value)}
+                  value={referralDetails}
+                  placeholder="Enter Referral Details here..." />
+              </IonCol>
+            </IonRow>
+          </IonGrid>
+        </>
       </IonContent>
     </IonPage>
   );

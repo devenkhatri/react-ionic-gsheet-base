@@ -48,6 +48,7 @@ import GymReports from './pages/GymReports';
 import Inquires from './pages/Inquires';
 import ViewInquiry from './pages/ViewInquiry';
 import ManageInquires from './pages/ManageInquires';
+import { useDataFromGoogleSheet } from './utils';
 
 setupIonicReact();
 
@@ -64,6 +65,12 @@ const App: React.FC = () => {
   const isPhysioAccess = (category === "physio")
   const isGymAdminAccess = (category === "gymadmin")
   const isGymAccess = (category === "gym") || (category === "gymadmin")
+
+  useDataFromGoogleSheet(
+    process.env.REACT_APP_GOOGLE_API_KEY || "",
+    process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
+    [],
+  );
 
   return (
     <IonApp>

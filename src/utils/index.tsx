@@ -1,5 +1,7 @@
 import { storage } from '../firebaseConfig';
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import GoogleSheetsMapper from 'google-sheets-mapper';
+import { useQuery } from "react-query";
 
 export const refreshPage = () => {
     window.location.reload();
@@ -15,12 +17,12 @@ export const uploadFileToFirebase = (pathprefix: any, file: any) => {
     return uploadString(storageRef, file.base64Data, 'data_url').then((snapshot) => {
         console.log('Uploaded a base64Data string!', snapshot);
         return getDownloadURL(storageRef)
-        .then((url) => {
-            console.log("****** downloadURL ", url)            
-            return url;
-        })
+            .then((url) => {
+                console.log("****** downloadURL ", url)
+                return url;
+            })
     });
-    
+
 }
 
 export const getWelcomeMessage = (currentGymMember: any) => {
@@ -43,3 +45,14 @@ export const sendWhatsappMessage = (mobileNumber: any, message: any) => {
     // Open our newly created URL in a new tab to send the message
     window.open(url);
 };
+
+export function useDataFromGoogleSheet (apiKey: any, sheetId: any, sheetsOptions: any) {
+    return useQuery("fulldata", async () => {
+        const data = await GoogleSheetsMapper.fetchGoogleSheetsData({
+            apiKey,
+            sheetId,
+            sheetsOptions: sheetsOptions,
+        });
+        return data;
+    })
+}

@@ -1,9 +1,8 @@
 import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonMenuButton, IonNavLink, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar } from '@ionic/react';
 import { add } from 'ionicons/icons';
 import ManageSessions from './ManageSessions';
-import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
-import { refreshPage } from '../utils';
+import { useDataFromGoogleSheet, refreshPage } from '../utils';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import SessionList from '../components/SessionList';
 import moment from 'moment';
@@ -13,17 +12,18 @@ const Sessions: React.FC = () => {
 
   const title = "Sessions"
 
-  const { data, loading, error } = useGoogleSheets({
-    apiKey: process.env.REACT_APP_GOOGLE_API_KEY || "",
-    sheetId: process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
-    sheetsOptions: [],
-  });
+  const { status, data, error, isFetching } = useDataFromGoogleSheet(
+    process.env.REACT_APP_GOOGLE_API_KEY || "",
+    process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
+    [],
+  );
+  const loading = (status === "loading");
 
   const [logDate,] = useState(moment())
   const [items, setItems] = useState<any>({});
   const scrollSize = 3;
   const [currentPage, setCurrentPage] = useState(1);
-  console.log("******* Time Diff = ", logDate.diff(moment()))
+  console.log("******* Time Diff = ", logDate.diff(moment()))  
 
   const [, updateState] = React.useState<any>();
   const forceUpdate = React.useCallback(() => updateState({}), []);
@@ -53,7 +53,7 @@ const Sessions: React.FC = () => {
       <IonHeader translucent={true}>
         <IonToolbar>
           <IonTitle>{title}</IonTitle>
-          {loading && <IonProgressBar type="indeterminate"></IonProgressBar>}
+          {isFetching && <IonProgressBar type="indeterminate"></IonProgressBar>}
           <IonButtons slot="start">
             <IonMenuButton color="primary"></IonMenuButton>
           </IonButtons>
@@ -67,6 +67,7 @@ const Sessions: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
+        <>
         <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
           <IonRefresherContent></IonRefresherContent>
         </IonRefresher>
@@ -108,6 +109,7 @@ const Sessions: React.FC = () => {
           </React.Fragment>
         }
         {!loading && Object.keys(items).length <= 0 && <IonItem><IonLabel color={'primary'}>No Data Found</IonLabel></IonItem>}
+        </>
       </IonContent>
     </IonPage>
   );

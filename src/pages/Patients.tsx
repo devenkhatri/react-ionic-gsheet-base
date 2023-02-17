@@ -1,9 +1,8 @@
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonButton, IonIcon, IonItem, IonLabel, IonNavLink, IonRefresher, IonRefresherContent, IonToast, IonItemDivider, IonItemGroup, IonSearchbar, IonProgressBar } from '@ionic/react';
 import ManagePatients from './ManagePatients';
 import { add } from 'ionicons/icons';
-import useGoogleSheets from 'use-google-sheets';
 import * as _ from "lodash";
-import { refreshPage } from '../utils';
+import { refreshPage, useDataFromGoogleSheet } from '../utils';
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import { useState } from 'react';
 import PatientList from '../components/PatientList';
@@ -12,11 +11,12 @@ import PatientList from '../components/PatientList';
 const Patients: React.FC = () => {
   const title = "Patients"
 
-  const { data, loading, error } = useGoogleSheets({
-    apiKey: process.env.REACT_APP_GOOGLE_API_KEY || "",
-    sheetId: process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
-    sheetsOptions: [],
-  });
+  const { status, data, error, isFetching } = useDataFromGoogleSheet(
+    process.env.REACT_APP_GOOGLE_API_KEY || "",
+    process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
+    [],
+  );
+  const loading = (status === "loading");
 
   const patientsData = _.filter(data, { id: "Patients" });
 
@@ -30,7 +30,7 @@ const Patients: React.FC = () => {
   }
 
   const sortedPatients = patientsData && patientsData.length > 0 && _.orderBy(patientsData[0].data, (item: any) => item["Name"])
-  const filteredPatients = sortedPatients && query?_.filter(sortedPatients, (item: any) => item["Name"] && item["Name"].toLowerCase().indexOf(query) > -1):sortedPatients;
+  const filteredPatients = sortedPatients && query ? _.filter(sortedPatients, (item: any) => item["Name"] && item["Name"].toLowerCase().indexOf(query) > -1) : sortedPatients;
   const groupedPatients = filteredPatients && _.groupBy(filteredPatients, (item: any) => item["Name"] && item["Name"].charAt(0).toUpperCase())
 
   return (
@@ -38,7 +38,7 @@ const Patients: React.FC = () => {
       <IonHeader translucent={true}>
         <IonToolbar>
           <IonTitle>{title}</IonTitle>
-          {loading && <IonProgressBar type="indeterminate"></IonProgressBar> }
+          {isFetching && <IonProgressBar type="indeterminate"></IonProgressBar>}
           <IonButtons slot="start">
             <IonMenuButton color="primary"></IonMenuButton>
           </IonButtons>
@@ -55,28 +55,28 @@ const Patients: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
-          <IonRefresherContent></IonRefresherContent>
-        </IonRefresher>
-        {loading &&
-          <ListLoadingSkeleton />
-        }
-        <IonToast
-          isOpen={!!error}
-          position={'top'}
-          color={'danger'}
-          message="Error occurred while fetching the details. Please try again !!!"
-          duration={1500}
-        />
-        {error &&
-          <IonItem color={'light'}>
-            <IonLabel color={'danger'}>Error loading data. Please refresh the page to try again !!!</IonLabel>
-          </IonItem>
-        }
         <>
+          <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
+            <IonRefresherContent></IonRefresherContent>
+          </IonRefresher>
+          {loading &&
+            <ListLoadingSkeleton />
+          }
+          <IonToast
+            isOpen={!!error}
+            position={'top'}
+            color={'danger'}
+            message="Error occurred while fetching the details. Please try again !!!"
+            duration={1500}
+          />
+          {error &&
+            <IonItem color={'light'}>
+              <IonLabel color={'danger'}>Error loading data. Please refresh the page to try again !!!</IonLabel>
+            </IonItem>
+          }
           {groupedPatients && _.map(groupedPatients, (patientDetails: any, initials: any) => (
             <IonItemGroup key={initials}>
-              <IonItemDivider color="primary" style={{padding: '0.5rem 1rem', margin:'1rem 0'}}>
+              <IonItemDivider color="primary" style={{ padding: '0.5rem 1rem', margin: '1rem 0' }}>
                 <IonLabel>
                   {initials}
                 </IonLabel>
