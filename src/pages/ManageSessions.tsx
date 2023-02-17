@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { refreshPage, useDataFromGoogleSheet } from '../utils';
 import * as _ from "lodash";
-import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
 
@@ -21,13 +20,12 @@ const ManageSessions: React.FC = () => {
 
   const title = (isEdit ? "Edit" : "Add") + " Sessions";
 
-  const { status, data, error, isFetching } = useDataFromGoogleSheet(
+  const { data, error, isFetching } = useDataFromGoogleSheet(
     process.env.REACT_APP_GOOGLE_API_KEY || "",
     process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
     [],
   );
-  const loading = (status === "loading");
-
+  
   const patientsData = _.filter(data, { id: "Patients" });
   const sortedPatients = patientsData && patientsData.length > 0 && _.orderBy(patientsData[0].data, (item: any) => item["Name"])
   const [allPatients, setAllPatients] = useState<any>()
@@ -144,7 +142,7 @@ const ManageSessions: React.FC = () => {
             <IonBackButton defaultHref={id ? `/viewsession/${id}` : "/sessions"}></IonBackButton>
           </IonButtons>
           <IonButtons slot="end">
-            <IonButton fill="clear" color='primary' onClick={saveRecord}>
+            <IonButton fill="clear" color='primary' onClick={saveRecord} disabled={isFetching}>
               Save
               <IonIcon slot="start" icon={saveOutline}></IonIcon>
             </IonButton>
@@ -155,10 +153,7 @@ const ManageSessions: React.FC = () => {
         <>
           <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
             <IonRefresherContent></IonRefresherContent>
-          </IonRefresher>
-          {loading &&
-            <ListLoadingSkeleton />
-          }
+          </IonRefresher>          
           <IonToast
             isOpen={!!error}
             position={'top'}

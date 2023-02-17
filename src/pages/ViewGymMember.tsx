@@ -2,7 +2,6 @@ import { IonBackButton, IonBadge, IonButton, IonButtons, IonCard, IonCardContent
 import { useParams } from 'react-router-dom';
 import * as _ from "lodash";
 import { formatCurrency, getWelcomeMessage, refreshPage, sendWhatsappMessage, useDataFromGoogleSheet } from '../utils';
-import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import { alarmOutline, callOutline, copyOutline, logoWhatsapp, mailOutline, pencil, shareOutline } from "ionicons/icons";
 import ManageGymMembers from "./ManageGymMembers";
 import moment from "moment";
@@ -22,12 +21,11 @@ const ViewGymMember: React.FC = () => {
     const category = process.env.REACT_APP_CATEGORY || "";
     const isGymAdminAccess = (category === "gymadmin")
 
-    const { status, data, error, isFetching } = useDataFromGoogleSheet(
+    const { data, error, isFetching } = useDataFromGoogleSheet(
         process.env.REACT_APP_GOOGLE_API_KEY || "",
         process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
         [],
     );
-    const loading = (status === "loading");
 
     const gymMembersData = _.filter(data, { id: "GymMembers" });
 
@@ -92,9 +90,6 @@ const ViewGymMember: React.FC = () => {
                     <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
                         <IonRefresherContent></IonRefresherContent>
                     </IonRefresher>
-                    {loading &&
-                        <ListLoadingSkeleton />
-                    }
                     <IonToast
                         isOpen={!!error}
                         position={'top'}
@@ -171,7 +166,7 @@ const ViewGymMember: React.FC = () => {
                             </IonCard>
 
                             <IonList>
-                                <IonCard color={status} style={{ padding: '1rem' }}>
+                                <IonCard color={membershipStatus} style={{ padding: '1rem' }}>
                                     <IonCardSubtitle>Membership {daysRemaining <= 0 ? 'Ended' : 'Ending'}</IonCardSubtitle>
                                     <IonLabel><h1>{moment(currentGymMember["Ending Date"]).fromNow()}</h1></IonLabel>
                                 </IonCard>

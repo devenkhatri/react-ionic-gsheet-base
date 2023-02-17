@@ -5,7 +5,6 @@ import _ from 'lodash';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import { refreshPage, useDataFromGoogleSheet } from '../utils';
 
 type PageParams = {
@@ -29,12 +28,11 @@ const ManagePatients: React.FC = () => {
   const [referralType, setReferralType] = useState<any>("")
   const [referralDetails, setReferralDetails] = useState<any>("")
 
-  const { status, data, error, isFetching } = useDataFromGoogleSheet(
+  const { data, error, isFetching } = useDataFromGoogleSheet(
     process.env.REACT_APP_GOOGLE_API_KEY || "",
     process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
     [],
   );
-  const loading = (status === "loading");
 
   const optionsData = _.filter(data, { id: "Options" });
   const allReferralType = optionsData && optionsData.length > 0 && _.filter(optionsData[0].data, (item: any) => item["Referral Type"])
@@ -122,7 +120,7 @@ const ManagePatients: React.FC = () => {
             <IonBackButton defaultHref="/patients"></IonBackButton>
           </IonButtons>
           <IonButtons slot="end">
-            <IonButton fill="clear" color='primary' onClick={saveRecord}>
+            <IonButton fill="clear" color='primary' onClick={saveRecord} disabled={isFetching}>
               Save
               <IonIcon slot="start" icon={saveOutline}></IonIcon>
             </IonButton>
@@ -134,9 +132,6 @@ const ManagePatients: React.FC = () => {
           <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
             <IonRefresherContent></IonRefresherContent>
           </IonRefresher>
-          {loading &&
-            <ListLoadingSkeleton />
-          }
           <IonToast
             isOpen={!!error}
             position={'top'}

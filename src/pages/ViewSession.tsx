@@ -2,7 +2,6 @@ import { IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardH
 import { useParams } from 'react-router-dom';
 import * as _ from "lodash";
 import { refreshPage, useDataFromGoogleSheet } from '../utils';
-import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import { pencil } from "ionicons/icons";
 import ManageSessions from "./ManageSessions";
 import PatientList from "../components/PatientList";
@@ -17,12 +16,11 @@ const ViewSession: React.FC = () => {
 
     const title = "Session Details"
 
-    const { status, data, error, isFetching } = useDataFromGoogleSheet(
+    const { data, error, isFetching } = useDataFromGoogleSheet(
         process.env.REACT_APP_GOOGLE_API_KEY || "",
         process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
         [],
     );
-    const loading = (status === "loading");
 
     const sessionsData = _.filter(data, { id: "Sessions" });
     const patientsData = _.filter(data, { id: "Patients" });
@@ -56,9 +54,6 @@ const ViewSession: React.FC = () => {
                     <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
                         <IonRefresherContent></IonRefresherContent>
                     </IonRefresher>
-                    {loading &&
-                        <ListLoadingSkeleton />
-                    }
                     <IonToast
                         isOpen={!!error}
                         position={'top'}

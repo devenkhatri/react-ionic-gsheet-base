@@ -1,7 +1,6 @@
 import { IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonNote, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar, useIonToast } from "@ionic/react";
 import { useParams } from 'react-router-dom';
 import * as _ from "lodash";
-import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import { callOutline, copyOutline, mailOutline } from "ionicons/icons";
 import ProfilePhoto from "../components/ProfilePhoto";
 import { refreshPage, useDataFromGoogleSheet } from "../utils";
@@ -16,13 +15,12 @@ const ViewInquiry: React.FC = () => {
 
     const title = "Inqury Details"
 
-    const { status, data, error, isFetching } = useDataFromGoogleSheet(
+    const {  data, error, isFetching } = useDataFromGoogleSheet(
         process.env.REACT_APP_GOOGLE_API_KEY || "",
         process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
         [],
     );
-    const loading = (status === "loading");
-
+    
     const inquriesData = _.filter(data, { id: "Inquires" });
 
     const filteredInquiry = inquriesData && inquriesData.length > 0 && _.filter(inquriesData[0].data, { "🔒 Row ID": id })
@@ -56,9 +54,6 @@ const ViewInquiry: React.FC = () => {
                     <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
                         <IonRefresherContent></IonRefresherContent>
                     </IonRefresher>
-                    {loading &&
-                        <ListLoadingSkeleton />
-                    }
                     <IonToast
                         isOpen={!!error}
                         position={'top'}

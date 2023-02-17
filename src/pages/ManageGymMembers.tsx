@@ -5,7 +5,6 @@ import _ from 'lodash';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import ProfilePhoto from '../components/ProfilePhoto';
 import { usePhotoGallery } from '../hooks/usePhotoGallery';
 import { refreshPage, uploadFileToFirebase, useDataFromGoogleSheet } from '../utils';
@@ -37,12 +36,11 @@ const ManageGymMembers: React.FC = () => {
   const [amountReceived, setAmountReceived] = useState()
   const [amountPending, setAmountPending] = useState()
 
-  const { status, data, error, isFetching } = useDataFromGoogleSheet(
+  const { data, error, isFetching } = useDataFromGoogleSheet(
     process.env.REACT_APP_GOOGLE_API_KEY || "",
     process.env.REACT_APP_GOOGLE_SHEETS_ID || "",
     [],
   );
-  const loading = (status === "loading");
 
   const optionsData = _.filter(data, { id: "Options" });
   const allPaymentModes = optionsData && optionsData.length > 0 && _.filter(optionsData[0].data, (item: any) => item["Payment Modes"])
@@ -181,7 +179,7 @@ const ManageGymMembers: React.FC = () => {
             <IonBackButton defaultHref={id ? `/viewgymmember/${id}` : "/gymmembers"}></IonBackButton>
           </IonButtons>
           <IonButtons slot="end">
-            <IonButton fill="clear" color='primary' onClick={saveRecord}>
+            <IonButton fill="clear" color='primary' onClick={saveRecord} disabled={isFetching}>
               Save
               <IonIcon slot="start" icon={saveOutline}></IonIcon>
             </IonButton>
@@ -193,9 +191,6 @@ const ManageGymMembers: React.FC = () => {
           <IonRefresher slot="fixed" onIonRefresh={refreshPage}>
             <IonRefresherContent></IonRefresherContent>
           </IonRefresher>
-          {loading &&
-            <ListLoadingSkeleton />
-          }
           <IonToast
             isOpen={!!error}
             position={'top'}

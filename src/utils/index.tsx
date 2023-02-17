@@ -54,5 +54,5 @@ export function useDataFromGoogleSheet (apiKey: any, sheetId: any, sheetsOptions
             sheetsOptions: sheetsOptions,
         });
         return data;
-    })
+    },{staleTime:5000})
 }
