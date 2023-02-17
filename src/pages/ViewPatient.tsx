@@ -101,7 +101,7 @@ const ViewPatient: React.FC = () => {
                                         <IonIcon slot="icon-only" icon={callOutline}></IonIcon>
                                     </IonButton>
                                     {currentPatient["Phone"] &&
-                                        <IonButton onClick={() => sendWhatsappMessage(`+91${currentPatient["Phone"]}`, getPatientWelcomeMessage(currentPatient))}>
+                                        <IonButton fill="clear" size="small" onClick={() => sendWhatsappMessage(`+91${currentPatient["Phone"]}`, getPatientWelcomeMessage(currentPatient))}>
                                             <IonIcon color="primary" icon={logoWhatsapp} />
                                         </IonButton>
                                     }
