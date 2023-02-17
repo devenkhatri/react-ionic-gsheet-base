@@ -1,8 +1,8 @@
 import { IonBackButton, IonBadge, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonNavLink, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar, useIonToast } from "@ionic/react";
 import { useParams } from 'react-router-dom';
 import * as _ from "lodash";
-import { refreshPage, useDataFromGoogleSheet } from '../utils';
-import { callOutline, copyOutline, pencil } from "ionicons/icons";
+import { getPatientWelcomeMessage, refreshPage, sendWhatsappMessage, useDataFromGoogleSheet } from '../utils';
+import { callOutline, copyOutline, logoWhatsapp, pencil } from "ionicons/icons";
 import Avatar from 'react-avatar';
 import ManagePatients from "./ManagePatients";
 import SessionList from "../components/SessionList";
@@ -38,8 +38,8 @@ const ViewPatient: React.FC = () => {
     const totalAmountPending = _.sumBy(sortedSessions, (session: any) => _.toNumber(session["Amount Pending"]));
     const totalAmountPaid = _.sumBy(sortedSessions, (session: any) => _.toNumber(session["Amount Paid"]));
 
-    console.log("****** currentPatient[Start Date]", currentPatient["Start Date"])
-    console.log("****** moment", (currentPatient["Start Date"] && moment(currentPatient["Start Date"], 'MM/DD/YYYY').format('DD-MMM-YYYY')))
+    // console.log("****** currentPatient[Start Date]", currentPatient["Start Date"])
+    // console.log("****** moment", (currentPatient["Start Date"] && moment(currentPatient["Start Date"], 'MM/DD/YYYY').format('DD-MMM-YYYY')))
 
     const [present] = useIonToast();
     const postCopyToClipboard = (text: any) => {
@@ -100,9 +100,14 @@ const ViewPatient: React.FC = () => {
                                     <IonButton href={`tel:${currentPatient["Phone"]}`} fill="clear" size="small">
                                         <IonIcon slot="icon-only" icon={callOutline}></IonIcon>
                                     </IonButton>
+                                    {currentPatient["Phone"] &&
+                                        <IonButton onClick={() => sendWhatsappMessage(`+91${currentPatient["Phone"]}`, getPatientWelcomeMessage(currentPatient))}>
+                                            <IonIcon color="primary" icon={logoWhatsapp} />
+                                        </IonButton>
+                                    }
                                     <IonButton fill="clear" size="small" color={'medium'} onClick={() => postCopyToClipboard(currentPatient["Phone"])}>
                                         <IonIcon slot="icon-only" icon={copyOutline}></IonIcon>
-                                    </IonButton>
+                                    </IonButton>                                    
                                 </>
                             }
                         </IonCardHeader>

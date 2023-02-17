@@ -30,6 +30,12 @@ export const getWelcomeMessage = (currentGymMember: any) => {
     return welcomeMesage;
 }
 
+export const getPatientWelcomeMessage = (currentPatient: any) => {
+    const welcomeMesage = `Dear ${currentPatient["Name"]}, Thanks for choosing Aastha Health Plus (Spine and Rehab) for your wellness journey'`
+    return welcomeMesage;
+}
+
+
 export const sendWhatsappMessage = (mobileNumber: any, message: any) => {
 
     // Regex expression to remove all characters which are NOT alphanumeric
