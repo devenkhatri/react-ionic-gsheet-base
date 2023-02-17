@@ -29,7 +29,7 @@ const Inquires: React.FC = () => {
     setQuery(q)
   }
 
-  const sortedInquriesMembers = inquriesData && inquriesData.length > 0 && _.orderBy(inquriesData[0].data, (item: any) => moment(item["Date"], "DD-MMM-YYYY"))
+  const sortedInquriesMembers = inquriesData && inquriesData.length > 0 && _.orderBy(inquriesData[0].data, (item: any) => moment(item["Date"], "DD-MMM-YYYY"),'desc')
   const filteredInquriesMembers = sortedInquriesMembers && query ? _.filter(sortedInquriesMembers, (item: any) => item["Name"] && item["Name"].toLowerCase().indexOf(query) > -1) : sortedInquriesMembers;
 
   return (
