@@ -34,9 +34,9 @@ exports.handler = async (event, context) => {
         const client = require('twilio')(accountSid, authToken);
 
         const responseMessage = await client.messages.create({
-            from: 'whatsapp:+919033033836',
+            to: 'whatsapp:+919033033836',
             body: messageBody,
-            to: 'whatsapp:+14155238886'
+            from: 'whatsapp:+14155238886'
         })
         // .then(message => console.log(message.sid));
 
