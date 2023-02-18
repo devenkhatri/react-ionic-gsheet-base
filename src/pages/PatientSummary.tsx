@@ -12,7 +12,6 @@ type PageParams = {
 
 const PatientSummary: React.FC = () => {
     const { id } = useParams<PageParams>();
-    const fromSessionID = new URLSearchParams(window.location.search).get("fromSessionID")
 
     const title = "Patient Details"
 
@@ -34,9 +33,6 @@ const PatientSummary: React.FC = () => {
     const totalDepositAmount = _.sumBy(sortedSessions, (session: any) => _.toNumber(session["Deposit Amount"]));
     const totalAmountPending = _.sumBy(sortedSessions, (session: any) => _.toNumber(session["Amount Pending"]));
     const totalAmountPaid = _.sumBy(sortedSessions, (session: any) => _.toNumber(session["Amount Paid"]));
-
-    // console.log("****** currentPatient[Start Date]", currentPatient["Start Date"])
-    // console.log("****** moment", (currentPatient["Start Date"] && moment(currentPatient["Start Date"], 'MM/DD/YYYY').format('DD-MMM-YYYY')))
 
     return (
         <IonPage id="main-content">
@@ -69,7 +65,7 @@ const PatientSummary: React.FC = () => {
                             <IonCardTitle>{currentPatient["Name"]}</IonCardTitle>
                             <IonCardSubtitle>
                                 {currentPatient["Phone"]}
-                            </IonCardSubtitle>                            
+                            </IonCardSubtitle>
                         </IonCardHeader>
 
                         <IonCardContent>
@@ -105,7 +101,7 @@ const PatientSummary: React.FC = () => {
                             </IonList>
                         </IonCardContent>
                     </IonCard>
-                    <IonLabel><h1 style={{ padding: "1rem 1rem 0 1rem" }}>View Session Details</h1></IonLabel>
+                    <IonLabel><h1 style={{ padding: "1rem 1rem 0 1rem" }}>Session Details</h1></IonLabel>
                     <SessionList allSessions={sortedSessions} fromPatientID={id} isShowDate isViewOnly />
                 </>
             </IonContent>
