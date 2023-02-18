@@ -163,7 +163,7 @@ const App: React.FC = () => {
               <IonIcon icon={barbellOutline} />
               <IonLabel>Gym Members</IonLabel>
             </IonTabButton>
-            <IonTabButton tab="inquires" href="/inquires" style={{display: isGymAccess?'':'none'}}>
+            <IonTabButton tab="inquires" href="/inquires" style={{display: (isGymAccess||isPhysioAccess)?'':'none'}}>
               <IonIcon icon={helpCircleOutline} />
               <IonLabel>Inquries</IonLabel>
             </IonTabButton>

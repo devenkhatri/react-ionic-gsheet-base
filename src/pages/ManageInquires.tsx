@@ -27,7 +27,9 @@ const ManageInquires: React.FC = () => {
   const [phone, setPhone] = useState("")
   const [date, setDate] = useState<any>(moment().format())
   const [remarks, setRemarks] = useState("")
-  const [category, setCategory] = useState("Gym")
+  const appCategory = process.env.REACT_APP_CATEGORY || "";
+  const isPhysioApp = (appCategory === "physio")  
+  const [category, setCategory] = useState(isPhysioApp?"Physio":"Gym")
   const [photo, setPhoto] = useState<any>()
 
   const { data, error, isFetching } = useDataFromGoogleSheet(
@@ -40,7 +42,7 @@ const ManageInquires: React.FC = () => {
 
   const optionsData = _.filter(data, { id: "Options" });
   const allInquriyCategory = optionsData && optionsData.length > 0 && _.filter(optionsData[0].data, (item: any) => item["Inquiry Category"])
-  const defaultInquriyCategory: any = allInquriyCategory && allInquriyCategory.length > 0 && _.head(allInquriyCategory);
+  let defaultInquriyCategory: any = allInquriyCategory && allInquriyCategory.length > 0 && _.head(allInquriyCategory);
 
   const inquriesData = _.filter(data, { id: "Inquires" });
 

@@ -30,7 +30,15 @@ const Inquires: React.FC = () => {
   }
 
   const sortedInquriesMembers = inquriesData && inquriesData.length > 0 && _.orderBy(inquriesData[0].data, (item: any) => moment(item["Date"], "DD-MMM-YYYY"), 'desc')
-  const filteredInquriesMembers = sortedInquriesMembers && query ? _.filter(sortedInquriesMembers, (item: any) => item["Name"] && item["Name"].toLowerCase().indexOf(query) > -1) : sortedInquriesMembers;
+  let filteredInquriesMembers = sortedInquriesMembers && query ? _.filter(sortedInquriesMembers, (item: any) => item["Name"] && item["Name"].toLowerCase().indexOf(query) > -1) : sortedInquriesMembers;
+
+  //if the application is physio then only show physio inquiries
+  //if the application is gym then only show gym inquires
+  const category = process.env.REACT_APP_CATEGORY || "";
+  const isPhysioApp = (category === "physio")
+  const isGymApp = (category === "gym") || (category === "gymadmin")
+  if(isPhysioApp) filteredInquriesMembers = filteredInquriesMembers && _.filter(filteredInquriesMembers, (item: any) => item["Category"] == "Physio");
+  if(isGymApp) filteredInquriesMembers = filteredInquriesMembers && _.filter(filteredInquriesMembers, (item: any) => item["Category"] != "Physio");
 
   return (
     <IonPage id="main-content">
