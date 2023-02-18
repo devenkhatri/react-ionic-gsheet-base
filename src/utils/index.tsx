@@ -2,6 +2,7 @@ import { storage } from '../firebaseConfig';
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import GoogleSheetsMapper from 'google-sheets-mapper';
 import { useQuery } from "react-query";
+import axios from 'axios';
 
 export const refreshPage = () => {
     window.location.reload();
@@ -35,9 +36,36 @@ export const getPatientWelcomeMessage = (currentPatient: any) => {
     return welcomeMesage;
 }
 
+export const sendWhatsappMessageLive = (mobileNumber: any, message: any) => {
+    const requestOptions: any = {
+        baseURL: process.env.REACT_APP_API_BASE || '',
+        url: `.netlify/functions/sendwhatsapp`,
+        method: 'post',
+        data: {
+            mobileNumber: mobileNumber,
+            message: message
+        },
+        withCredentials: false,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+        },
+    };
+
+    axios(requestOptions)
+        .then(function (response: any) {
+            console.log(response);
+            // presentToast('success', thumbsUp, response?.data?.message || 'Saved Successfully.....');
+            // setShowLoading(false)
+            // window.location.href = id ? `/viewsession/${id}` : "/sessions";
+        })
+        .catch(function (error) {
+            console.log(error);
+            // setShowLoading(false)
+            // presentToast('danger', thumbsDown, 'Sorry some error occured. Please try again to save.....')
+        });
+}
 
 export const sendWhatsappMessage = (mobileNumber: any, message: any) => {
-
     // Regex expression to remove all characters which are NOT alphanumeric
     let number = mobileNumber.replace(/[^\w\s]/gi, "").replace(/ /g, "");
 
@@ -52,7 +80,7 @@ export const sendWhatsappMessage = (mobileNumber: any, message: any) => {
     window.open(url);
 };
 
-export function useDataFromGoogleSheet (apiKey: any, sheetId: any, sheetsOptions: any) {
+export function useDataFromGoogleSheet(apiKey: any, sheetId: any, sheetsOptions: any) {
     return useQuery("fulldata", async () => {
         const data = await GoogleSheetsMapper.fetchGoogleSheetsData({
             apiKey,
@@ -60,5 +88,5 @@ export function useDataFromGoogleSheet (apiKey: any, sheetId: any, sheetsOptions
             sheetsOptions: sheetsOptions,
         });
         return data;
-    },{staleTime:5000})
+    }, { staleTime: 5000 })
 }
