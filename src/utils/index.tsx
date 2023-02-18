@@ -31,7 +31,7 @@ export const getWelcomeMessage = (currentGymMember: any) => {
 }
 
 export const getPatientWelcomeMessage = (currentPatient: any) => {
-    const welcomeMesage = `Dear ${currentPatient["Name"]}, Thanks for choosing Aastha Health Plus (Spine and Rehab) for your wellness journey'`
+    const welcomeMesage = `Dear ${currentPatient["Name"]}, Thanks for choosing Aastha Health Plus (Spine and Rehab) for your wellness journey.\n\nView your details at ${process.env.REACT_APP_URL}patientsummary/${currentPatient["🔒 Row ID"]}`
     return welcomeMesage;
 }
 

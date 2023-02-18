@@ -49,6 +49,7 @@ import Inquires from './pages/Inquires';
 import ViewInquiry from './pages/ViewInquiry';
 import ManageInquires from './pages/ManageInquires';
 import { useDataFromGoogleSheet } from './utils';
+import PatientSummary from './pages/PatientSummary';
 
 setupIonicReact();
 
@@ -103,6 +104,9 @@ const App: React.FC = () => {
             </Route>
             <Route path="/viewpatient/:id">
               <ViewPatient />
+            </Route>
+            <Route path="/patientsummary/:id">
+              <PatientSummary />
             </Route>
             <Route path="/physioreports">
               <PhysioReports />
