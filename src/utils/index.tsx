@@ -26,14 +26,18 @@ export const uploadFileToFirebase = (pathprefix: any, file: any) => {
 
 }
 
+const appendWriteReviewLink = () => {
+    return "\n\nPlease tell us more about your experience at https://g.page/r/CapG5zkcHSoZEBM/review, so that we can improve our service."
+}
+
 export const getWelcomeMessage = (currentGymMember: any) => {
     const welcomeMesage = `Dear ${currentGymMember["Name"]}, Your Gym Membership details at Aastha Health Plus are: Duration='${currentGymMember["Months"]} month(s)', Joining Date='${currentGymMember["Joining Date"]}' and Ending Date='${currentGymMember["Ending Date"]}'`
-    return welcomeMesage;
+    return welcomeMesage+appendWriteReviewLink();
 }
 
 export const getPatientWelcomeMessage = (currentPatient: any) => {
     const welcomeMesage = `Dear ${currentPatient["Name"]}, Thanks for choosing Aastha Health Plus (Spine and Rehab) for your wellness journey.\n\nView your details at ${process.env.REACT_APP_URL}patientsummary/${currentPatient["🔒 Row ID"]}`
-    return welcomeMesage;
+    return welcomeMesage+appendWriteReviewLink();
 }
 
 export const sendWhatsappMessageLive = (mobileNumber: any, message: any) => {
