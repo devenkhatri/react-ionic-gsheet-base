@@ -50,16 +50,16 @@ const ManageSessions: React.FC = () => {
   const [depositAmount, setDepositAmount] = useState<any>()
 
   useEffect(() => {
-    if (!allPatients) setAllPatients(sortedPatients);
-    if (!paymentMode) setPaymentMode(defaultPaymentMode && defaultPaymentMode["Payment Modes"]);
+    if (!allPatients) setAllPatients(sortedPatients);    
     if (isEdit && currentSession) {
       setPatientID(currentSession["Patient ID"])
       currentSession["Session Date"] && setSessionDate(moment(currentSession["Session Date"], "DD-MMM-YYYY, ddd").format())
-      setPaymentMode(currentSession["Payment Mode"])
+      if (!paymentMode) setPaymentMode(currentSession["Payment Mode"])
       setAmountPaid(currentSession["Amount Paid"])
       setAmountPending(currentSession["Amount Pending"])
       setDepositAmount(currentSession["Deposit Amount"])
     }
+    if (!isEdit && !paymentMode) setPaymentMode(defaultPaymentMode && defaultPaymentMode["Payment Modes"]);
   }, [paymentMode, defaultPaymentMode, currentSession, allPatients]);
 
   const presentToast = (color: any, icon: any, message: any) => {
