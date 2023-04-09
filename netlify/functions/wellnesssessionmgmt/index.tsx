@@ -39,35 +39,25 @@ exports.handler = async (event, context) => {
             private_key: privateKey,
         });
         await doc.loadInfo(); // loads document properties and worksheets
-        const sheet = doc.sheetsByTitle['WellnessPatients']; // or use doc.sheetsById[id] or doc.sheetsByTitle[title]
+        const sheet = doc.sheetsByTitle['WellnessSessions']; // or use doc.sheetsById[id] or doc.sheetsByTitle[title]
 
-        const patientName = body.patientName;
-        const profilePhoto = body.profilePhoto;
-        const startDate = moment(body.startDate).tz("Asia/Kolkata").format("MM/DD/YYYY");
-        const description = body.description
-        const totalSessions = body.totalSessions
-        const totalCharges = body.totalCharges
-        const paymentMode = body.paymentMode
-        const phone = body.phone
-        const occupation = body.occupation
-        const referralType = body.referralType
-        const referralDetails = body.referralDetails
+        const patientId = body.patientId;
+        const sessionDate = moment(body.sessionDate).tz("Asia/Kolkata").format("DD-MMM-YYYY, ddd");
+        const sessionDescription = body.sessionDescription
+        const sittingsUsed = Number.parseInt(body.sittingsUsed || 0)
+        const reportPatientName = body.patientName
+        const reportProfilePhoto = body.profilePhoto
 
         let message = "";
         if(!isEdit) { // adding a row
             const dataToAdd = {
                 '🔒 Row ID': token,
-                'Name': patientName,  
-                'Start Date': startDate,
-                'Treatment Description': description,
-                'Treatment Total Sittings': totalSessions,
-                'Treatment Total Charges': totalCharges,
-                'Phone': phone,
-                'Payment Mode': paymentMode,
-                'Occupation': occupation,
-                'Referral Type': referralType,
-                'Referral Details': referralDetails,
-                'Profile Photo': profilePhoto,
+                'Patient ID': patientId,  
+                'Session Date': sessionDate,
+                'Session Description': sessionDescription,
+                'Sittings Used': sittingsUsed,
+                'Report: Patient Name': reportPatientName,
+                'Report: Profile Photo': reportProfilePhoto,
             }
             console.log("****** dataToAdd", dataToAdd)
             await sheet.addRow(dataToAdd);
@@ -76,17 +66,12 @@ exports.handler = async (event, context) => {
             const rows = await sheet.getRows();
             if(rows && rows.length > 0) {
                 const rowIndex = _.findIndex(rows, { "🔒 Row ID": itemID });
-                rows[rowIndex]['Name'] = patientName
-                rows[rowIndex]['Start Date'] = startDate
-                rows[rowIndex]['Treatment Description'] = description
-                rows[rowIndex]['Treatment Total Sittings'] = totalSessions
-                rows[rowIndex]['Treatment Total Charges'] = totalCharges
-                rows[rowIndex]['Payment Mode'] = paymentMode
-                rows[rowIndex]['Phone'] = phone
-                rows[rowIndex]['Occupation'] = occupation
-                rows[rowIndex]['Referral Type'] = referralType
-                rows[rowIndex]['Referral Details'] = referralDetails
-                rows[rowIndex]['Profile Photo'] = profilePhoto
+                rows[rowIndex]['Patient ID'] = patientId
+                rows[rowIndex]['Session Date'] = sessionDate
+                rows[rowIndex]['Session Description'] = sessionDescription
+                rows[rowIndex]['Sittings Used'] = sittingsUsed
+                rows[rowIndex]['Report: Patient Name'] = reportPatientName
+                rows[rowIndex]['Report: Collection Amount'] = reportProfilePhoto
                 await rows[rowIndex].save();
                 message = "Session Updated Successfully."
             }            

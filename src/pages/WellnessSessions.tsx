@@ -23,14 +23,13 @@ const WellnessSessions: React.FC = () => {
   const [items, setItems] = useState<any>({});
   const scrollSize = 3;
   const [currentPage, setCurrentPage] = useState(1);
-  console.log("******* Time Diff = ", logDate.diff(moment()))  
-
+  
   const [, updateState] = React.useState<any>();
   const forceUpdate = React.useCallback(() => updateState({}), []);
 
   const generateItems = () => {
-    const sessionsData = _.filter(data, { id: "Sessions" });
-    const groupedSessions = sessionsData && sessionsData.length > 0 && _.groupBy(sessionsData[0].data, (item: any) => item["Report: Session Date"])
+    const sessionsData = _.filter(data, { id: "WellnessSessions" });
+    const groupedSessions = sessionsData && sessionsData.length > 0 && _.groupBy(sessionsData[0].data, (item: any) => item["Session Date"])
     const sortedSessionKeys = groupedSessions && _.orderBy(Object.keys(groupedSessions), key => moment(key, 'DD-MMM-YYYY'), ['desc'])
     if (sortedSessionKeys) {
       const newItems: any = items;

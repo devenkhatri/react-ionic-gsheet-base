@@ -32,6 +32,7 @@ const ManageWellnessPatients: React.FC = () => {
   const [referralDetails, setReferralDetails] = useState<any>("")
   const [totalSessions, setTotalSessions] = useState<any>(1)
   const [totalCharges, setTotalCharges] = useState<any>(0)
+  const [paymentMode, setPaymentMode] = useState("")
 
   const { data, error, isFetching } = useDataFromGoogleSheet(
     process.env.REACT_APP_GOOGLE_API_KEY || "",
@@ -42,6 +43,9 @@ const ManageWellnessPatients: React.FC = () => {
   const optionsData = _.filter(data, { id: "Options" });
   const allReferralType = optionsData && optionsData.length > 0 && _.filter(optionsData[0].data, (item: any) => item["Referral Type"])
   const defaultReferralType: any = allReferralType && allReferralType.length > 0 && _.head(allReferralType);
+
+  const allPaymentModes = optionsData && optionsData.length > 0 && _.filter(optionsData[0].data, (item: any) => item["Payment Modes"])
+  const defaultPaymentMode: any = allPaymentModes && allPaymentModes.length > 0 && _.head(allPaymentModes);
 
   const patientsData = _.filter(data, { id: "WellnessPatients" });
   const filteredPatient = patientsData && patientsData.length > 0 && _.filter(patientsData[0].data, { "🔒 Row ID": id })
@@ -64,10 +68,12 @@ const ManageWellnessPatients: React.FC = () => {
       setOccupation(currentPatient["Occupation"])
       setReferralType(currentPatient["Referral Type"])
       setReferralDetails(currentPatient["Referral Details"])
-      setTotalSessions(currentPatient["Treatment Total Sessions"])
+      setTotalSessions(currentPatient["Treatment Total Sittings"])
       setTotalCharges(currentPatient["Treatment Total Charges"])
+      if (!paymentMode) setPaymentMode(currentPatient["Payment Mode"])
     }
-  }, [defaultReferralType, currentPatient]);
+    if (!isEdit && !paymentMode) setPaymentMode(defaultPaymentMode && defaultPaymentMode["Payment Modes"]);
+  }, [paymentMode, defaultPaymentMode, defaultReferralType, currentPatient]);
 
   const presentToast = (color: any, icon: any, message: any) => {
     present({
@@ -105,6 +111,7 @@ const ManageWellnessPatients: React.FC = () => {
         description: description,
         totalSessions: totalSessions,
         totalCharges: totalCharges,
+        paymentMode: paymentMode,
         phone: phone,
         occupation: occupation,
         referralType: referralType,
@@ -264,7 +271,7 @@ const ManageWellnessPatients: React.FC = () => {
             </IonRow>
             <IonRow>
               <IonCol>
-                <IonLabel>Treatment Total Sessions</IonLabel>
+                <IonLabel>Treatment Total Sittings</IonLabel>
               </IonCol>
             </IonRow>
             <IonRow>
@@ -286,6 +293,22 @@ const ManageWellnessPatients: React.FC = () => {
                   onIonInput={(e: any) => setTotalCharges(e.target.value)}
                   value={totalCharges}
                 ></IonInput>
+              </IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol><IonLabel>Payment Mode</IonLabel></IonCol>
+            </IonRow>
+            <IonRow>
+              <IonCol>
+                <IonSelect interface="action-sheet" interfaceOptions={{ header: "Select Payment Mode" }} placeholder="Select Payment Mode"
+                  value={paymentMode}
+                  onIonChange={(e) => setPaymentMode(e.detail.value)}
+                  style={{ background: "var(--ion-color-light)" }}
+                >
+                  {allPaymentModes && allPaymentModes.map((options: any) => (
+                    <IonSelectOption key={options["Payment Modes"]} value={options["Payment Modes"]}>{options["Payment Modes"]}</IonSelectOption>
+                  ))}
+                </IonSelect>
               </IonCol>
             </IonRow>
             <IonRow>

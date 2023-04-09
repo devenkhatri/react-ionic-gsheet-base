@@ -30,7 +30,7 @@ const Sessions: React.FC = () => {
 
   const generateItems = () => {
     const sessionsData = _.filter(data, { id: "Sessions" });
-    const groupedSessions = sessionsData && sessionsData.length > 0 && _.groupBy(sessionsData[0].data, (item: any) => item["Report: Session Date"])
+    const groupedSessions = sessionsData && sessionsData.length > 0 && _.groupBy(sessionsData[0].data, (item: any) => item["Session Date"])
     const sortedSessionKeys = groupedSessions && _.orderBy(Object.keys(groupedSessions), key => moment(key, 'DD-MMM-YYYY'), ['desc'])
     if (sortedSessionKeys) {
       const newItems: any = items;

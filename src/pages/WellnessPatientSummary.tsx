@@ -30,9 +30,9 @@ const WellnessPatientSummary: React.FC = () => {
     const filteredSession = currentPatient && sessionsData && sessionsData.length > 0 && _.filter(sessionsData[0].data, { "Patient ID": currentPatient["🔒 Row ID"] })
     const sortedSessions = filteredSession && _.orderBy(filteredSession, (item: any) => moment(item["Report: Session Date"], 'DD-MMM-YYYY'), ['desc'])
 
-    const totalTreatmentSessions = currentPatient["Treatment Total Sessions"] || 0;
-    const totalSittings = _.sumBy(sortedSessions, (session: any) => _.toNumber(session["Sittings"]));
-    const remaining = totalTreatmentSessions - totalSittings;
+    const totalTreatmentSessions = currentPatient["Treatment Total Sittings"] || 0;
+    const totalSittingsUsed = _.sumBy(sortedSessions, (session: any) => _.toNumber(session["Sittings Used"]));
+    const remaining = totalTreatmentSessions - totalSittingsUsed;
     const remainingStyle = remaining === 0 ? 'warning' : (remaining > 0 ? 'success' : 'danger');
 
     return (
@@ -76,8 +76,10 @@ const WellnessPatientSummary: React.FC = () => {
                             <IonLabel color={"dark"}><h2 style={{ paddingTop: "0.5rem" }}>Treatment Description: </h2></IonLabel>
                             <IonLabel>{currentPatient["Treatment Description"]}</IonLabel>
 
-                            <IonLabel color={"dark"}><h2 style={{ paddingTop: "0.5rem" }}>Treatment Total Sessions: </h2></IonLabel>
-                            <IonLabel>{currentPatient["Treatment Total Sessions"]}</IonLabel>
+                            <IonLabel color={"dark"}><h2 style={{ paddingTop: "0.5rem" }}>Treatment Total Sittings: </h2></IonLabel>
+                            <IonLabel>{currentPatient["Treatment Total Sittings"]}</IonLabel>
+                            <IonLabel color={"dark"}><h2 style={{ paddingTop: "0.5rem" }}>Total Sittings Consumed: </h2></IonLabel>
+                            <IonLabel>{totalSittingsUsed}</IonLabel>
 
                             <IonList>
                                 <IonCard color={remainingStyle} style={{ padding: '1rem' }}>

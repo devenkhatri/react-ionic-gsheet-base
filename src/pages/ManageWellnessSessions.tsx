@@ -1,4 +1,4 @@
-import { IonBackButton, IonButton, IonButtons, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonGrid, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonLoading, IonModal, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonRow, IonSearchbar, IonSelect, IonSelectOption, IonTitle, IonToast, IonToolbar, useIonToast } from '@ionic/react';
+import { IonBackButton, IonButton, IonButtons, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonGrid, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonLoading, IonModal, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonRow, IonSearchbar, IonSelect, IonSelectOption, IonTextarea, IonTitle, IonToast, IonToolbar, useIonToast } from '@ionic/react';
 import { saveOutline, thumbsDown, thumbsUp } from 'ionicons/icons';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -30,10 +30,6 @@ const ManageWellnessSessions: React.FC = () => {
   const sortedPatients = patientsData && patientsData.length > 0 && _.orderBy(patientsData[0].data, (item: any) => item["Name"])
   const [allPatients, setAllPatients] = useState<any>()
 
-  const optionsData = _.filter(data, { id: "Options" });
-  const allPaymentModes = optionsData && optionsData.length > 0 && _.filter(optionsData[0].data, (item: any) => item["Payment Modes"])
-  const defaultPaymentMode: any = allPaymentModes && allPaymentModes.length > 0 && _.head(allPaymentModes);
-
   const sessionsData = _.filter(data, { id: "WellnessSessions" });
   const filteredSession = sessionsData && sessionsData.length > 0 && _.filter(sessionsData[0].data, { "🔒 Row ID": id })
   const currentSession: any = (filteredSession && filteredSession.length > 0) ? filteredSession[0] : {}
@@ -43,24 +39,20 @@ const ManageWellnessSessions: React.FC = () => {
 
   const [patientID, setPatientID] = useState("")
   const [patientName, setPatientName] = useState("")
+  const [profilePhoto, setProfilePhoto] = useState("")
+  const [sessionDescription, setSessionDescription] = useState("")
   const [sessionDate, setSessionDate] = useState<any>(moment().format())
-  const [paymentMode, setPaymentMode] = useState("")
-  const [amountPaid, setAmountPaid] = useState<any>()
-  const [amountPending, setAmountPending] = useState<any>()
-  const [depositAmount, setDepositAmount] = useState<any>()
+  const [sittingsUsed, setSittingsUsed] = useState<any>(1)
 
   useEffect(() => {
     if (!allPatients) setAllPatients(sortedPatients);    
     if (isEdit && currentSession) {
       setPatientID(currentSession["Patient ID"])
       currentSession["Session Date"] && setSessionDate(moment(currentSession["Session Date"], "DD-MMM-YYYY, ddd").format())
-      if (!paymentMode) setPaymentMode(currentSession["Payment Mode"])
-      setAmountPaid(currentSession["Amount Paid"])
-      setAmountPending(currentSession["Amount Pending"])
-      setDepositAmount(currentSession["Deposit Amount"])
+      setSittingsUsed(currentSession["Sittings Used"])
+      setSessionDescription(currentSession["Session Description"])
     }
-    if (!isEdit && !paymentMode) setPaymentMode(defaultPaymentMode && defaultPaymentMode["Payment Modes"]);
-  }, [paymentMode, defaultPaymentMode, currentSession, allPatients]);
+  }, [currentSession, allPatients]);
 
   const presentToast = (color: any, icon: any, message: any) => {
     present({
@@ -87,11 +79,10 @@ const ManageWellnessSessions: React.FC = () => {
       data: {
         patientId: patientID,
         sessionDate: sessionDate,
-        amountPaid: amountPaid,
-        amountPending: amountPending,
-        paymentMode: paymentMode,
-        depositAmount: depositAmount,
-        patientName: patientName
+        sessionDescription: sessionDescription,
+        sittingsUsed: sittingsUsed,
+        patientName: patientName,
+        profilePhoto: profilePhoto,
       },
       withCredentials: false,
       headers: {
@@ -119,6 +110,13 @@ const ManageWellnessSessions: React.FC = () => {
     const filteredPatient = _.filter(sortedPatients, { "🔒 Row ID": pId })
     const currentPatient: any = (filteredPatient && filteredPatient.length > 0) ? filteredPatient[0] : {}
     return currentPatient["Name"];
+  }
+
+  const getPatientPhotoFromID = (pId: string) => {
+    if (!sortedPatients) return null;
+    const filteredPatient = _.filter(sortedPatients, { "🔒 Row ID": pId })
+    const currentPatient: any = (filteredPatient && filteredPatient.length > 0) ? filteredPatient[0] : {}
+    return currentPatient["Profile Photo"];
   }
 
   const handleSearch = (ev: Event) => {
@@ -186,6 +184,7 @@ const ManageWellnessSessions: React.FC = () => {
                   onIonChange={(e) => {
                     setPatientID(e.detail.value);
                     setPatientName(getPatientNameFromID(e.detail.value))
+                    setProfilePhoto(getPatientPhotoFromID(e.detail.value))
                   }}
                   value={patientID}
                   style={{ background: "var(--ion-color-light)" }}
@@ -220,59 +219,33 @@ const ManageWellnessSessions: React.FC = () => {
             </IonRow>
 
             <IonRow>
-              <IonCol><IonLabel>Payment Mode</IonLabel></IonCol>
+              <IonCol>
+                <IonLabel>Session Description</IonLabel>
+              </IonCol>
             </IonRow>
             <IonRow>
               <IonCol>
-                <IonSelect interface="action-sheet" interfaceOptions={{ header: "Select Payment Mode" }} placeholder="Select Payment Mode"
-                  value={paymentMode}
-                  onIonChange={(e) => setPaymentMode(e.detail.value)}
-                  style={{ background: "var(--ion-color-light)" }}
-                >
-                  {allPaymentModes && allPaymentModes.map((options: any) => (
-                    <IonSelectOption key={options["Payment Modes"]} value={options["Payment Modes"]}>{options["Payment Modes"]}</IonSelectOption>
-                  ))}
-                </IonSelect>
+                <IonTextarea
+                  autoCorrect='true'
+                  autoGrow={true}
+                  placeholder="Enter Treatment Description here..."
+                  onIonInput={(e: any) => setSessionDescription(e.target.value)}
+                  value={sessionDescription}
+                  style={{ background: "var(--ion-color-light)" }} />
               </IonCol>
             </IonRow>
 
             <IonRow>
               <IonCol>
-                <IonLabel>Amount Received</IonLabel>
+                <IonLabel>Sittings Used in current Session</IonLabel>
               </IonCol>
             </IonRow>
             <IonRow>
               <IonCol>
                 <IonInput type='number' defaultValue="0" placeholder='0'
-                  onIonInput={(e) => setAmountPaid(e.target.value)}
+                  onIonInput={(e) => setSittingsUsed(e.target.value)}
                   style={{ background: "var(--ion-color-light)" }}
-                  value={amountPaid}></IonInput>
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol>
-                <IonLabel>Amount Pending</IonLabel>
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol>
-                <IonInput type='number' defaultValue="0" placeholder='0'
-                  onIonInput={(e) => setAmountPending(e.target.value)}
-                  style={{ background: "var(--ion-color-light)" }}
-                  value={amountPending}></IonInput>
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol>
-                <IonLabel>Amount Deposited</IonLabel>
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol>
-                <IonInput type='number' defaultValue="0" placeholder='0'
-                  onIonInput={(e) => setDepositAmount(e.target.value)}
-                  style={{ background: "var(--ion-color-light)" }}
-                  value={depositAmount}></IonInput>
+                  value={sittingsUsed}></IonInput>
               </IonCol>
             </IonRow>
           </IonGrid>

@@ -11,14 +11,15 @@ const WellnessSessionList = ({ allSessions, fromPatientID, isShowDate = false, i
                     <IonItemSliding key={session["🔒 Row ID"]}>
                         <IonItem button={!isViewOnly} key={session["🔒 Row ID"]} detail={!isViewOnly} href={isViewOnly ? undefined : detailLink}>
                             {!isViewOnly && <IonAvatar slot="start">
-                                <Avatar name={session["Report: Patient Name"]} round size="100%" />
+                                <Avatar name={session["Report: Patient Name"]} round size="100%" src={session["Report: Profile Photo"]} />
                             </IonAvatar>
                             }
                             <IonLabel>
                                 <h2>{session["Report: Patient Name"]}</h2>
                                 {isShowDate && <p>{session["Session Date"]}</p>}
+                                <p>{session["Session Description"]}</p>
                             </IonLabel>
-                            <IonLabel slot='end'>{session["Report: Collection Amount"]}</IonLabel>
+                            <IonLabel slot='end'>{session["Sittings Used"]}</IonLabel>
                         </IonItem>
                         {!isViewOnly && <IonItemOptions>
                             <IonItemOption onClick={() => { window.location.href = `/managewellnesssession/${session["🔒 Row ID"]}` }}>

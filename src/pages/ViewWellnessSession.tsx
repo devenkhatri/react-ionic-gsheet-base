@@ -74,17 +74,11 @@ const ViewWellnessSession: React.FC = () => {
                         </IonCardHeader>
 
                         <IonCardContent>
-                            <IonLabel color={"dark"}><h2 style={{ paddingTop: "0.5rem" }}>Payment Mode: </h2></IonLabel>
-                            <IonLabel>{currentSession["Payment Mode"]}</IonLabel>
+                            <IonLabel color={"dark"}><h2 style={{ paddingTop: "0.5rem" }}>Session Description: </h2></IonLabel>
+                            <IonLabel>{currentSession["Session Description"]}</IonLabel>
 
-                            <IonLabel color={"dark"}><h2 style={{ paddingTop: "0.5rem" }}>Amount Paid: </h2></IonLabel>
-                            <IonLabel>{currentSession["Amount Paid"]}</IonLabel>
-
-                            <IonLabel color={"dark"}><h2 style={{ paddingTop: "0.5rem" }}>Amount Pending: </h2></IonLabel>
-                            <IonLabel>{currentSession["Amount Pending"]}</IonLabel>
-
-                            <IonLabel color={"dark"}><h2 style={{ paddingTop: "0.5rem" }}>Deposit Amount: </h2></IonLabel>
-                            <IonLabel>{currentSession["Deposit Amount"]}</IonLabel>
+                            <IonLabel color={"dark"}><h2 style={{ paddingTop: "0.5rem" }}>Sittings Used in this Session: </h2></IonLabel>
+                            <IonLabel>{currentSession["Sittings Used"]}</IonLabel>
                         </IonCardContent>
                     </IonCard>
 
