@@ -13,10 +13,12 @@
 
 # misc
 .DS_Store
+.env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+.env.production
 /.vscode/*
 !/.vscode/extensions.json
 .idea
@@ -27,7 +29,6 @@ yarn-error.log*
 
 # Optional eslint cache
 .eslintcache
-.env
 
 # Local Netlify folder
 .netlify
