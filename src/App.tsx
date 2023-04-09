@@ -10,7 +10,7 @@ import {
   setupIonicReact
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { peopleOutline, barChartOutline, calendarOutline, informationCircle, barbellOutline, helpCircleOutline } from 'ionicons/icons';
+import { peopleOutline, barChartOutline, calendarOutline, informationCircle, barbellOutline, helpCircleOutline, bodyOutline } from 'ionicons/icons';
 import Sessions from './pages/Sessions';
 import Patients from './pages/Patients';
 import PhysioReports from './pages/PhysioReports';
@@ -50,6 +50,13 @@ import ViewInquiry from './pages/ViewInquiry';
 import ManageInquires from './pages/ManageInquires';
 import { useDataFromGoogleSheet } from './utils';
 import PatientSummary from './pages/PatientSummary';
+import WellnessSessions from './pages/WellnessSessions';
+import WellnessPatients from './pages/WellnessPatients';
+import ManageWellnessSessions from './pages/ManageWellnessSessions';
+import ViewWellnessSession from './pages/ViewWellnessSession';
+import ManageWellnessPatients from './pages/ManageWellnessPatients';
+import ViewWellnessPatient from './pages/ViewWellnessPatient';
+import WellnessPatientSummary from './pages/WellnessPatientSummary';
 
 setupIonicReact();
 
@@ -66,6 +73,7 @@ const App: React.FC = () => {
   const isPhysioAccess = (category === "physio")
   const isGymAdminAccess = (category === "gymadmin")
   const isGymAccess = (category === "gym") || (category === "gymadmin")
+  const isWellnessAccess = (category === "wellness")
 
   useDataFromGoogleSheet(
     process.env.REACT_APP_GOOGLE_API_KEY || "",
@@ -78,9 +86,14 @@ const App: React.FC = () => {
       <IonReactRouter>
         <IonTabs>
           <IonRouterOutlet>
-          <Route exact path="/">
+            <Route exact path="/">
               <Redirect to="/info" />
             </Route>
+            <Route path="/info">
+              <Info />
+            </Route>
+
+            {/* Physio */}
             <Route exact path="/sessions">
               <Sessions />
             </Route>
@@ -111,9 +124,8 @@ const App: React.FC = () => {
             <Route path="/physioreports">
               <PhysioReports />
             </Route>
-            <Route path="/info">
-              <Info />
-            </Route>
+
+            {/* Gym */}
             <Route exact path="/gymmembers">
               <GymMembers />
             </Route>
@@ -141,37 +153,77 @@ const App: React.FC = () => {
             <Route path="/gymreports">
               <GymReports />
             </Route>
+
+            {/* Wellness */}
+            <Route exact path="/wellnesssessions">
+              <WellnessSessions />
+            </Route>
+            <Route exact path="/wellnesspatients">
+              <WellnessPatients />
+            </Route>
+            <Route exact path="/managewellnesssession">
+              <ManageWellnessSessions />
+            </Route>
+            <Route path="/managewellnesssession/:id">
+              <ManageWellnessSessions />
+            </Route>
+            <Route path="/viewwellnesssession/:id">
+              <ViewWellnessSession />
+            </Route>
+            <Route exact path="/managewellnesspatient">
+              <ManageWellnessPatients />
+            </Route>
+            <Route path="/managewellnesspatient/:id">
+              <ManageWellnessPatients />
+            </Route>
+            <Route path="/viewwellnesspatient/:id">
+              <ViewWellnessPatient />
+            </Route>
+            <Route path="/wellnesspatientsummary/:id">
+              <WellnessPatientSummary />
+            </Route>
           </IonRouterOutlet>
           <IonTabBar slot="bottom">
             {/* Physio Related Tabs - STARTS */}
-            <IonTabButton tab="sessions" href="/sessions" style={{display: isPhysioAccess?'':'none'}}>
+            <IonTabButton tab="sessions" href="/sessions" style={{ display: isPhysioAccess ? '' : 'none' }}>
               <IonIcon icon={calendarOutline} />
               <IonLabel>Sessions</IonLabel>
             </IonTabButton>
-            <IonTabButton tab="patients" href="/patients" style={{display: isPhysioAccess?'':'none'}}>
+            <IonTabButton tab="patients" href="/patients" style={{ display: isPhysioAccess ? '' : 'none' }}>
               <IonIcon icon={peopleOutline} />
               <IonLabel>Patients</IonLabel>
             </IonTabButton>
-            <IonTabButton tab="physioreports" href="/physioreports" style={{display: isPhysioAccess?'':'none'}}>
+            <IonTabButton tab="physioreports" href="/physioreports" style={{ display: isPhysioAccess ? '' : 'none' }}>
               <IonIcon icon={barChartOutline} />
-              <IonLabel>Reports</IonLabel>              
+              <IonLabel>Reports</IonLabel>
             </IonTabButton>
             {/* Physio Related Tabs - ENDS */}
 
             {/* Gym Related Tabs - STARTS */}
-            <IonTabButton tab="gymmembers" href="/gymmembers" style={{display: isGymAccess?'':'none'}}>
+            <IonTabButton tab="gymmembers" href="/gymmembers" style={{ display: isGymAccess ? '' : 'none' }}>
               <IonIcon icon={barbellOutline} />
               <IonLabel>Gym Members</IonLabel>
             </IonTabButton>
-            <IonTabButton tab="inquires" href="/inquires" style={{display: (isGymAccess||isPhysioAccess)?'':'none'}}>
+            <IonTabButton tab="inquires" href="/inquires" style={{ display: (isGymAccess || isPhysioAccess) ? '' : 'none' }}>
               <IonIcon icon={helpCircleOutline} />
               <IonLabel>Inquries</IonLabel>
             </IonTabButton>
-            <IonTabButton tab="gymreports" href="/gymreports" style={{display: isGymAdminAccess?'':'none'}}>
+            <IonTabButton tab="gymreports" href="/gymreports" style={{ display: isGymAdminAccess ? '' : 'none' }}>
               <IonIcon icon={barChartOutline} />
-              <IonLabel>Reports</IonLabel>              
+              <IonLabel>Reports</IonLabel>
             </IonTabButton>
             {/* Gym Related Tabs - ENDS */}
+
+            {/* Wellness Related Tabs - STARTS */}
+            <IonTabButton tab="wellnesssessions" href="/wellnesssessions" style={{ display: isWellnessAccess ? '' : 'none' }}>
+              <IonIcon icon={bodyOutline} />
+              <IonLabel>WellnessSessions</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="wellnesspatients" href="/wellnesspatients" style={{ display: isWellnessAccess ? '' : 'none' }}>
+              <IonIcon icon={peopleOutline} />
+              <IonLabel>WellnessPatients</IonLabel>
+            </IonTabButton>
+            {/* Wellness Related Tabs - ENDS */}
 
             <IonTabButton tab="info" href="/info">
               <IonIcon icon={informationCircle} />

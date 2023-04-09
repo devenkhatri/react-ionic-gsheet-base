@@ -40,6 +40,11 @@ export const getPatientWelcomeMessage = (currentPatient: any) => {
     return welcomeMesage+appendWriteReviewLink();
 }
 
+export const getWellnessPatientWelcomeMessage = (currentPatient: any) => {
+    const welcomeMesage = `Dear ${currentPatient["Name"]}, Thanks for choosing Aastha Health Plus (Fitness and Wellness) for your wellness journey.\n\nView your details at ${process.env.REACT_APP_URL}wellnesspatientsummary/${currentPatient["🔒 Row ID"]}`
+    return welcomeMesage+appendWriteReviewLink();
+}
+
 export const sendWhatsappMessageLive = (mobileNumber: any, message: any) => {
     const requestOptions: any = {
         baseURL: process.env.REACT_APP_API_BASE || '',
