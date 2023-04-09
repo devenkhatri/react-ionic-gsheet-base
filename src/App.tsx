@@ -57,6 +57,7 @@ import ViewWellnessSession from './pages/ViewWellnessSession';
 import ManageWellnessPatients from './pages/ManageWellnessPatients';
 import ViewWellnessPatient from './pages/ViewWellnessPatient';
 import WellnessPatientSummary from './pages/WellnessPatientSummary';
+import WellnessReports from './pages/WellnessReports';
 
 setupIonicReact();
 
@@ -182,6 +183,9 @@ const App: React.FC = () => {
             <Route path="/wellnesspatientsummary/:id">
               <WellnessPatientSummary />
             </Route>
+            <Route path="/wellnessreports">
+              <WellnessReports />
+            </Route>
           </IonRouterOutlet>
           <IonTabBar slot="bottom">
             {/* Physio Related Tabs - STARTS */}
@@ -222,6 +226,10 @@ const App: React.FC = () => {
             <IonTabButton tab="wellnesspatients" href="/wellnesspatients" style={{ display: isWellnessAccess ? '' : 'none' }}>
               <IonIcon icon={peopleOutline} />
               <IonLabel>WellnessPatients</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="wellnessreports" href="/wellnessreports" style={{ display: isWellnessAccess ? '' : 'none' }}>
+              <IonIcon icon={barChartOutline} />
+              <IonLabel>Reports</IonLabel>
             </IonTabButton>
             {/* Wellness Related Tabs - ENDS */}
 
