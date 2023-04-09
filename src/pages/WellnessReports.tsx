@@ -1,9 +1,7 @@
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonRefresher, IonRefresherContent, IonItem, IonLabel, IonToast, IonProgressBar, IonCol, IonGrid, IonRow } from '@ionic/react';
-import { formatCurrency, refreshPage, useDataFromGoogleSheet } from '../utils';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton, IonContent, IonRefresher, IonRefresherContent, IonItem, IonLabel, IonToast, IonProgressBar, IonCol, IonGrid, IonRow, IonBadge } from '@ionic/react';
+import { refreshPage, useDataFromGoogleSheet } from '../utils';
 import * as _ from "lodash";
 import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
-import PhysioReportDaywise from '../components/PhysioReportDaywise';
-import PhysioReportMonthwise from '../components/PhysioReportMonthwise';
 import moment from 'moment';
 
 
@@ -21,8 +19,6 @@ const WellnessReports: React.FC = () => {
   const sessionsData = _.filter(data, { id: "WellnessSessions" });
 
   const sortedPatients = patientsData && patientsData.length > 0 && _.orderBy(patientsData[0].data, (item: any) => item["Name"])
-  const groupedPatients = sortedPatients && _.groupBy(sortedPatients, (item: any) => item["Name"] && item["Name"].charAt(0).toUpperCase())
-
 
   return (
     <IonPage id="main-content">
@@ -65,7 +61,7 @@ const WellnessReports: React.FC = () => {
                         <IonCol size="3" class="numberType">Remaining</IonCol>
                     </IonRow>
                 </IonLabel>
-                {groupedPatients && _.map(groupedPatients, (patientDetails: any) => {
+                {sortedPatients && _.map(sortedPatients, (patientDetails: any) => {
                   const filteredSession = patientDetails && sessionsData && sessionsData.length > 0 && _.filter(sessionsData[0].data, { "Patient ID": patientDetails["🔒 Row ID"] })
                   const sortedSessions = filteredSession && _.orderBy(filteredSession, (item: any) => moment(item["Report: Session Date"], 'DD-MMM-YYYY'), ['desc'])
 
@@ -79,7 +75,7 @@ const WellnessReports: React.FC = () => {
                             <IonCol size="3">{ patientDetails["Name"]}</IonCol>
                             <IonCol size="3" class="numberType">{totalTreatmentSessions}</IonCol>
                             <IonCol size="3" class="numberType">{totalSittingsUsed}</IonCol>
-                            <IonCol size="3" class="numberType">{remaining}</IonCol>
+                            <IonCol size="3" class="numberType"><IonBadge color={remainingStyle}>{remaining}</IonBadge></IonCol>
                         </IonRow>
                     )
                 })}
