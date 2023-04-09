@@ -6,7 +6,7 @@ import moment from 'moment';
 
 
 const WellnessReports: React.FC = () => {
-  const title = "Physio Reports"
+  const title = "Wellness Reports"
 
   const { status, data, error, isFetching } = useDataFromGoogleSheet(
     process.env.REACT_APP_GOOGLE_API_KEY || "",
