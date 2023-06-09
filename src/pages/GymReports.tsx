@@ -73,14 +73,14 @@ const GymReports: React.FC = () => {
             </IonCard>
           </IonList>
 
+          <GymReportMonthwise data={gymMembersData} />
+
           <GymReportExpiringList data={gymMembersData} />
           <IonItem />
 
           <a id="activememberlist"></a>
           <IonLabel color={'primary'} class="reportTitle"><h1>All Active Member List</h1></IonLabel>
-          <GymMemberList allGymMembers={activeMemberships} />
-
-          <GymReportMonthwise data={gymMembersData} />
+          <GymMemberList allGymMembers={activeMemberships} />          
         </>
       </IonContent>
     </IonPage>
