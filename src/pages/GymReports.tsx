@@ -5,6 +5,7 @@ import ListLoadingSkeleton from '../components/ListLoadingSkeleton';
 import GymReportExpiringList from '../components/GymReportExpiringList';
 import moment from 'moment';
 import GymMemberList from '../components/GymMemberList';
+import GymReportMonthwise from '../components/GymReportMonthwise';
 
 
 const GymReports: React.FC = () => {
@@ -78,6 +79,8 @@ const GymReports: React.FC = () => {
           <a id="activememberlist"></a>
           <IonLabel color={'primary'} class="reportTitle"><h1>All Active Member List</h1></IonLabel>
           <GymMemberList allGymMembers={activeMemberships} />
+
+          <GymReportMonthwise data={gymMembersData} />
         </>
       </IonContent>
     </IonPage>

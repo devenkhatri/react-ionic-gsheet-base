@@ -5,7 +5,7 @@ import moment from "moment";
 import Avatar from "react-avatar";
 import { RWebShare } from "react-web-share";
 import { sendWhatsappMessage } from "../utils";
-import './PhysioReportDaywise.css'
+import './ReportDaywise.css'
 
 const GymReportExpiringList = ({ data }: any) => {
     

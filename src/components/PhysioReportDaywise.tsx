@@ -2,7 +2,7 @@ import { IonLabel, IonGrid, IonRow, IonCol } from "@ionic/react";
 import _ from "lodash";
 import moment from "moment";
 import { formatCurrency } from "../utils";
-import './PhysioReportDaywise.css'
+import './ReportDaywise.css'
 
 const PhysioReportDaywise = ({ data }: any) => {
     const sortedSessions = data && data.length > 0 && _.orderBy(data[0].data, (item: any) => moment(item["Report: Session Date"], 'DD-MMM-YYYY'), ['desc'])

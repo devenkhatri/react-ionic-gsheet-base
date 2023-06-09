@@ -4,9 +4,9 @@ import moment from "moment";
 import { formatCurrency } from "../utils";
 import './ReportDaywise.css'
 
-const PhysioReportMonthwise = ({ data }: any) => {
-    const sortedSessions = data && data.length > 0 && _.orderBy(data[0].data, (item: any) => moment(item["Report: Session Date"], 'DD-MMM-YYYY'), ['desc'])
-    const groupedSessions = sortedSessions && _.groupBy(sortedSessions, (item: any) => moment(item["Session Date"], "MMM-YYYY").format("MMM-YYYY"))
+const GymReportMonthwise = ({ data }: any) => {
+    const sortedGymMembers = data && data.length > 0 && _.orderBy(data[0].data, (item: any) => moment(item["Joining Date"], "DD-MMM-YYYY"))
+    const groupedGymMembers = sortedGymMembers && _.groupBy(sortedGymMembers, (item: any) => moment(item["Joining Date"], "MMM-YYYY").format("MMM-YYYY"))
 
     let grandTotalCash = 0;
     let grandTotalOnline = 0;
@@ -23,10 +23,10 @@ const PhysioReportMonthwise = ({ data }: any) => {
                         <IonCol size="3" class="numberType">Total</IonCol>
                     </IonRow>
                 </IonLabel>
-                {groupedSessions && _.map(groupedSessions, (sessionDetails: any, sessionDate: any) => {
+                {groupedGymMembers && _.map(groupedGymMembers, (sessionDetails: any, sessionDate: any) => {
                     const groupedByMode = _.groupBy(sessionDetails, (item: any) => item["Payment Mode"]);
-                    const totalCash = groupedByMode["Cash"] ? _.sumBy(groupedByMode["Cash"], (session: any) => _.toNumber(session["Report: Collection Amount"])) : 0;
-                    const totalOnline = groupedByMode["Online"] ? _.sumBy(groupedByMode["Online"], (session: any) => _.toNumber(session["Report: Collection Amount"])) : 0;
+                    const totalCash = groupedByMode["Cash"] ? _.sumBy(groupedByMode["Cash"], (session: any) => _.toNumber(session["Amount Received"])) : 0;
+                    const totalOnline = groupedByMode["Online"] ? _.sumBy(groupedByMode["Online"], (session: any) => _.toNumber(session["Amount Received"])) : 0;
                     const netTotal = totalCash + totalOnline
                     grandTotalCash += totalCash
                     grandTotalOnline += totalOnline
@@ -52,4 +52,4 @@ const PhysioReportMonthwise = ({ data }: any) => {
     );
 }
 
-export default PhysioReportMonthwise;
+export default GymReportMonthwise;
