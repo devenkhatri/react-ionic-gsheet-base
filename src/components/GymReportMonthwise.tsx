@@ -29,6 +29,7 @@ const GymReportMonthwise = ({ data }: any) => {
                     const totalCash = groupedByMode["Cash"] ? _.sumBy(groupedByMode["Cash"], (session: any) => _.toNumber(session["Amount Received"])) : 0;
                     const totalOnline = groupedByMode["Online"] ? _.sumBy(groupedByMode["Online"], (session: any) => _.toNumber(session["Amount Received"])) : 0;
                     const netTotal = totalCash + totalOnline
+                    if(netTotal <= 0) return; //hide 0 value rows
                     grandTotalCash += totalCash
                     grandTotalOnline += totalOnline
                     return (
