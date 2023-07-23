@@ -48,6 +48,7 @@ exports.handler = async (event, context) => {
         const totalSessions = body.totalSessions
         const totalCharges = body.totalCharges
         const paymentMode = body.paymentMode
+        const treatmentType = body.treatmentType
         const phone = body.phone
         const occupation = body.occupation
         const referralType = body.referralType
@@ -64,6 +65,7 @@ exports.handler = async (event, context) => {
                 'Treatment Total Charges': totalCharges,
                 'Phone': phone,
                 'Payment Mode': paymentMode,
+                'Treatment Type': treatmentType,
                 'Occupation': occupation,
                 'Referral Type': referralType,
                 'Referral Details': referralDetails,
@@ -71,7 +73,7 @@ exports.handler = async (event, context) => {
             }
             console.log("****** dataToAdd", dataToAdd)
             await sheet.addRow(dataToAdd);
-            message = "Session Added Successfully."
+            message = "Wellness Patient Added Successfully."
         } else { //editing a row
             const rows = await sheet.getRows();
             if(rows && rows.length > 0) {
@@ -82,13 +84,14 @@ exports.handler = async (event, context) => {
                 rows[rowIndex]['Treatment Total Sittings'] = totalSessions
                 rows[rowIndex]['Treatment Total Charges'] = totalCharges
                 rows[rowIndex]['Payment Mode'] = paymentMode
+                rows[rowIndex]['Treatment Type'] = treatmentType
                 rows[rowIndex]['Phone'] = phone
                 rows[rowIndex]['Occupation'] = occupation
                 rows[rowIndex]['Referral Type'] = referralType
                 rows[rowIndex]['Referral Details'] = referralDetails
                 rows[rowIndex]['Profile Photo'] = profilePhoto
                 await rows[rowIndex].save();
-                message = "Session Updated Successfully."
+                message = "Wellness Patient Updated Successfully."
             }            
         }
 

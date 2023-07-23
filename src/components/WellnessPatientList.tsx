@@ -12,7 +12,7 @@ const WellnessPatientList = ({ allPatients, fromSessionID, isShowDescription = f
                             <Avatar name={patient["Name"]} round size="100%" src={patient["Profile Photo"]}  />
                         </IonAvatar>
                         <IonLabel>
-                            <h2>{patient["Name"]}</h2>
+                            <h2>{patient["Name"]} - {patient["Treatment Type"]}</h2>
                             {isShowDescription && <p>{patient["Treatment Description"]}</p>}
                         </IonLabel>
                     </IonItem>

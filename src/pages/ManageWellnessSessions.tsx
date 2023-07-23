@@ -38,7 +38,7 @@ const ManageWellnessSessions: React.FC = () => {
   const [showLoading, setShowLoading] = useState(false);
 
   const [patientID, setPatientID] = useState("")
-  const [patientName, setPatientName] = useState("")
+  const [patientName, setPatientName] = useState<any>("")
   const [profilePhoto, setProfilePhoto] = useState("")
   const [sessionDescription, setSessionDescription] = useState("")
   const [sessionDate, setSessionDate] = useState<any>(moment().format())
@@ -109,7 +109,8 @@ const ManageWellnessSessions: React.FC = () => {
     if (!sortedPatients) return null;
     const filteredPatient = _.filter(sortedPatients, { "🔒 Row ID": pId })
     const currentPatient: any = (filteredPatient && filteredPatient.length > 0) ? filteredPatient[0] : {}
-    return currentPatient["Name"];
+    const reportPatientName = (currentPatient["Name"] + " - " + currentPatient["Treatment Type"]) || ""
+    return reportPatientName;
   }
 
   const getPatientPhotoFromID = (pId: string) => {
@@ -190,7 +191,7 @@ const ManageWellnessSessions: React.FC = () => {
                   style={{ background: "var(--ion-color-light)" }}
                 >
                   {allPatients && allPatients.map((patient: any) => (
-                    <IonSelectOption key={patient["🔒 Row ID"]} value={patient["🔒 Row ID"]}>{patient["Name"]}</IonSelectOption>
+                    <IonSelectOption key={patient["🔒 Row ID"]} value={patient["🔒 Row ID"]}>{patient["Name"]} - {patient["Treatment Type"]}</IonSelectOption>
                   ))}
                 </IonSelect>
               </IonCol>

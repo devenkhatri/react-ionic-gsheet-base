@@ -110,7 +110,10 @@ const ViewWellnessPatient: React.FC = () => {
                             }
                         </IonCardHeader>
 
-                        <IonCardContent>
+                        <IonCardContent>          
+                            <IonLabel color={"dark"}><h2 style={{ paddingTop: "0.5rem" }}>Treatment Type: </h2></IonLabel>
+                            <IonLabel>{currentPatient["Treatment Type"]}</IonLabel>
+
                             <IonLabel color={"dark"}><h2 style={{ paddingTop: "0.5rem" }}>Treatment Start Date: </h2></IonLabel>
                             <IonLabel>{currentPatient["Start Date"] && moment(currentPatient["Start Date"], 'MM/DD/YYYY').format('DD-MMM-YYYY')}</IonLabel>
 
