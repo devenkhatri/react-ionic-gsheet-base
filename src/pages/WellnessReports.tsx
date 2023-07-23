@@ -68,14 +68,15 @@ const WellnessReports: React.FC = () => {
                   const totalTreatmentSessions = patientDetails["Treatment Total Sittings"] || 0;
                   const totalSittingsUsed = _.sumBy(sortedSessions, (session: any) => _.toNumber(session["Sittings Used"]));
                   const remaining = totalTreatmentSessions - totalSittingsUsed;
-                  const remainingStyle = remaining === 0 ? 'warning' : (remaining > 0 ? 'success' : 'danger');
+                  //show yellow if 1 setting remaining
+                  const remainingStyle = remaining === 1 ? 'warning' : (remaining > 0 ? 'success' : 'danger');
 
                     return (
                         <IonRow key={patientDetails["🔒 Row ID"]} class="itemrow">
-                            <IonCol size="3">{ patientDetails["Name"]}</IonCol>
+                            <IonCol size="3">{patientDetails["Name"]} - {patientDetails["Treatment Type"]}</IonCol>
                             <IonCol size="3" class="numberType">{totalTreatmentSessions}</IonCol>
                             <IonCol size="3" class="numberType">{totalSittingsUsed}</IonCol>
-                            <IonCol size="3" class="numberType"><IonBadge color={remainingStyle}>{remaining}</IonBadge></IonCol>
+                            <IonCol size="3" class="numberType"><IonBadge color={remainingStyle} style={{padding: "0.5rem"}}>{remaining}</IonBadge></IonCol>
                         </IonRow>
                     )
                 })}
