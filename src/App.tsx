@@ -10,7 +10,7 @@ import {
   setupIonicReact
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { peopleOutline, barChartOutline, calendarOutline, informationCircle, barbellOutline, helpCircleOutline, bodyOutline } from 'ionicons/icons';
+import { peopleOutline, barChartOutline, calendarOutline, informationCircle, barbellOutline, helpCircleOutline, bodyOutline, medal } from 'ionicons/icons';
 import Sessions from './pages/Sessions';
 import Patients from './pages/Patients';
 import PhysioReports from './pages/PhysioReports';
@@ -58,6 +58,7 @@ import ManageWellnessPatients from './pages/ManageWellnessPatients';
 import ViewWellnessPatient from './pages/ViewWellnessPatient';
 import WellnessPatientSummary from './pages/WellnessPatientSummary';
 import WellnessReports from './pages/WellnessReports';
+import GotoReviews from './pages/GotoReviews';
 
 setupIonicReact();
 
@@ -89,6 +90,9 @@ const App: React.FC = () => {
           <IonRouterOutlet>
             <Route exact path="/">
               <Redirect to="/info" />
+            </Route>
+            <Route path="/gotoreviews">
+              <GotoReviews />
             </Route>
             <Route path="/info">
               <Info />
@@ -233,6 +237,10 @@ const App: React.FC = () => {
             </IonTabButton>
             {/* Wellness Related Tabs - ENDS */}
 
+            <IonTabButton tab="gotoreviews" href="/gotoreviews">
+              <IonIcon icon={medal} />
+              <IonLabel>Reviews</IonLabel>
+            </IonTabButton>
             <IonTabButton tab="info" href="/info">
               <IonIcon icon={informationCircle} />
               <IonLabel>Info</IonLabel>
