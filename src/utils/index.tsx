@@ -27,7 +27,7 @@ export const uploadFileToFirebase = (pathprefix: any, file: any) => {
 }
 
 const appendWriteReviewLink = () => {
-    return "\n\nPlease tell us more about your experience at https://g.page/r/CapG5zkcHSoZEBM/review, so that we can improve our service."
+    return "\r\n\r\n %0a%0aYour Feedback Matters! Please tell us more about your experience at https://bit.ly/3XSjIjV, so that we can improve our service. "
 }
 
 export const getWelcomeMessage = (currentGymMember: any) => {

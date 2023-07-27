@@ -14,7 +14,7 @@ const GotoReviews: React.FC = () => {
 
   const appDetails = {
     title: process.env.REACT_APP_TITLE,
-    subtitle: `Ye " Aastha Health Plus " ke google account par reviews dalvane k liye Link he, isko customer and relative ko share kare and jitna ho sake utne jyada reviews dalvaao`,
+    subtitle: `📢🌟 Your Feedback Matters! Write a Google Review and Share Your Experience for "Aastha Health Plus"! 🌟📢`,
     url: `https://bit.ly/3XSjIjV`,
   }
 
@@ -61,7 +61,7 @@ const GotoReviews: React.FC = () => {
           <IonCardContent>
             <IonGrid>
               <IonRow><IonCol>
-                <IonLabel>Ye "Aastha Health Plus" ke google account par reviews dalvane k liye QR code he, isko scan karte hi sidha reviews profile par chala jaayega customer</IonLabel>
+                <IonLabel>{appDetails.subtitle}</IonLabel>
               </IonCol></IonRow>
               <IonRow><IonCol>
         <img alt="Silhouette of a person's head" src="/assets/icon/googlereview-qr.jpeg" width={'100%'} />
