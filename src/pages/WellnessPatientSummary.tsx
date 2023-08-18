@@ -51,7 +51,7 @@ const WellnessPatientSummary: React.FC = () => {
                             <RWebShare
                                 data={{
                                     text: "Aastha Health Plus - Patient Summary",
-                                    url: process.env.REACT_APP_URL + window.location.pathname,
+                                    url: process.env.REACT_APP_URL + "wellnesspatientsummary/" + id,
                                     title: process.env.REACT_APP_TITLE,
                                 }}
                                 onClick={() => console.log("shared successfully!")}
