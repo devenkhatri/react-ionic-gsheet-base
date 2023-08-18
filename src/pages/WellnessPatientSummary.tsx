@@ -1,10 +1,12 @@
-import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonItem, IonLabel, IonList, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar } from "@ionic/react";
+import { IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonNavLink, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonTitle, IonToast, IonToolbar } from "@ionic/react";
 import { useParams } from 'react-router-dom';
 import * as _ from "lodash";
 import { refreshPage, useDataFromGoogleSheet } from '../utils';
 import moment from "moment";
 import WellnessSessionList from "../components/WellnessSessionList";
 import ProfilePhoto from "../components/ProfilePhoto";
+import { medalOutline, shareOutline } from "ionicons/icons";
+import { RWebShare } from "react-web-share";
 
 type PageParams = {
     id?: string;
@@ -41,6 +43,25 @@ const WellnessPatientSummary: React.FC = () => {
                 <IonToolbar>
                     <IonTitle>{process.env.REACT_APP_TITLE} - {title}</IonTitle>
                     {isFetching && <IonProgressBar type="indeterminate"></IonProgressBar>}
+                    <IonButtons slot="end">
+                        <IonNavLink>
+                            <IonButton href="https://bit.ly/3XSjIjV" target="_new">
+                                <IonIcon slot="icon-only" icon={medalOutline} color="primary"></IonIcon>
+                            </IonButton>
+                            <RWebShare
+                                data={{
+                                    text: "Aastha Health Plus - Patient Summary",
+                                    url: process.env.REACT_APP_URL + window.location.pathname,
+                                    title: process.env.REACT_APP_TITLE,
+                                }}
+                                onClick={() => console.log("shared successfully!")}
+                            >
+                                <IonButton>
+                                    <IonIcon slot="icon-only" icon={shareOutline} color="primary"></IonIcon>
+                                </IonButton>
+                            </RWebShare>
+                        </IonNavLink>
+                    </IonButtons>
                 </IonToolbar>
             </IonHeader>
             <IonContent fullscreen>
