@@ -70,12 +70,14 @@ const App: React.FC = () => {
     ReactGA.send({ hitType: "pageview", page: (window.location.pathname + window.location.search) });
   }, []);
 
+  const isSummaryView = window.location.pathname && window.location.pathname.indexOf("summary") >= 0;
+
   const category = process.env.REACT_APP_CATEGORY || "";
 
-  const isPhysioAccess = (category === "physio")
-  const isGymAdminAccess = (category === "gymadmin")
-  const isGymAccess = (category === "gym") || (category === "gymadmin")
-  const isWellnessAccess = (category === "wellness")
+  const isPhysioAccess = (category === "physio") && !isSummaryView
+  const isGymAdminAccess = (category === "gymadmin") && !isSummaryView
+  const isGymAccess = ((category === "gym") || (category === "gymadmin")) && !isSummaryView
+  const isWellnessAccess = (category === "wellness") && !isSummaryView
 
   useDataFromGoogleSheet(
     process.env.REACT_APP_GOOGLE_API_KEY || "",
@@ -237,11 +239,12 @@ const App: React.FC = () => {
             </IonTabButton>
             {/* Wellness Related Tabs - ENDS */}
 
-            <IonTabButton tab="gotoreviews" href="/gotoreviews">
+            {/* Remove common tabs from "Summary" view/page */}
+            <IonTabButton tab="gotoreviews" href="/gotoreviews" style={{ display: isSummaryView ? 'none' : '' }}>
               <IonIcon icon={medal} />
               <IonLabel>Reviews</IonLabel>
             </IonTabButton>
-            <IonTabButton tab="info" href="/info">
+            <IonTabButton tab="info" href="/info" style={{ display: isSummaryView ? 'none' : '' }}>
               <IonIcon icon={informationCircle} />
               <IonLabel>Info</IonLabel>
             </IonTabButton>
