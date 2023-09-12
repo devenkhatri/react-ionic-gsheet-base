@@ -74,7 +74,8 @@ const App: React.FC = () => {
 
   const category = process.env.REACT_APP_CATEGORY || "";
 
-  const isPhysioAccess = (category === "physio") && !isSummaryView
+  const isPhysioAdminAccess = (category === "physioadmin") && !isSummaryView
+  const isPhysioAccess = ((category === "physio") || (category === "physioadmin")) && !isSummaryView
   const isGymAdminAccess = (category === "gymadmin") && !isSummaryView
   const isGymAccess = ((category === "gym") || (category === "gymadmin")) && !isSummaryView
   const isWellnessAccess = (category === "wellness") && !isSummaryView
@@ -203,7 +204,7 @@ const App: React.FC = () => {
               <IonIcon icon={peopleOutline} />
               <IonLabel>Patients</IonLabel>
             </IonTabButton>
-            <IonTabButton tab="physioreports" href="/physioreports" style={{ display: isPhysioAccess ? '' : 'none' }}>
+            <IonTabButton tab="physioreports" href="/physioreports" style={{ display: isPhysioAdminAccess ? '' : 'none' }}>
               <IonIcon icon={barChartOutline} />
               <IonLabel>Reports</IonLabel>
             </IonTabButton>
