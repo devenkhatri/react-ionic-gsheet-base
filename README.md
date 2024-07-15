@@ -14,6 +14,19 @@ Ionic React Application to map with configured google sheet to perform basic CRU
 
 ## Setup Steps
 
+### Google Sheets Setup
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/) to get API key for Google Sheets API.
+2. Create a Google Sheet and add some data. See [example sheet](https://docs.google.com/spreadsheets/d/1zbEyIfga05-gXTCVGejJHpl8ZrlcTYanvgnQBa1t2DM/edit#gid=0).
+3. Share it with "Anyone with this link can view".
+4. Get sheet id from url of the sheet.
+
+```html
+https://docs.google.com/spreadsheets/d/[THIS-IS-THE-SHEET-ID]/
+```
+
+5. Add API key and sheet id to `.env` file in variables `REACT_APP_GOOGLE_API_KEY=` and `REACT_APP_GOOGLE_SHEETS_ID=` respectively
+
 ## Extra Notes
 
 ### It uses https://github.com/robinmoisson/staticrypt for password protecting pages
