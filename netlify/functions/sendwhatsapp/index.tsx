@@ -29,12 +29,12 @@ exports.handler = async (event, context) => {
         const mobileNumber = body.mobileNumber;
         const messageBody = body.message;
 
-        const accountSid = 'AC30403357a326adf4fa2fa3df740f6b76'//"ACc2842b5cd2e2980f13f5737c9d0bc10d"//process.env.TWILIO_ACCOUNT_SID;
-        const authToken = '3c84310d7256c47a4bc927e8f0c54d84'//"5db31228ee1cd07c62da4f4e68a68a7e"//process.env.TWILIO_AUTH_TOKEN;
+        const accountSid = process.env.TWILIO_ACCOUNT_SID;
+        const authToken = process.env.TWILIO_AUTH_TOKEN;
         const client = require('twilio')(accountSid, authToken);
 
         const responseMessage = await client.messages.create({
-            to: 'whatsapp:+919033033836',
+            to: 'whatsapp:'+mobileNumber,
             body: messageBody,
             from: 'whatsapp:+14155238886'
         })
